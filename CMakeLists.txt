@@ -39,6 +39,7 @@ endif()
 # Import Qt
 set(PXCRYPT_QT_COMPONENTS
     Core
+    Gui
 )
 
 # Find Qt package
@@ -52,7 +53,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "v0.5.0.1"
+    REF "a9b31a99745293d60d1457265b36979b43ad876e"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )

@@ -1,0 +1,48 @@
+#ifndef PX_SKIMMER
+#define PX_SKIMMER
+
+// Qt Includes
+#include <QImage>
+
+// Qx Includes
+
+// Project Includes
+#include "pxcrypt/encdec.h"
+#include "px_sequence_generator.h"
+
+namespace pxcrypt
+{
+
+class PxSkimmer
+{
+//-Class Variables------------------------------------------------------------------------------------------------------
+private:
+
+
+//-Instance Variables------------------------------------------------------------------------------------------------------
+private:
+    EncType mType;
+    const QRgb* mPixels;
+    const QRgb* mRefPixels;
+
+    PxSequenceGenerator mSequence;
+    quint8 mMask;
+
+    int mChannel;
+    quint8 mBuffer[3];
+
+//-Constructor---------------------------------------------------------------------------------------------------------
+public:
+    PxSkimmer(const QImage* surface, const QImage* medium, QStringView psk, quint8 bpc, EncType type);
+
+//-Instance Functions----------------------------------------------------------------------------------------------
+private:
+    void advance();
+
+public:
+    quint8 next();
+};
+
+}
+
+#endif // PX_SKIMMER
