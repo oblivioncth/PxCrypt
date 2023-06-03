@@ -7,7 +7,7 @@
 // Qx Includes
 #include <qx/core/qx-algorithm.h>
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // Unit Include
 #include "px_skimmer.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //===============================================================================================================

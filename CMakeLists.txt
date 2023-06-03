@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.24.0...3.25.0)
 
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
-project(pxcrypt
+project(PxCrypt
     VERSION 0.1
     LANGUAGES CXX
     DESCRIPTION "Weave arbitrary data into an image in an encrypted manner"
@@ -21,7 +21,7 @@ ob_standard_project_setup()
 
 # Configuration options
 # Handled by fetched libs, but set this here formally since they aren't part of the main project
-option(BUILD_SHARED_LIBS "Build pxcrypt with shared libraries" OFF)
+option(BUILD_SHARED_LIBS "Build PxCrypt with shared libraries" OFF)
 
 # C++
 set(CMAKE_CXX_STANDARD 20)
@@ -57,6 +57,10 @@ ob_fetch_qx(
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )
+
+# Fetch Neargye's Magic Enum
+include(OB/FetchMagicEnum)
+ob_fetch_magicenum("v0.9.1")
 
 # Process Targets
 set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_codec)

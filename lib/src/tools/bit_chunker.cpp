@@ -1,7 +1,7 @@
 // Unit Include
 #include "bit_chunker.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //===============================================================================================================

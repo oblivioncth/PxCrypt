@@ -13,7 +13,7 @@
 // Project Includes
 #include "pxcrypt/encdec.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 //-Namespace Types ---------------------------------------------------------------------------------------------
 struct EncodeSettings

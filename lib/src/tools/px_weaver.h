@@ -10,7 +10,7 @@
 #include "pxcrypt/encdec.h"
 #include "px_sequence_generator.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 class PxWeaver

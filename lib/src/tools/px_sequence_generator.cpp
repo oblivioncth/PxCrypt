@@ -1,7 +1,7 @@
 // Unit Include
 #include "px_sequence_generator.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //===============================================================================================================

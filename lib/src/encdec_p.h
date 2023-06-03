@@ -12,7 +12,7 @@
 // Project Includes
 #include "pxcrypt/encdec.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //-Namespace Variables-------------------------------------------------------------------------------------------------

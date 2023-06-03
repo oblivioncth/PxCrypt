@@ -4,7 +4,7 @@
 // Qt Includes
 #include <QByteArrayView>
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 class BitChunker

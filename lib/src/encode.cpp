@@ -11,7 +11,7 @@
 #include <qx/core/qx-bytearray.h>
 #include <qx/core/qx-bitarray.h>
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 namespace

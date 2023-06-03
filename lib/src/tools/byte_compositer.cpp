@@ -4,7 +4,7 @@
 // Qt Includes
 #include <QByteArray>
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //===============================================================================================================

@@ -1,4 +1,4 @@
-# pxcrypt
+# PxCrypt
 Unaware of what's right in front of you
 
 # WIP

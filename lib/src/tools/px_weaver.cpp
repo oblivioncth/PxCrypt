@@ -1,7 +1,7 @@
 // Unit Include
 #include "px_weaver.h"
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 //===============================================================================================================

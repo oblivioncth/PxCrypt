@@ -9,7 +9,7 @@
 // Qx Includes
 #include <qx/utility/qx-macros.h>
 
-namespace pxcrypt
+namespace PxCrypt
 {
 //-Namespace Enums-----------------------------------------------------------------------------------------------------
 enum EncType : quint8 {

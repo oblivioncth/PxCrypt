@@ -10,7 +10,7 @@
 // Qx Includes
 #include <qx/core/qx-bitarray.h>
 
-namespace pxcrypt
+namespace PxCrypt
 {
 
 namespace
