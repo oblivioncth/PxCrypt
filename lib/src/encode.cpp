@@ -27,16 +27,16 @@ namespace
 }
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
-quint8 calculateOptimalDensity(const QSize& dim, quint32 payloadSize)
+quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloadSize)
 {
     // Returns the minimum BPC required to store `payload`, or 0 if the
     // payload will not fit within `dim`
     if(dim.width() == 0 || dim.height() == 0)
         return 0;
 
-    double bits = (payloadSize + HEADER_BYTES) * 8.0;
+    double bits = (payloadSize + tagSize + HEADER_BYTES) * 8.0;
     double chunks = dim.width() * dim.height() * 3.0;
-    double bpc = bits/chunks;
+    double bpc = std::ceil(bits/chunks);
 
     return bpc < 8 ? bpc : 0;
 }
@@ -52,6 +52,8 @@ quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
 
 Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings set)
 {
+    // BPC of 0 means "auto"
+
     // Clear buffer
     enc = QImage();
 
@@ -60,7 +62,7 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
         return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_NO_DATA);
 
     // Ensure bits-per-channel is valid (TODO: optionally could clamp instead)
-    if(set.bpc < 1 || set.bpc > 7)
+    if(set.bpc > 7)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_INVALID_BPC);
 
     // Ensure image is valid
@@ -71,6 +73,18 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     QByteArray tagData = tag.toUtf8();
     if(tagData.size() > std::numeric_limits<quint16>::max())
         tagData.resize(std::numeric_limits<quint16>::max());
+
+    // Determine BPC if auto
+    if(set.bpc == 0)
+    {
+        set.bpc = calculateOptimalDensity(medium.size(), tagData.size(), payload.size());
+        if(set.bpc == 0)
+        {
+            // Check how short at max density
+            quint64 max = calcMaxPayloadSize(medium.size(), tagData.size(), 7);
+            return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - max)/1024.0, 0, 'g', 2));
+        }
+    }
 
     // Ensure data will fit
     quint64 maxStorage = calcMaxPayloadSize(medium.size(), tagData.size(), set.bpc);
