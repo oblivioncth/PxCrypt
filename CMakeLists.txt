@@ -49,6 +49,7 @@ find_package(Qt6 REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
 # Fetch Qx (build and import from source)
 set(PXCRYPT_QX_COMPONENTS
     Core
+    Io
 )
 
 include(OB/FetchQx)
