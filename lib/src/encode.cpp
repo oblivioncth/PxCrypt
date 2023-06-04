@@ -41,16 +41,16 @@ quint8 calculateOptimalDensity(const QSize& dim, quint32 payloadSize)
     return bpc < 8 ? bpc : 0;
 }
 
-quint64 calculateMaximumStorage(const QSize& dim, quint8 bpc)
+quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
 {
     /* NOTE: Both decode.h and encode.h need the internal version of this function
      * so using a wrapper for the public version prevents including decode.h from
      * automatically including encode.h
      */
-    return calcMaxPayloadSize(dim, bpc);
+    return calcMaxPayloadSize(dim, tagSize, bpc);
 }
 
-Qx::GenericError encode(QImage& enc, const QImage& medium, QByteArrayView payload, EncodeSettings set)
+Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings set)
 {
     // Clear buffer
     enc = QImage();
@@ -67,18 +67,26 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QByteArrayView payloa
     if(medium.isNull())
         return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_INVALID_IMAGE);
 
+    // Convert tag to UTF-8 and cap to storage cap
+    QByteArray tagData = tag.toUtf8();
+    if(tagData.size() > std::numeric_limits<quint16>::max())
+        tagData.resize(std::numeric_limits<quint16>::max());
+
     // Ensure data will fit
-    quint64 maxStorage = calcMaxPayloadSize(medium.size(), set.bpc);
+    quint64 maxStorage = calcMaxPayloadSize(medium.size(), tagData.size(), set.bpc);
     if(static_cast<quint64>(payload.size()) > maxStorage)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - maxStorage)/1024.0, 0, 'g', 2));
 
     // Create header array
     QByteArray header;
     header.reserve(HEADER_BYTES);
-    header.append(MAGIC_NUM);
-    header.append(EncType::Relative),
-    header.append(QCryptographicHash::hash(payload, CHECKSUM_METHOD));
-    header.append(Qx::ByteArray::fromPrimitive(static_cast<quint32>(payload.size()), QSysInfo::BigEndian));
+
+    QDataStream hs(&header, QIODeviceBase::WriteOnly);
+    hs.writeRawData(MAGIC_NUM, MAGIC_SIZE);
+    hs << EncType::Relative,
+    hs.writeRawData(QCryptographicHash::hash(payload, CHECKSUM_METHOD), CHECKSUM_SIZE);
+    hs << static_cast<quint16>(tagData.size());
+    hs << static_cast<quint32>(payload.size());
 
     // Copy base image
     enc = medium;
@@ -102,6 +110,14 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QByteArrayView payloa
     BitChunker bChunker(header, set.bpc);
     while(bChunker.hasNext())
         pWeaver.weave(bChunker.next());
+
+    // Encode Tag
+    if(!tagData.isEmpty())
+    {
+        bChunker = BitChunker(tagData, set.bpc);
+        while(bChunker.hasNext())
+            pWeaver.weave(bChunker.next());
+    }
 
     // Encode payload
     bChunker = BitChunker(payload, set.bpc);

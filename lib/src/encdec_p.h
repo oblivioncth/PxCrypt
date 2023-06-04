@@ -19,11 +19,19 @@ namespace PxCrypt
 const QByteArray MAGIC_NUM = QBAL("PXC");
 const QCryptographicHash::Algorithm CHECKSUM_METHOD = QCryptographicHash::Sha256;
 
+const int MAGIC_SIZE = MAGIC_NUM.size();
+const int TYPE_SIZE = sizeof(EncType);
 const int CHECKSUM_SIZE = QCryptographicHash::hashLength(CHECKSUM_METHOD);
-const int HEADER_BYTES = MAGIC_NUM.size() + sizeof(EncType) + CHECKSUM_SIZE + sizeof(quint32);
+const int TAG_LENGTH_SIZE = sizeof(quint16);
+const int PAYLOAD_LENGTH_SIZE = sizeof(quint32);
+const int HEADER_BYTES = MAGIC_SIZE +
+                         TYPE_SIZE +
+                         CHECKSUM_SIZE +
+                         TAG_LENGTH_SIZE +
+                         PAYLOAD_LENGTH_SIZE;
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
-quint64 calcMaxPayloadSize(const QSize& dim, quint8 bpc);
+quint64 calcMaxPayloadSize(const QSize& dim, qsizetype tagSize, quint8 bpc);
 
 }
 

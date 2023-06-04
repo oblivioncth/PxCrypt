@@ -23,7 +23,7 @@ struct DecodeSettings
 };
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
-PXCRYPT_CODEC_EXPORT Qx::GenericError decode(QByteArray& dec, const QImage& enc, DecodeSettings set, const QImage& medium = QImage());
+PXCRYPT_CODEC_EXPORT Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, DecodeSettings set, const QImage& medium = QImage());
 
 }
 

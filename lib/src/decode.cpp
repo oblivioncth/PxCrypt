@@ -26,10 +26,17 @@ namespace
                                            " or the password/medium are incorrect.");
     const QString ERR_LENGTH_MISMATCH = QSL("The encoded image's header indicates it contains more data than possible.");
     const QString ERR_CHECKSUM_MISMATCH = QSL("The payload's checksum did not match the expected value.");
+
+    //-Unit Private Functions ---------------------------------------------------------------------------------------------
+    bool canFitHeader(const QSize& dim, quint8 bpc)
+    {
+        int bits = (dim.width() * dim.height() - 1) * 3 * bpc; // -1 For bpp indicator
+        return bits >= HEADER_BYTES * 8;
+    }
 }
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
-Qx::GenericError decode(QByteArray& dec, const QImage& enc, DecodeSettings set, const QImage& medium)
+Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, DecodeSettings set, const QImage& medium)
 {
     // Clear buffer
     dec.clear();
@@ -58,8 +65,7 @@ Qx::GenericError decode(QByteArray& dec, const QImage& enc, DecodeSettings set, 
     quint8 bpc = bpcBits.toInteger<quint8>();
 
     // Ensure at least header can fit
-    quint64 maxStorage = calcMaxPayloadSize(enc.size(), bpc);
-    if(maxStorage == 0)
+    if(!canFitHeader(enc.size(), bpc))
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
 
     // Reserve space for header
@@ -78,15 +84,17 @@ Qx::GenericError decode(QByteArray& dec, const QImage& enc, DecodeSettings set, 
     QByteArray hMagic(MAGIC_NUM.size(), Qt::Uninitialized);
     EncType hType;
     QByteArray hPayloadChecksum(CHECKSUM_SIZE, Qt::Uninitialized);
+    quint16 hTagSize;
     quint32 hPayloadSize;
 
     hs.readRawData(hMagic.data(), hMagic.size());
     hs >> hType;
     hs.readRawData(hPayloadChecksum.data(), hPayloadChecksum.size());
+    hs >> hTagSize;
     hs >> hPayloadSize;
 
     // Ensure header is valid
-    if(maxStorage == 0)
+    if(hMagic != MAGIC_NUM)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_HEADER);
 
     if(hType != set.type)
@@ -98,10 +106,20 @@ Qx::GenericError decode(QByteArray& dec, const QImage& enc, DecodeSettings set, 
         qWarning("mismatched encoding type!");
     }
 
+    quint64 maxStorage = calcMaxPayloadSize(enc.size(), hTagSize, bpc);
     if(hPayloadSize > maxStorage)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
 
-    // Clear header, prep output for payloads
+    // Clear header, prep output for tag
+    dec.clear();
+    dec.reserve(hTagSize);
+
+    // Read tag
+    while(dec.size() != hTagSize)
+        bCompositer.composite(pSkimmer.next());
+    tag = QString::fromUtf8(dec.constData());
+
+    // Clear tag, prep output for payloads
     dec.clear();
     dec.reserve(hPayloadSize);
 
