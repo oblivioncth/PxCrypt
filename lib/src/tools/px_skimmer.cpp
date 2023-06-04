@@ -55,12 +55,25 @@ void PxSkimmer::advance()
 }
 
 //Public:
+bool PxSkimmer::isAtLimit() { return mLimitReached; }
+
 quint8 PxSkimmer::next()
 {
+    if(mLimitReached)
+    {
+        qWarning("attempted to skim pixels when at the limit.");
+        return 0;
+    }
+
     quint8 chunk = mBuffer[mChannel];
 
     if(mChannel == 2)
-        advance();
+    {
+        if(mSequence.hasNext())
+            advance();
+        else
+            mLimitReached = true;
+    }
     else
         mChannel++;
 

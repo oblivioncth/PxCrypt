@@ -23,6 +23,7 @@ public:
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:
+    bool dataInBuffer();
     void advance();
 
 public:

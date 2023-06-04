@@ -25,6 +25,7 @@ namespace
     const QString ERR_INVALID_HEADER = QSL("The provided image is not encoded, the wrong encoding type was specified,"
                                            " or the password/medium are incorrect.");
     const QString ERR_LENGTH_MISMATCH = QSL("The encoded image's header indicates it contains more data than possible.");
+    const QString ERR_UNEXPECTED_END = QSL("All pixels were skimmed before the expected payload size was reached.");
     const QString ERR_CHECKSUM_MISMATCH = QSL("The payload's checksum did not match the expected value.");
 
     //-Unit Private Functions ---------------------------------------------------------------------------------------------
@@ -124,8 +125,16 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
     dec.reserve(hPayloadSize);
 
     // Read payload
-    while(dec.size() != hPayloadSize)
+    while(dec.size() != hPayloadSize && !pSkimmer.isAtLimit())
         bCompositer.composite(pSkimmer.next());
+
+    if(pSkimmer.isAtLimit())
+    {
+        // There will still be bits in the compositer's buffer in this case
+        bCompositer.flush();
+        if(dec.size() != hPayloadSize)
+            return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_UNEXPECTED_END);
+    }
 
     // Validate payload
     QByteArray checksum = QCryptographicHash::hash(dec, CHECKSUM_METHOD);

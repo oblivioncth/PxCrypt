@@ -22,15 +22,22 @@ ByteCompositer::ByteCompositer(QByteArray* bufferOut, quint8 chunkSize) :
 }
 
 //-Instance Functions--------------------------------------------------------------------------------------------
-//Public:
+//Private:
+bool ByteCompositer::dataInBuffer() { return mBitIdx > 0; }
+
 void ByteCompositer::advance()
 {
     mBuffer = 0;
     mBitIdx = 0;
 }
 
+//Public:
 void ByteCompositer::composite(quint8 chunk)
 {
+    // Append uninitialized byte after flush
+    if(!dataInBuffer())
+        mOutput->resize(mOutput->size() + 1);
+
     int composited = 0;
 
     while(composited < mChunkSize)
@@ -54,6 +61,10 @@ void ByteCompositer::composite(quint8 chunk)
     }
 }
 
-void ByteCompositer::flush() { mOutput->append(mBuffer); }
+void ByteCompositer::flush()
+{
+    if(dataInBuffer())
+        mOutput->back() = mBuffer;
+}
 
 }

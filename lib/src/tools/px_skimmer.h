@@ -31,6 +31,8 @@ private:
     int mChannel;
     quint8 mBuffer[3];
 
+    bool mLimitReached;
+
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
     PxSkimmer(const QImage* surface, const QImage* medium, QStringView psk, quint8 bpc, EncType type);
@@ -40,6 +42,7 @@ private:
     void advance();
 
 public:
+    bool isAtLimit();
     quint8 next();
 };
 
