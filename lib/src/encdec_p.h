@@ -31,7 +31,7 @@ const int HEADER_BYTES = MAGIC_SIZE +
                          PAYLOAD_LENGTH_SIZE;
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
-quint64 calcMaxPayloadSize(const QSize& dim, qsizetype tagSize, quint8 bpc);
+quint64 calcMaxPayloadSize(const QSize& dim, quint16 tagSize, quint8 bpc);
 
 }
 
