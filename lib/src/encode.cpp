@@ -50,7 +50,7 @@ quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
     return calcMaxPayloadSize(dim, tagSize, bpc);
 }
 
-Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings set)
+Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings& set)
 {
     // BPC of 0 means "auto"
 

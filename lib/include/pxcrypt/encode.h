@@ -26,7 +26,7 @@ struct EncodeSettings
 //-Namespace Functions-------------------------------------------------------------------------------------------------
 PXCRYPT_CODEC_EXPORT quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc);
 PXCRYPT_CODEC_EXPORT quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloadSize);
-PXCRYPT_CODEC_EXPORT Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings set);
+PXCRYPT_CODEC_EXPORT Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings& set);
 
 }
 
