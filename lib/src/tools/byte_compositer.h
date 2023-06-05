@@ -23,12 +23,15 @@ public:
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:
-    bool dataInBuffer();
+    /* Flush doesn't need to be public, which would complicate the design of this class since encoded data is only ever
+     * composed of complete bytes. If PxSkimmer runs out of data while this is in the middle of a byte then there
+     * is a different problem.
+     */
+    void flush();
     void advance();
 
 public:
     void composite(quint8 chunk);
-    void flush();
 };
 
 }

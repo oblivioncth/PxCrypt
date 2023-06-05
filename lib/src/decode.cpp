@@ -128,13 +128,8 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
     while(dec.size() != hPayloadSize && !pSkimmer.isAtLimit())
         bCompositer.composite(pSkimmer.next());
 
-    if(pSkimmer.isAtLimit())
-    {
-        // There will still be bits in the compositer's buffer in this case
-        bCompositer.flush();
-        if(dec.size() != hPayloadSize)
+    if(dec.size() != hPayloadSize)
             return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_UNEXPECTED_END);
-    }
 
     // Validate payload
     QByteArray checksum = QCryptographicHash::hash(dec, CHECKSUM_METHOD);
