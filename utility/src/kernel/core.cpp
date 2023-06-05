@@ -102,7 +102,7 @@ ErrorCode Core::initialize(QString& command, QStringList& commandParam)
         showHelp();
     else
     {
-        command = cmdPart.takeFirst();
+        command = cmdPart.first().toLower();
         commandParam = cmdPart;
     }
 
