@@ -49,9 +49,10 @@ private:
                                                  "\n"
                                                  "Commands:\n"
                                                  "---------%2\n"
+                                                 "\n"
                                                  "Use the '-h' switch after a command to see it's specific usage notes\n");
     static inline const QString HELP_OPT_TEMPL = QSL("\n%1: %2");
-    static inline const QString HELP_COMMAND_TEMPL = QSL("\n[%1]: %2\n");
+    static inline const QString HELP_COMMAND_TEMPL = QSL("\n[%1]: %2");
 
     // Messages
     static inline const QString MSG_VERSION = QSL(PROJECT_SHORT_NAME " version " PROJECT_VERSION_STR "\n");
