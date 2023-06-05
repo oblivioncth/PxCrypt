@@ -17,7 +17,7 @@ private:
     // Messages
     static inline const QString MSG_ENCODING_TYPE = QSL("Encoding Type: %1");
     static inline const QString MSG_DECODING = QSL("Decoding...");
-    static inline const QString MSG_PAYLOAD_SIZE = QSL("Decoded %1");
+    static inline const QString MSG_PAYLOAD_SIZE = QSL("Decoded %1 KiB");
     static inline const QString MSG_TAG = QSL("Data tag: %1");
     static inline const QString MSG_DATA_SAVED = QSL("Wrote decoded data to '%1'");
 

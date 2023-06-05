@@ -99,7 +99,7 @@ ErrorCode CEncode::process(const QStringList& commandLine)
         mCore.printError(NAME, lr.toGenericError().setErrorLevel(Qx::GenericError::Error));
         return ErrorCode::ENCODE_FAILED;
     }
-    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(aPayload.size()/1024.0, 0, 'g', 2));
+    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(aPayload.size()/1024.0, 0, 'f', 2));
 
     // Load medium
     QImageReader imgReader(mediumPath);

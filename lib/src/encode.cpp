@@ -22,7 +22,7 @@ namespace
     const QString ERR_ENCODING_FAILED = QSL("Encoding failed.");
     const QString ERR_NO_DATA = QSL("No data was provided");
     const QString ERR_INVALID_IMAGE = QSL("The medium is invalid.");
-    const QString ERR_WONT_FIT = QSL("The medium's dimmensions are not large enough to fit the payload (%1 KB short).");
+    const QString ERR_WONT_FIT = QSL("The medium's dimmensions are not large enough to fit the payload (%1 KiB short).");
     const QString ERR_INVALID_BPC = QSL("Bits-per-channel must be between 1 and 7.");
 }
 
@@ -82,14 +82,14 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
         {
             // Check how short at max density
             quint64 max = calcMaxPayloadSize(medium.size(), tagData.size(), 7);
-            return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - max)/1024.0, 0, 'g', 2));
+            return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - max)/1024.0, 0, 'f', 2));
         }
     }
 
     // Ensure data will fit
     quint64 maxStorage = calcMaxPayloadSize(medium.size(), tagData.size(), set.bpc);
     if(static_cast<quint64>(payload.size()) > maxStorage)
-        return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - maxStorage)/1024.0, 0, 'g', 2));
+        return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - maxStorage)/1024.0, 0, 'f', 2));
 
     // Create header array
     QByteArray header;

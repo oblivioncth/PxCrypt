@@ -20,7 +20,7 @@ private:
     // Messages
     static inline const QString MSG_ENCODING_TYPE = QSL("Encoding Type: %1");
     static inline const QString MSG_AUTO_BPC = QSL("Auto-density: %1");
-    static inline const QString MSG_PAYLOAD_SIZE = QSL("Payload size: %1");
+    static inline const QString MSG_PAYLOAD_SIZE = QSL("Payload size: %1 KiB");
     static inline const QString MSG_MEDIUM_DIM = QSL("Medium dimmensions: %1 x %2");
     static inline const QString MSG_ENCODING = QSL("Encoding...");
     static inline const QString MSG_IMAGE_SAVED = QSL("Wrote encoded image to '%1'");
