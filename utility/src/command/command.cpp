@@ -60,8 +60,8 @@ Qx::GenericError Command::checkRequiredOptions()
 {
     QStringList missing;
     for(auto opt : qxAsConst(requiredOptions()))
-        if(mParser.isSet(*opt))
-            missing << opt->names().constFirst();
+        if(!mParser.isSet(*opt))
+            missing.append(opt->names().constFirst());
 
     if(!missing.isEmpty())
         return Qx::GenericError(Qx::GenericError::Error, ERR_MISSING_REQ_OPT.arg(name()), "'" + missing.join("','") + "'");
