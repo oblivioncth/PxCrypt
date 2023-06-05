@@ -8,8 +8,8 @@
 #include "tools/bit_chunker.h"
 
 // Qx Includes
-#include <qx/core/qx-bytearray.h>
 #include <qx/core/qx-bitarray.h>
+#include <qx/core/qx-integrity.h>
 
 namespace PxCrypt
 {
@@ -98,7 +98,7 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     QDataStream hs(&header, QIODeviceBase::WriteOnly);
     hs.writeRawData(MAGIC_NUM, MAGIC_SIZE);
     hs << EncType::Relative,
-    hs.writeRawData(QCryptographicHash::hash(payload, CHECKSUM_METHOD), CHECKSUM_SIZE);
+    hs << Qx::Integrity::crc32(payload);
     hs << static_cast<quint16>(tagData.size());
     hs << static_cast<quint32>(payload.size());
 

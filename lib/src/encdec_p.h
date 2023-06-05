@@ -17,11 +17,10 @@ namespace PxCrypt
 
 //-Namespace Variables-------------------------------------------------------------------------------------------------
 const QByteArray MAGIC_NUM = QBAL("PXC");
-const QCryptographicHash::Algorithm CHECKSUM_METHOD = QCryptographicHash::Sha256;
 
 const int MAGIC_SIZE = MAGIC_NUM.size();
 const int TYPE_SIZE = sizeof(EncType);
-const int CHECKSUM_SIZE = QCryptographicHash::hashLength(CHECKSUM_METHOD);
+const int CHECKSUM_SIZE = sizeof(quint32);
 const int TAG_LENGTH_SIZE = sizeof(quint16);
 const int PAYLOAD_LENGTH_SIZE = sizeof(quint32);
 const int HEADER_BYTES = MAGIC_SIZE +

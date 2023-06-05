@@ -9,6 +9,7 @@
 
 // Qx Includes
 #include <qx/core/qx-bitarray.h>
+#include <qx/core/qx-integrity.h>
 
 namespace PxCrypt
 {
@@ -16,6 +17,7 @@ namespace PxCrypt
 namespace
 {
     //-Unit Private Variables ---------------------------------------------------------------------------------------------
+
     // Errors
     const QString ERR_DECODING_FAILED = QSL("Decoding failed.");
     const QString ERR_INVALID_SOURCE = QSL("The encoded image is invalid.");
@@ -84,13 +86,13 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
     QDataStream hs(dec);
     QByteArray hMagic(MAGIC_NUM.size(), Qt::Uninitialized);
     EncType hType;
-    QByteArray hPayloadChecksum(CHECKSUM_SIZE, Qt::Uninitialized);
+    quint32 hPayloadChecksum;
     quint16 hTagSize;
     quint32 hPayloadSize;
 
     hs.readRawData(hMagic.data(), hMagic.size());
     hs >> hType;
-    hs.readRawData(hPayloadChecksum.data(), hPayloadChecksum.size());
+    hs >> hPayloadChecksum;
     hs >> hTagSize;
     hs >> hPayloadSize;
 
@@ -132,7 +134,7 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
             return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_UNEXPECTED_END);
 
     // Validate payload
-    QByteArray checksum = QCryptographicHash::hash(dec, CHECKSUM_METHOD);
+    quint32 checksum = Qx::Integrity::crc32(dec);
     if(checksum != hPayloadChecksum)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_CHECKSUM_MISMATCH);
 
