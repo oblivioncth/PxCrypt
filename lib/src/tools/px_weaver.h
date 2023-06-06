@@ -24,6 +24,7 @@ private:
     EncType mType;
     QRgb* mPixels;
     PxSequenceGenerator mSequence;
+    quint8 mClearMask;
 
     quint64 mPxIndex;
     int mChannel;
@@ -32,7 +33,7 @@ private:
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxWeaver(QImage* canvas, QStringView psk, EncType type);
+    PxWeaver(QImage* canvas, QStringView psk, quint8 bpc, EncType type);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:

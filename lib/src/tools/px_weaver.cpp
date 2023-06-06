@@ -10,10 +10,11 @@ namespace PxCrypt
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxWeaver::PxWeaver(QImage* canvas, QStringView psk, EncType type) :
+PxWeaver::PxWeaver(QImage* canvas, QStringView psk, quint8 bpc, EncType type) :
     mType(type),
     mPixels(reinterpret_cast<QRgb*>(canvas->bits())),
     mSequence(canvas->size(), psk),
+    mClearMask(~((0b1 << bpc) - 1)),
     mAtEnd(false)
 {
     advance();
@@ -46,8 +47,11 @@ void PxWeaver::weave(quint8 chunk)
         switch(mType)
         {
             case EncType::Absolute:
-                mBuffer[mChannel] = chunk;
+            {
+                quint8& val = mBuffer[mChannel];
+                val = (val & mClearMask) | chunk;
                 break;
+            }
 
             case EncType::Relative:
             {
