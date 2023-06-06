@@ -52,6 +52,27 @@ quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
 
 Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings& set)
 {
+    /* NOTE: Because the data chunked by BitChunker won't always align to a byte boundary at the end
+     * (i.e. the final chunk of a byte sequence might not actually contain enough bits to reach the
+     * bpc size), all data encoded by this function must be done so using a contiguous array so that
+     * no incomplete chunk is woven into a pixel (this would effectively cause null padding bits to be
+     * present in the encoded result that the decoder wouldn't be able to detect).
+     *
+     * An alternative is to change PxWeaver to have a data buffer of its own and change it so that it can
+     * be told it's received an unfinished chunk and wait till it receives the rest to weave it; this is
+     * undesirably clunky however.
+     *
+     * Instead, for now the increased memory usage of copying the payload array into a final array will
+     * be considered acceptable given the relatively small amounts of data that can be encoded with
+     * this format. A good candidate for remedying this is std::views::concat which is slated to be
+     * added in C++26 (allows creating a view of an arbitrary number of heterogeneous containers that
+     * can be iterated over sequentially as long as they have the same value type). With this the header
+     * and tag portions can be created as separate arrays and then they and the original payload view can
+     * be iterated over as they are without a copy.
+     *
+     * https://github.com/cplusplus/papers/issues/1204
+     */
+
     // BPC of 0 means "auto"
 
     // Clear buffer
@@ -91,16 +112,21 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     if(static_cast<quint64>(payload.size()) > maxStorage)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - maxStorage)/1024.0, 0, 'f', 2));
 
-    // Create header array
-    QByteArray header;
-    header.reserve(HEADER_BYTES);
+    // Create full data array
+    QByteArray fullData;
+    fullData.reserve(HEADER_BYTES + tagData.size() + payload.size());
 
-    QDataStream hs(&header, QIODeviceBase::WriteOnly);
+    // Add header to array
+    QDataStream hs(&fullData, QIODeviceBase::WriteOnly);
     hs.writeRawData(MAGIC_NUM, MAGIC_SIZE);
     hs << EncType::Relative,
     hs << Qx::Integrity::crc32(payload);
     hs << static_cast<quint16>(tagData.size());
     hs << static_cast<quint32>(payload.size());
+
+    // Add tag and payload to array
+    fullData.append(tagData);
+    fullData.append(payload);
 
     // Copy base image
     enc = medium;
@@ -120,21 +146,8 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     // Prepare pixel weaver
     PxWeaver pWeaver(&enc, set.psk, EncType::Relative);
 
-    // Encode header
-    BitChunker bChunker(header, set.bpc);
-    while(bChunker.hasNext())
-        pWeaver.weave(bChunker.next());
-
-    // Encode Tag
-    if(!tagData.isEmpty())
-    {
-        bChunker = BitChunker(tagData, set.bpc);
-        while(bChunker.hasNext())
-            pWeaver.weave(bChunker.next());
-    }
-
-    // Encode payload
-    bChunker = BitChunker(payload, set.bpc);
+    // Encode full array
+    BitChunker bChunker(fullData, set.bpc);
     while(bChunker.hasNext())
         pWeaver.weave(bChunker.next());
 
