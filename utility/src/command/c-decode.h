@@ -1,8 +1,6 @@
 #ifndef CDECODE_H
 #define CDECODE_H
 
-// Qt Includes
-
 // Magic enum
 #include <magic_enum.hpp>
 
@@ -15,6 +13,7 @@ class CDecode : public Command
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
     // Messages
+    static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Decode\n--------------");
     static inline const QString MSG_ENCODING_TYPE = QSL("Encoding Type: %1");
     static inline const QString MSG_DECODING = QSL("Decoding...");
     static inline const QString MSG_PAYLOAD_SIZE = QSL("Decoded %1 KiB");

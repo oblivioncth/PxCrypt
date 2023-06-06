@@ -30,6 +30,7 @@ const QString CDecode::name() { return NAME; }
 ErrorCode CDecode::process(const QStringList& commandLine)
 {
     //-Preparation---------------------------------------
+    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
 
     // Parse and check for valid arguments
     ErrorCode parseError = parse(commandLine);

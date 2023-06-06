@@ -30,6 +30,7 @@ const QString CEncode::name() { return NAME; }
 ErrorCode CEncode::process(const QStringList& commandLine)
 {
     //-Preparation---------------------------------------
+    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
 
     // Parse and check for valid arguments
     ErrorCode parseError = parse(commandLine);

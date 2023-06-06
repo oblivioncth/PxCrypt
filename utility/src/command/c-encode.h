@@ -1,14 +1,13 @@
 #ifndef CENCODE_H
 #define CENCODE_H
 
-// Qt Includes
-
 // Magic enum
 #include <magic_enum.hpp>
 
 // Project Includes
 #include "command.h"
 #include "pxcrypt/encdec.h"
+#include "project_vars.h"
 
 class CEncode : public Command
 {
@@ -18,6 +17,7 @@ private:
     static inline const QString OUTPUT_EXT = QSL("png");
 
     // Messages
+    static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Encode\n--------------");
     static inline const QString MSG_ENCODING_TYPE = QSL("Encoding Type: %1");
     static inline const QString MSG_AUTO_BPC = QSL("Auto-density: %1");
     static inline const QString MSG_PAYLOAD_SIZE = QSL("Payload size: %1 KiB");
