@@ -6,6 +6,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 class BitChunker
 {
@@ -29,6 +30,7 @@ public:
     bool hasNext() const;
 };
 
+/*! @endcond */
 }
 
 #endif // BIT_CHUNKER_H

@@ -12,6 +12,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 class PxSequenceGenerator
 {
@@ -35,6 +36,7 @@ public:
     bool hasNext() const;
 };
 
+/*! @endcond */
 }
 
 #endif // PX_SEQUENCE_GENERATOR

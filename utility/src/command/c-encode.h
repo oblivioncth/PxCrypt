@@ -61,7 +61,7 @@ private:
     static inline const QString CL_OPT_TYPE_DESC = QSL(
         "The type of encoding to use (defaults to Relative):\n"
         "\n"
-        "Relative - Requires the original medium to decode, slightly smaller impact on the image\n"
+        "Relative - Requires the original medium to decode\n"
         "Absolute - Doesn't require the original medium to decode\n"
     );
     static inline const QString CL_OPT_TYPE_DEFAULT = QSL("Relative");

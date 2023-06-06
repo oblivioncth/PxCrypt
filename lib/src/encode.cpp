@@ -11,6 +11,12 @@
 #include <qx/core/qx-bitarray.h>
 #include <qx/core/qx-integrity.h>
 
+/*!
+ *  @file encode.h
+ *
+ *  @brief The encode header file provides facilities relevant to encoding data within an image.
+ */
+
 namespace PxCrypt
 {
 
@@ -26,7 +32,55 @@ namespace
     const QString ERR_INVALID_BPC = QSL("Bits-per-channel must be between 1 and 7.");
 }
 
+//-Namespace Types-------------------------------------------------------------------------------------------------
+
+//===============================================================================================================
+// EncodeSettings
+//===============================================================================================================
+
+/*!
+ *  @struct EncodeSettings <pxcrypt/encode.h>
+ *
+ *  @brief The EncodeSettings struct holds tuning parameters that affect how data is encoded into an image.
+ *
+ *  @sa encode().
+ */
+
+/*!
+ *  @var quint8 EncodeSettings::bpc
+ *
+ *  The number of bits woven into each color channel of a pixel.
+ *
+ *  Affects the total encoding capacity. Settings a BPC of 0 will instruct the encoder to determine the
+ *  optimal BPC count automatically.
+ */
+
+/*!
+ *  @var QStringView EncodeSettings::psk
+ *
+ *  The key used for scrambling the encoding sequence.
+ *
+ *  Required in order to decode the resultant encoded data. An
+ *  empty string results in the use of a known/default encoding sequence.
+ */
+
+/*!
+ *  @var EncType EncodeSettings::type
+ *
+ *  The encoding strategy to use. Needs to be known when decoding the resultant data.
+ */
+
 //-Namespace Functions-------------------------------------------------------------------------------------------------
+/*!
+ *  Returns the minimum number of bits per channel required to store a payload of @a payloadSize along with a tag
+ *  of @a tagSize within a medium image of @a dim dimensions. @c 0 is returned if the payload/tag cannot fit within
+ *  those dimensions.
+ *
+ *  Using the lowest BPC necessary is optimal as it will produce in the least distortion per pixel and the most
+ *  even spread of the encoded data, overall resulting in the most minimal visual disturbance of the original image.
+ *
+ *  @sa calculateMaximumStorage().
+ */
 quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloadSize)
 {
     // Returns the minimum BPC required to store `payload`, or 0 if the
@@ -41,6 +95,12 @@ quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloa
     return bpc < 8 ? bpc : 0;
 }
 
+/*!
+ *  Returns the maximum number of bytes that can be stored within an image of dimensions @a dim and tag of size
+ *  @a tagSize when using @a bpc bits per channel.
+ *
+ *  @sa calculateOptimalDensity().
+ */
 quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
 {
     /* NOTE: Both decode.h and encode.h need the internal version of this function
@@ -50,6 +110,18 @@ quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
     return calcMaxPayloadSize(dim, tagSize, bpc);
 }
 
+/*!
+ *  Encodes a payload within a given medium image.
+ *
+ *  @param[out] enc The resultant image with the encoded payload.
+ *  @param[in] medium The image to encode the data within
+ *  @param[in] tag An optional identifier string to couple with the encoded payload
+ *  @param[in] payload The data to encode
+ *  @param[in] set Tuneables for the encoding technique
+ *  @return An error object that describes cause of failure if encoding fails.
+ *
+ *  @sa decode(), EncodeSettings.
+ */
 Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings& set)
 {
     /* NOTE: Because the data chunked by BitChunker won't always align to a byte boundary at the end

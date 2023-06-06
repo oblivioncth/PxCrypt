@@ -6,6 +6,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 class ByteCompositer
 {
@@ -34,6 +35,7 @@ public:
     void composite(quint8 chunk);
 };
 
+/*! @endcond */
 }
 
 #endif // BYTE_COMPOSITER_H

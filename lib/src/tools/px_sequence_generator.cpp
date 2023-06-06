@@ -3,6 +3,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 //===============================================================================================================
 // PxSequenceGenerator
@@ -41,4 +42,5 @@ int PxSequenceGenerator::next()
 
 bool PxSequenceGenerator::hasNext() const { return !mPixelTracker.isBooked(); }
 
+/*! @endcond */
 }

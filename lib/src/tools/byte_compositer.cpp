@@ -6,6 +6,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 //===============================================================================================================
 // ByteCompositer
@@ -58,4 +59,5 @@ void ByteCompositer::composite(quint8 chunk)
 
 void ByteCompositer::flush() { mOutput->append(mBuffer); }
 
+/*! @endcond */
 }

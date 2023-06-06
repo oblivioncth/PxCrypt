@@ -12,6 +12,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 class PxSkimmer
 {
@@ -46,6 +47,7 @@ public:
     quint8 next();
 };
 
+/*! @endcond */
 }
 
 #endif // PX_SKIMMER
