@@ -145,6 +145,12 @@ ErrorCode CEncode::process(const QStringList& commandLine)
         outputPath = dir.absoluteFilePath(basename + "_enc." + OUTPUT_EXT);
     }
 
+    if(QFile::exists(outputPath))
+    {
+        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_OUTPUT_WRITE_FAILED, ERR_OUTPUT_ALREADY_EXISTS));
+        return ErrorCode::ENCODE_FAILED;
+    }
+
     QImageWriter imgWriter(outputPath);
     if(!imgWriter.write(encoded))
     {

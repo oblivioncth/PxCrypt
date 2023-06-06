@@ -30,6 +30,7 @@ private:
     static inline const QString ERR_INVALID_DENSITY = QSL("Invalid data density.");
     static inline const QString ERR_MEDIUM_READ_FAILED = QSL("Failed reading the medium image.");
     static inline const QString ERR_OUTPUT_WRITE_FAILED = QSL("Failed writing the encoded image.");
+    static inline const QString ERR_OUTPUT_ALREADY_EXISTS = QSL("The file already exists.");
 
     // Command line option strings
     static inline const QString CL_OPT_INPUT_S_NAME = QSL("i");
