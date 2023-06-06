@@ -28,6 +28,7 @@ private:
     quint64 mPxIndex;
     int mChannel;
     quint8 mBuffer[4];
+    bool mAtEnd;
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
