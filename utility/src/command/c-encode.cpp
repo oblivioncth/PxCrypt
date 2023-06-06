@@ -131,9 +131,8 @@ ErrorCode CEncode::process(const QStringList& commandLine)
         return ErrorCode::ENCODE_FAILED;
     }
 
-    // Print auto-determined density
-    if(autoDensity)
-        mCore.printMessage(NAME, MSG_AUTO_BPC.arg(es.bpc));
+    // Print density (largely for when set to auto)
+    mCore.printMessage(NAME, MSG_BPC.arg(es.bpc));
 
     // Write encoded image
     QString outputPath;
