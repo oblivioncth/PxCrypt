@@ -28,10 +28,9 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         tools/px_skimmer.cpp
         tools/px_weaver.cpp
     LINKS
-        PRIVATE
-            Qx::Core
         PUBLIC
             Qt6::Core
             Qt6::Gui
+            Qx::Core
     CONFIG STANDARD
 )
