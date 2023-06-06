@@ -128,10 +128,8 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     fullData.append(tagData);
     fullData.append(payload);
 
-    // Copy base image
-    enc = medium;
-    if(enc.colorCount() > 0) // Ensure quadruplet format
-        enc.convertTo(QImage::Format_ARGB32);
+    // Copy base image, normalize to standard 32-bit format
+    enc = medium.convertToFormat(QImage::Format_RGBA8888);
 
     // Mark BPC
     Qx::BitArray bpcBits = Qx::BitArray::fromInteger(set.bpc);

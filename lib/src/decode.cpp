@@ -58,6 +58,15 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
             return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_DIMMENSION_MISTMATCH);
     }
 
+    // Ensure standard pixel format
+    QImage encStd = enc; // Because of Qt's CoW system this occurs almost no penalty if the format is already correct
+    if(encStd.format() != QImage::Format_RGBA8888)
+        encStd.convertTo(QImage::Format_RGBA8888);
+
+    QImage mediumStd = medium;
+    if(!mediumStd.isNull() && mediumStd.format() != QImage::Format_RGBA8888)
+        mediumStd.convertTo(QImage::Format_RGBA8888);
+
     // Check BPC
     Qx::BitArray bpcBits(3);
 
@@ -68,14 +77,14 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
     quint8 bpc = bpcBits.toInteger<quint8>();
 
     // Ensure at least header can fit
-    if(!canFitHeader(enc.size(), bpc))
+    if(!canFitHeader(encStd.size(), bpc))
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
 
     // Reserve space for header
     dec.reserve(HEADER_BYTES);
 
     // Prepare pixel skimmer and byte compositer
-    PxSkimmer pSkimmer(&enc, &medium, set.psk, bpc, set.type);
+    PxSkimmer pSkimmer(&encStd, &mediumStd, set.psk, bpc, set.type);
     ByteCompositer bCompositer(&dec, bpc);
 
     // Read header
@@ -109,7 +118,7 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
         qWarning("mismatched encoding type!");
     }
 
-    quint64 maxStorage = calcMaxPayloadSize(enc.size(), hTagSize, bpc);
+    quint64 maxStorage = calcMaxPayloadSize(encStd.size(), hTagSize, bpc);
     if(hPayloadSize > maxStorage)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
 
