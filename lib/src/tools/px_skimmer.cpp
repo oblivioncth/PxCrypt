@@ -5,7 +5,7 @@ namespace PxCrypt
 {
 
 //===============================================================================================================
-// PxWeaver
+// PxSkimmer
 //===============================================================================================================
 
 //-Constructor---------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ PxSkimmer::PxSkimmer(const QImage* surface, const QImage* medium, QStringView ps
     mPixels(reinterpret_cast<const QRgb*>(surface->bits())),
     mRefPixels(!medium ? nullptr : reinterpret_cast<const QRgb*>(medium->bits())),
     mSequence(surface->size(), psk),
-    mMask((0b1 < bpc) - 1),
+    mMask((0b1 << bpc) - 1),
     mLimitReached(false)
 {
     Q_ASSERT(bpc <= 7);
