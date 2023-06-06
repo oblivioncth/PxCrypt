@@ -35,23 +35,23 @@ void PxSkimmer::advance()
 
    switch(mType)
    {
-       case EncType::Absolute:
-           mBuffer[0] = qRed(pixel) & mMask;
-           mBuffer[1] = qGreen(pixel) & mMask;
-           mBuffer[2] = qBlue(pixel) & mMask;
-           break;
+        case EncType::Absolute:
+            mBuffer[0] = qRed(pixel) & mMask;
+            mBuffer[1] = qGreen(pixel) & mMask;
+            mBuffer[2] = qBlue(pixel) & mMask;
+            break;
 
-       case EncType::Relative:
-       {
-           const QRgb& refPixel = mRefPixels[index];
-           mBuffer[0] = Qx::distance(qRed(pixel), qRed(refPixel)) & mMask;
-           mBuffer[1] = Qx::distance(qGreen(pixel), qGreen(refPixel)) & mMask;
-           mBuffer[2] = Qx::distance(qBlue(pixel), qBlue(refPixel)) & mMask;
-           break;
-       }
+        case EncType::Relative:
+        {
+            const QRgb& refPixel = mRefPixels[index];
+            mBuffer[0] = Qx::distance(qRed(pixel), qRed(refPixel)) & mMask;
+            mBuffer[1] = Qx::distance(qGreen(pixel), qGreen(refPixel)) & mMask;
+            mBuffer[2] = Qx::distance(qBlue(pixel), qBlue(refPixel)) & mMask;
+            break;
+        }
 
-       default:
-           qCritical("unhandled encoding type.");
+        default:
+            qCritical("unhandled encoding type.");
    }
 }
 

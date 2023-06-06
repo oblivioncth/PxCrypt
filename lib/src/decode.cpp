@@ -131,7 +131,7 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
         bCompositer.composite(pSkimmer.next());
 
     if(dec.size() != hPayloadSize)
-            return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_UNEXPECTED_END);
+        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_UNEXPECTED_END);
 
     // Validate payload
     quint32 checksum = Qx::Integrity::crc32(dec);
