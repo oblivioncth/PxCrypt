@@ -10,7 +10,7 @@ namespace PxCrypt
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxSkimmer::PxSkimmer(const QImage* surface, const QImage* medium, QStringView psk, quint8 bpc, EncType type) :
+PxSkimmer::PxSkimmer(const QImage* surface, const QImage* medium, QByteArrayView psk, quint8 bpc, EncType type) :
     mType(type),
     mPixels(reinterpret_cast<const QRgb*>(surface->bits())),
     mRefPixels(!medium ? nullptr : reinterpret_cast<const QRgb*>(medium->bits())),

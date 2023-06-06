@@ -74,7 +74,7 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     }
 
     // Get key
-    QString aKey = mParser.value(CL_OPTION_KEY);
+    QByteArray aKey = mParser.value(CL_OPTION_KEY).toUtf8();
 
     // Get input file info
     QString encodedPath(mParser.value(CL_OPTION_INPUT));

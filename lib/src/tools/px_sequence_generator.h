@@ -27,7 +27,7 @@ private:
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxSequenceGenerator(const QSize& dim, QStringView seedStr);
+    PxSequenceGenerator(const QSize& dim, QByteArrayView seed);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 public:

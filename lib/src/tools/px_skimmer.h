@@ -35,7 +35,7 @@ private:
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxSkimmer(const QImage* surface, const QImage* medium, QStringView psk, quint8 bpc, EncType type);
+    PxSkimmer(const QImage* surface, const QImage* medium, QByteArrayView psk, quint8 bpc, EncType type);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:

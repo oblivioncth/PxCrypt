@@ -10,13 +10,12 @@ namespace PxCrypt
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxSequenceGenerator::PxSequenceGenerator(const QSize& dim, QStringView seedStr) :
+PxSequenceGenerator::PxSequenceGenerator(const QSize& dim, QByteArrayView seed) :
     mDimensions(dim),
     mPixelTracker(0, (dim.width() * dim.height()) - 1, {0})
 {
     // Seed generator
-    bool e = seedStr.empty();
-    QByteArray seed = seedStr.toUtf8();
+    bool e = seed.empty();
     std::seed_seq ss(!e ? seed.cbegin() : DEFAULT_SEED.cbegin(), !e ? seed.cend() : DEFAULT_SEED.cend());
     mGenerator.seed(ss);
 }

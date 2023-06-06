@@ -33,7 +33,7 @@ private:
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxWeaver(QImage* canvas, QStringView psk, quint8 bpc, EncType type);
+    PxWeaver(QImage* canvas, QByteArrayView psk, quint8 bpc, EncType type);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:

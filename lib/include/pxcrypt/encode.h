@@ -19,7 +19,7 @@ namespace PxCrypt
 struct EncodeSettings
 {
     quint8 bpc = 1;
-    QStringView psk;
+    QByteArray psk;
     EncType type = Relative;
 };
 

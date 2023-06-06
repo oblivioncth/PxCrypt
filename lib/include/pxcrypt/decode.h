@@ -18,7 +18,7 @@ namespace PxCrypt
 //-Namespace Types ---------------------------------------------------------------------------------------------
 struct DecodeSettings
 {
-    QStringView psk;
+    QByteArray psk;
     EncType type = Relative;
 };
 

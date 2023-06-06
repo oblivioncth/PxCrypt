@@ -10,7 +10,7 @@ namespace PxCrypt
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxWeaver::PxWeaver(QImage* canvas, QStringView psk, quint8 bpc, EncType type) :
+PxWeaver::PxWeaver(QImage* canvas, QByteArrayView psk, quint8 bpc, EncType type) :
     mType(type),
     mPixels(reinterpret_cast<QRgb*>(canvas->bits())),
     mSequence(canvas->size(), psk),

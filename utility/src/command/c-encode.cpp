@@ -82,7 +82,7 @@ ErrorCode CEncode::process(const QStringList& commandLine)
     }
 
     // Get key
-    QString aKey = mParser.value(CL_OPTION_KEY);
+    QByteArray aKey = mParser.value(CL_OPTION_KEY).toUtf8();
 
     // Get input file info
     QFile inputFile(mParser.value(CL_OPTION_INPUT));
