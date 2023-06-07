@@ -45,7 +45,8 @@ set(PXCRYPT_QT_COMPONENTS
 
 # Find Qt package
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060000)
-find_package(Qt6 REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
+include(OB/BetterFindQt6)
+ob_find_qt6_package(REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
 
 # Fetch Qx (build and import from source)
 set(PXCRYPT_QX_COMPONENTS
