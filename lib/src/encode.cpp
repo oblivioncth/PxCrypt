@@ -120,6 +120,21 @@ quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
  *  @param[in] set Tuneables for the encoding technique
  *  @return An error object that describes cause of failure if encoding fails.
  *
+ *  @a enc will always use the format `QImage::Format_RGBA8888` regardless of the format of @a medium.
+ *
+ *  @warning
+ *  @parblock
+ *  The image produced by this function must never undergo a reduction in fidelity in order to remain
+ *  decodable. In other words, it must be stored in a format that uses 8 bits per color channel and holds at least
+ *  the RGB channels, else the encoded data be corrupted. No data is encoded within the alpha channel so that can
+ *  safely be discarded.
+ *
+ *  Conversion to a format with a higher bit-depth can still result in data corruption due to aliasing sustained
+ *  while resampling.
+ *
+ *  A 32-bit PNG is generally recommended as an ideal container.
+ *  @endparblock
+ *
  *  @sa decode(), EncodeSettings.
  */
 Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByteArrayView payload, EncodeSettings& set)
