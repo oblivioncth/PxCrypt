@@ -191,7 +191,7 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     // Add header to array
     QDataStream hs(&fullData, QIODeviceBase::WriteOnly);
     hs.writeRawData(MAGIC_NUM, MAGIC_SIZE);
-    hs << EncType::Relative,
+    hs << set.type,
     hs << Qx::Integrity::crc32(payload);
     hs << static_cast<quint16>(tagData.size());
     hs << static_cast<quint32>(payload.size());
@@ -214,7 +214,7 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     enc.setPixel(0, 0, qRgba(r, g, b, a));
 
     // Prepare pixel weaver
-    PxWeaver pWeaver(&enc, set.psk, set.bpc, EncType::Relative);
+    PxWeaver pWeaver(&enc, set.psk, set.bpc, set.type);
 
     // Encode full array
     BitChunker bChunker(fullData, set.bpc);
