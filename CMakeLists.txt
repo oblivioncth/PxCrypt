@@ -21,6 +21,7 @@ include(OB/Project)
 ob_standard_project_setup()
 
 # Configuration options
+option(${PROJECT_NAME_UC}_TESTS "Build ${PROJECT_NAME} tests" OFF)
 option(${PROJECT_NAME_UC}_DOCS "Build ${PROJECT_NAME} documentation" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
@@ -42,6 +43,10 @@ set(PXCRYPT_QT_COMPONENTS
     Core
     Gui
 )
+
+if(${PROJECT_NAME_UC}_TESTS)
+    list(APPEND PXCRYPT_QT_COMPONENTS Test)
+endif()
 
 # Find Qt package
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060000)
@@ -79,6 +84,13 @@ add_subdirectory(utility)
 if(${PROJECT_NAME_UC}_DOCS)
     set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
     add_subdirectory(doc)
+endif()
+
+if(${PROJECT_NAME_UC}_TESTS)
+    enable_testing()
+    set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
+    set(TESTS_COMMON_TARGET "${TESTS_TARGET_PREFIX}_tst_common")
+    add_subdirectory(test)
 endif()
 
 #--------------------Package Config-----------------------
