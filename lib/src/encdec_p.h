@@ -14,6 +14,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 //-Namespace Variables-------------------------------------------------------------------------------------------------
 const QByteArray MAGIC_NUM = QBAL("PXC");
@@ -32,6 +33,7 @@ const int HEADER_BYTES = MAGIC_SIZE +
 //-Namespace Functions-------------------------------------------------------------------------------------------------
 quint64 calcMaxPayloadSize(const QSize& dim, quint16 tagSize, quint8 bpc);
 
+/*! @endcond */
 }
 
 

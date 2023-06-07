@@ -1,0 +1,9 @@
+/*!
+ *  @namespace PxCrypt
+ *
+ *  @brief The @c PxCrypt namespace is the main namespace through which all functionality of the PxCrypt
+ *  library is accessed.
+ *
+ *  All library features are nested within this namespace in a similar vein as @c std with the
+ *  C++ Standard Library.
+ */

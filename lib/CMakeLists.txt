@@ -27,6 +27,8 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         tools/px_sequence_generator.cpp
         tools/px_skimmer.cpp
         tools/px_weaver.cpp
+    DOC_ONLY
+        encdec.dox
     LINKS
         PUBLIC
             Qt6::Core

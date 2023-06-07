@@ -8,20 +8,21 @@ cmake_minimum_required(VERSION 3.24.0...3.25.0)
 project(PxCrypt
     VERSION 0.1
     LANGUAGES CXX
-    DESCRIPTION "Weave arbitrary data into an image in an encrypted manner"
+    DESCRIPTION "Encrypt data within an image"
 )
+set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3")
+fetch_ob_cmake("fd9e1c7b63c228f3aa5fe60f91fdc444855a1faf")
 
 # Initialize project according to standard rules
 include(OB/Project)
 ob_standard_project_setup()
 
 # Configuration options
-# Handled by fetched libs, but set this here formally since they aren't part of the main project
-option(BUILD_SHARED_LIBS "Build PxCrypt with shared libraries" OFF)
+option(${PROJECT_NAME_UC}_DOCS "Build ${PROJECT_NAME} documentation" OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
 set(CMAKE_CXX_STANDARD 20)
@@ -73,6 +74,11 @@ add_subdirectory("${LIB_PATH}")
 set(APP_TARGET_NAME ${PROJECT_NAMESPACE_LC}_utility)
 set(APP_ALIAS_NAME Utility)
 add_subdirectory(utility)
+
+if(${PROJECT_NAME_UC}_DOCS)
+    set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
+    add_subdirectory(doc)
+endif()
 
 #--------------------Package Config-----------------------
 

@@ -3,6 +3,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 //===============================================================================================================
 // BitChunker
@@ -56,4 +57,5 @@ quint8 BitChunker::next()
 
 bool BitChunker::hasNext() const { return mDataItr != mDataEnd; }
 
+/*! @endcond */
 }

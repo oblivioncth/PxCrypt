@@ -9,6 +9,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
 quint64 calcMaxPayloadSize(const QSize& dim, quint16 tagSize, quint8 bpc)
@@ -22,4 +23,5 @@ quint64 calcMaxPayloadSize(const QSize& dim, quint16 tagSize, quint8 bpc)
     return payloadBits / 8; // Truncate down
 }
 
+/*! @endcond */
 }

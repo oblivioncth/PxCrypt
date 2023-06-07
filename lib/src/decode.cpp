@@ -11,6 +11,12 @@
 #include <qx/core/qx-bitarray.h>
 #include <qx/core/qx-integrity.h>
 
+/*!
+ *  @file decode.h
+ *
+ *  @brief The decode header file provides facilities relevant to decoding data stored within an image.
+ */
+
 namespace PxCrypt
 {
 
@@ -38,7 +44,45 @@ namespace
     }
 }
 
+//-Namespace Types-------------------------------------------------------------------------------------------------
+
+//===============================================================================================================
+// DecodeSettings
+//===============================================================================================================
+
+/*!
+ *  @struct DecodeSettings <pxcrypt/decode.h>
+ *
+ *  @brief The DecodeSettings struct holds tuning parameters that are required to properly decode
+ *  data from an image.
+ */
+
+/*!
+ *  @var QByteArray DecodeSettings::psk
+ *
+ *  The key that was used when encoding the original data, if any.
+ */
+
+/*!
+ *  @var EncType DecodeSettings::type
+ *
+ *  The encoding strategy that was used when encoding the original data.
+ */
+
 //-Namespace Functions-------------------------------------------------------------------------------------------------
+
+/*!
+ *  Retrieves data from a PxCrypt image.
+ *
+ *  @param[out] dec The original payload.
+ *  @param[out] tag The image's/payload's tag
+ *  @param[in] enc The image with the encoded data
+ *  @param[in] set Tuneables for properly decoding the input image
+ *  @param[in] medium The original medium used when encoding the payload. Ignored for encoding types other than EncType::Relative
+ *  @return An error object that describes cause of failure if encoding fails.
+ *
+ *  @sa encode(), DecodeSettings.
+ */
 Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, DecodeSettings set, const QImage& medium)
 {
     // Clear buffer

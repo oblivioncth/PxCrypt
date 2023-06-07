@@ -12,6 +12,7 @@
 
 namespace PxCrypt
 {
+/*! @cond */
 
 class PxWeaver
 {
@@ -44,6 +45,7 @@ public:
     void flush();
 };
 
+/*! @endcond */
 }
 
 #endif // PX_WEAVER
