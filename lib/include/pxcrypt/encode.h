@@ -20,7 +20,7 @@ struct EncodeSettings
 {
     quint8 bpc = 1;
     QByteArray psk;
-    EncType type = Relative;
+    EncType type = Absolute;
 };
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------

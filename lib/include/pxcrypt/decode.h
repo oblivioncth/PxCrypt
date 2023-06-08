@@ -19,7 +19,7 @@ namespace PxCrypt
 struct DecodeSettings
 {
     QByteArray psk;
-    EncType type = Relative;
+    EncType type = Absolute;
 };
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------

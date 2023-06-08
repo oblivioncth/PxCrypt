@@ -59,12 +59,12 @@ private:
     static inline const QString CL_OPT_TYPE_S_NAME = QSL("t");
     static inline const QString CL_OPT_TYPE_L_NAME = QSL("type");
     static inline const QString CL_OPT_TYPE_DESC = QSL(
-        "The type of encoding to use (defaults to Relative):\n"
+        "The type of encoding to use (defaults to Absolute):\n"
         "\n"
         "Relative - Requires the original medium to decode\n"
         "Absolute - Doesn't require the original medium to decode\n"
     );
-    static inline const QString CL_OPT_TYPE_DEFAULT = QSL("Relative");
+    static inline const QString CL_OPT_TYPE_DEFAULT = QSL("Absolute");
 
     /* NOTE: This will cause a compilation error when changing PxCrypt::EncType in order to prompt the developer
      * to ensure any new options have been described above and then manually check them off here
