@@ -9,6 +9,7 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         encdec_p.h
         tools/bit_chunker.h
         tools/byte_compositer.h
+        tools/ch_sequence_generator.h
         tools/px_sequence_generator.h
         tools/px_skimmer.h
         tools/px_weaver.h
@@ -24,6 +25,7 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         encdec_p.cpp
         tools/bit_chunker.cpp
         tools/byte_compositer.cpp
+        tools/ch_sequence_generator.cpp
         tools/px_sequence_generator.cpp
         tools/px_skimmer.cpp
         tools/px_weaver.cpp

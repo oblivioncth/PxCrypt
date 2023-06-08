@@ -15,9 +15,10 @@ PxSequenceGenerator::PxSequenceGenerator(const QSize& dim, QByteArrayView seed) 
     mDimensions(dim),
     mPixelTracker(0, (dim.width() * dim.height()) - 1, {0})
 {
+    Q_ASSERT(!seed.isEmpty());
+
     // Seed generator
-    bool e = seed.empty();
-    std::seed_seq ss(!e ? seed.cbegin() : DEFAULT_SEED.cbegin(), !e ? seed.cend() : DEFAULT_SEED.cend());
+    std::seed_seq ss(seed.cbegin(), seed.cend());
     mGenerator.seed(ss);
 }
 

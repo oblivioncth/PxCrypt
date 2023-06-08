@@ -9,6 +9,7 @@
 // Project Includes
 #include "pxcrypt/encdec.h"
 #include "px_sequence_generator.h"
+#include "ch_sequence_generator.h"
 
 namespace PxCrypt
 {
@@ -16,19 +17,15 @@ namespace PxCrypt
 
 class PxWeaver
 {
-//-Class Variables------------------------------------------------------------------------------------------------------
-private:
-
-
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
     EncType mType;
     QRgb* mPixels;
-    PxSequenceGenerator mSequence;
+    PxSequenceGenerator mPxSequence;
+    ChSequenceGenerator mChSequence;
     quint8 mClearMask;
 
     quint64 mPxIndex;
-    int mChannel;
     quint8 mBuffer[4];
     bool mAtEnd;
 

@@ -9,6 +9,7 @@
 // Project Includes
 #include "pxcrypt/encdec.h"
 #include "px_sequence_generator.h"
+#include "ch_sequence_generator.h"
 
 namespace PxCrypt
 {
@@ -16,20 +17,16 @@ namespace PxCrypt
 
 class PxSkimmer
 {
-//-Class Variables------------------------------------------------------------------------------------------------------
-private:
-
-
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
     EncType mType;
     const QRgb* mPixels;
     const QRgb* mRefPixels;
 
-    PxSequenceGenerator mSequence;
-    quint8 mMask;
+    PxSequenceGenerator mPxSequence;
+    ChSequenceGenerator mChSequence;
 
-    int mChannel;
+    quint8 mMask;
     quint8 mBuffer[3];
 
     bool mLimitReached;

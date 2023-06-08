@@ -128,7 +128,7 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, Decode
     dec.reserve(HEADER_BYTES);
 
     // Prepare pixel skimmer and byte compositer
-    PxSkimmer pSkimmer(&encStd, &mediumStd, set.psk, bpc, set.type);
+    PxSkimmer pSkimmer(&encStd, &mediumStd, set.psk.isEmpty() ? set.psk : DEFAULT_SEED, bpc, set.type);
     ByteCompositer bCompositer(&dec, bpc);
 
     // Read header

@@ -229,7 +229,7 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     enc.setPixel(0, 0, qRgba(r, g, b, a));
 
     // Prepare pixel weaver
-    PxWeaver pWeaver(&enc, set.psk, set.bpc, set.type);
+    PxWeaver pWeaver(&enc, set.psk.isEmpty() ? set.psk : DEFAULT_SEED, set.bpc, set.type);
 
     // Encode full array
     BitChunker bChunker(fullData, set.bpc);
