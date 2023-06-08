@@ -14,7 +14,7 @@ set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("fd9e1c7b63c228f3aa5fe60f91fdc444855a1faf")
+fetch_ob_cmake("5e7e721875616363b41e2561d2b6989fe94e203b")
 
 # Initialize project according to standard rules
 include(OB/Project)

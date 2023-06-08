@@ -1,0 +1,13 @@
+name: Main pull-request checks
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: main
+
+jobs:
+  check-pr-correctness:
+    name: Main PR correctness check
+    runs-on: windows-latest
+    steps:
+    - name: Ensure higher version
+      uses: oblivioncth/actions/cmake/ensure-project-version-gt-tag@dev
