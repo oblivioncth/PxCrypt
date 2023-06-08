@@ -1,11 +1,127 @@
 # PxCrypt
-Unaware of what's right in front of you
 
-# WIP
+PxCrypt is a C++ library that facilitates a form of digital visual steganography. More specifically, it allows for storing arbitrary binary data within the color channel data of images.
 
-Store a single or two byte value in the header that denotes the type/version of the magic image.
+The project also includes a command-line utility through which one can evaluate the library's functionality, or simply encode/decode images as an end-user.
 
-The primary form is the one that directly adds/subtracts the payload to/from each color channel and requires the original image to decrypt. This is the most secure and most efficient in terms of how much the image needs to be distorted for a given amount of data.
+[![Dev Builds](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml/badge.svg?branch=dev)](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml)
 
-A second form could be one where the data is directly replaces the bits of each channel starting from least significant. The header of the format will need to be stored unencrpyted in some standard fashion (e.g. the first 1-2 bits of each channel of the 4 pixels in each corner
-of the image) so that the decrypter knows how many bits per channel were stored. This is the least secure and most destructive, but has the covenience of only relying on a password.
+## Features
+
+- Easy to use command-line encoder/decoder utility for jumping straight into digital image steganography
+- Fully documented C++ library available in static and shared flavors
+- Supports images across a variety of popular formats as a storage medium
+- Stores 1-7 bits of information per-color-channel, per-pixel
+- Optionally augments data obfuscation with basic encryption via a pre-shared key that scrambles the payload data sequence
+- Optionally encode data in a manner that also requires the original, unaltered image in order to decode the payload (can be combined with a pre-shared key)
+- Always produces a 32-bit RGBA images (saves as a PNG from the command-line)
+
+## Library
+Detailed documentation of this library, facilitated by Doxygen, is available at: https://oblivioncth.github.io/PxCrypt/
+
+### Getting Started
+Either grab the latest [release](https://github.com/oblivioncth/PxCrypt/releases/) or [build the library from source](https://oblivioncth.github.io/PxCrypt/index.html#autotoc_md5), and import using CMake.
+
+Building from source is recommended as this library can easily be integrated as a dependency into your project using CMake's FetchContent. An example of this is demonstrated in the documentation.
+
+Finally, the [Minimal Example](https://oblivioncth.github.io/PxCrypt/index.html#autotoc_md4) gives a basic overview of the lib's API.
+
+You can also refer to the encoder/decoder utility source to get a better understanding of how to use the library.
+
+## Encoder/Decoder Utility
+This utility is able to encode and decode PxCrypt images via a command-line interface. The **encode** command takes a single arbitrary file along with an image as input and produces a "magic" image with the provided file encoded within, as well as the file's original name. The **decode** command takes an encoded image and simply reverses the process. There are various options for both commands that can be used to customize exactly how data serialization is handled.
+
+Input image format support can vary depending on platform, but usually most popular formats are supported. The exact list on a given system can be checked using the global **-f** option.
+
+Output images are always produced as a 32-bit RGBA PNG. **It is imperative that the encoded images produced by this utility are not edited, converted, or otherwise modified in a manner that perverts color channel data, or the original data will be lost.** This includes converting the image to a lossy format, or format with a different bit-depth per-channel. No data is encoded within the alpha channel so it is safe to discard, and the order of each color channel (i.e. RGB vs BGR) does not matter so long as 8-bits per-channel is maintained.
+
+An optional pre-shared key (i.e. password) can be added during magic image creation in order to strengthen the security of the encoded data.
+
+### Usage
+
+The application uses the following syntax scheme:
+    
+    PxCrypt <global options> [command] <command options>
+    
+The order of switches within each options section does not matter.
+
+### Example
+To encode a file within an image, try:
+	
+	PxCrypt encode -i "example/file/path.txt" -m "medium/image/path.jpg"
+
+then to recover the data
+	
+	PxCrypt decode -i "example/file/path_enc.png"
+
+The original `"example/file/path.txt"` file will need to be moved before using the `decode` command as the utility will not overwrite files that already exist.
+
+Encoding data with a pre-shared key is recommended as anyone with this utility can decode keyless images. Using the "Relative" encoding type is even better.
+
+### All Commands/Options
+
+#### Global Options:
+ -  **-h | --help | -?:** Prints usage information
+ -  **-v | --version:** Prints the current version of the tool
+ - **-f | --formats:** Prints the image formats supported by the tool (input only)
+
+#### Commands:
+**encode** - Stores a file within the color channel data of an image
+
+Options:
+ -  **-i | --input:** Path to the input file to encode
+ -  **-o | --output:** Path to the encoded output file. Defaults to the input path with a '_enc' suffix
+ - **-m | --medium:** Path to the image in which to encode the file
+ - **-d | --density:** How many bits-per-channel to use when encoding the image (auto | 1-7). Defaults to 'auto'
+ - **-k | --key:** An optional key/password to require in order to decode the encoded image
+ - **-t | --type:** "The type of encoding to use, choose between 'Relative' and 'Absolute' (defaults to Absolute)
+
+Requires:
+**-i** and **-m** 
+
+*Notes:*
+See the documentation for [PxCrypt::EncType](https://oblivioncth.github.io/PxCrypt/namespace_px_crypt.html#a750ea91c0809276e93ae9e113dcf9b41) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
+
+--------------------------------------------------------------------------------
+
+**decode** - Retrieves the original file from an encoded image
+
+Options:
+ -  **-i | --input:** Path to the encoded image to decode
+ -  **-o | --output:** Directory to place the decoded output. Defaults to the input path's directory
+ - **-m | --medium:** Path to the original image used to encode the data (ignored for encoding types other than 'Relative')
+ - **-k | --key:** The key for images protected with one
+ - **-t | --type:** "The type of encoding that was used to create the encoded input (defaults to Absolute)
+
+Requires:
+**-i**
+
+--------------------------------------------------------------------------------
+
+## Source
+
+### Summary
+
+ - C++20
+ - CMake >= 3.23.0
+ - Targets:
+	 - Windows 10+
+	 - Linux
+
+### Dependencies
+- Qt6
+- [Qx](https://github.com/oblivioncth/Qx/)
+- [Neargye's Magic Enum](https://github.com/Neargye/magic_enum)
+- [OBCMake](https://github.com/oblivioncth/OBCmake) (build script support, fetched automatically)
+- [Doxygen](https://www.doxygen.nl/)  (for documentation)
+- 
+## Pre-built Releases/Artifacts
+
+Releases and some workflows currently provide builds of PxCrypt in various combinations of platforms and compilers. View the repository [Actions](https://github.com/oblivioncth/PxCrypt/actions) or [Releases](https://github.com/oblivioncth/PxCrypt/releases) to see examples
+
+### Details
+The source for this project is managed by a sensible CMake configuration that allows for straightforward compilation and consumption of its target(s), either as a sub-project or as an imported package. All required dependencies except for Qt6 and Doxygen are automatically acquired via CMake's FetchContent mechanism.
+
+The configuration of this projects supports consumption both via find_package() and FetchContent.
+
+See the *Packaging* and *Building From Source* sections of the [documentation](https://oblivioncth.github.io/PxCrypt/) for a detailed overview of the various CMake options, targets, install components, etc.
