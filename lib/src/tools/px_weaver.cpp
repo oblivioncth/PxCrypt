@@ -14,7 +14,8 @@ namespace PxCrypt
 PxWeaver::PxWeaver(QImage* canvas, QByteArrayView psk, quint8 bpc, EncType type) :
     mType(type),
     mPixels(reinterpret_cast<QRgb*>(canvas->bits())),
-    mSequence(canvas->size(), psk),
+    mPxSequence(canvas->size(), psk),
+    mChSequence(psk),
     mClearMask(~((0b1 << bpc) - 1)),
     mAtEnd(false)
 {
@@ -25,16 +26,15 @@ PxWeaver::PxWeaver(QImage* canvas, QByteArrayView psk, quint8 bpc, EncType type)
 //Private:
 void PxWeaver::advance()
 {
-    if(mSequence.hasNext())
+    if(mPxSequence.hasNext())
     {
-        mPxIndex = mSequence.next();
-        mChannel = 0;
+        mPxIndex = mPxSequence.next();
 
         QRgb& currentPixel = mPixels[mPxIndex];
-        mBuffer[0] = qRed(currentPixel);
-        mBuffer[1] = qGreen(currentPixel);
-        mBuffer[2] = qBlue(currentPixel);
-        mBuffer[3] = qAlpha(currentPixel);
+        mBuffer[Channel::Red] = qRed(currentPixel);
+        mBuffer[Channel::Green] = qGreen(currentPixel);
+        mBuffer[Channel::Blue] = qBlue(currentPixel);
+        mBuffer[Channel::Alpha] = qAlpha(currentPixel);
     }
     else
         mAtEnd = true;
@@ -45,18 +45,20 @@ void PxWeaver::weave(quint8 chunk)
 {
     if(!mAtEnd)
     {
+        Channel ch = mChSequence.next();
+
         switch(mType)
         {
             case EncType::Absolute:
             {
-                quint8& val = mBuffer[mChannel];
+                quint8& val = mBuffer[ch];
                 val = (val & mClearMask) | chunk;
                 break;
             }
 
             case EncType::Relative:
             {
-                quint8& val = mBuffer[mChannel];
+                quint8& val = mBuffer[ch];
                 if(val > 127)
                     val -= chunk;
                 else
@@ -68,13 +70,11 @@ void PxWeaver::weave(quint8 chunk)
                 qCritical("unhandled encoding type.");
         }
 
-        if(mChannel == 2)
+        if(mChSequence.pixelExhausted())
         {
             flush();
             advance();
         }
-        else
-            mChannel++;
     }
 }
 
@@ -83,7 +83,10 @@ void PxWeaver::flush()
     if(!mAtEnd)
     {
         QRgb& currentPixel = mPixels[mPxIndex];
-        currentPixel = qRgba(mBuffer[0], mBuffer[1], mBuffer[2], mBuffer[3]);
+        currentPixel = qRgba(mBuffer[Channel::Red],
+                             mBuffer[Channel::Green],
+                             mBuffer[Channel::Blue],
+                             mBuffer[Channel::Alpha]);
     }
 }
 

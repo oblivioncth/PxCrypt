@@ -1,38 +1,41 @@
-#ifndef PX_SEQUENCE_GENERATOR
-#define PX_SEQUENCE_GENERATOR
+#ifndef CH_SEQUENCE_GENERATOR
+#define CH_SEQUENCE_GENERATOR
 
 // Qt Includes
 #include <QRandomGenerator>
-#include <QSize>
-#include <QPoint>
 
 // Qx Includes
-#include <qx/core/qx-freeindextracker.h>
 #include <qx/utility/qx-macros.h>
+
+// Project Includes
+#include "../encdec_p.h"
 
 namespace PxCrypt
 {
 /*! @cond */
 
-class PxSequenceGenerator
+class ChSequenceGenerator
 {
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
-    QSize mDimensions;
     QRandomGenerator mGenerator;
-    Qx::FreeIndexTracker mPixelTracker;
+    bool mUsedChannels[3];
+    bool mExhausted;
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxSequenceGenerator(const QSize& dim, QByteArrayView seed);
+    ChSequenceGenerator(QByteArrayView seed);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
+private:
+    void reset();
+
 public:
-    int next();
-    bool hasNext() const;
+    bool pixelExhausted() const;
+    Channel next();
 };
 
 /*! @endcond */
 }
 
-#endif // PX_SEQUENCE_GENERATOR
+#endif // CH_SEQUENCE_GENERATOR

@@ -15,7 +15,8 @@ PxSkimmer::PxSkimmer(const QImage* surface, const QImage* medium, QByteArrayView
     mType(type),
     mPixels(reinterpret_cast<const QRgb*>(surface->bits())),
     mRefPixels(!medium ? nullptr : reinterpret_cast<const QRgb*>(medium->bits())),
-    mSequence(surface->size(), psk),
+    mPxSequence(surface->size(), psk),
+    mChSequence(psk),
     mMask((0b1 << bpc) - 1),
     mLimitReached(false)
 {
@@ -30,24 +31,23 @@ PxSkimmer::PxSkimmer(const QImage* surface, const QImage* medium, QByteArrayView
 //Private:
 void PxSkimmer::advance()
 {
-    quint64 index = mSequence.next();
+    quint64 index = mPxSequence.next();
     const QRgb& pixel = mPixels[index];
-    mChannel = 0;
 
    switch(mType)
    {
         case EncType::Absolute:
-            mBuffer[0] = qRed(pixel) & mMask;
-            mBuffer[1] = qGreen(pixel) & mMask;
-            mBuffer[2] = qBlue(pixel) & mMask;
+            mBuffer[Channel::Red] = qRed(pixel) & mMask;
+            mBuffer[Channel::Green] = qGreen(pixel) & mMask;
+            mBuffer[Channel::Blue] = qBlue(pixel) & mMask;
             break;
 
         case EncType::Relative:
         {
             const QRgb& refPixel = mRefPixels[index];
-            mBuffer[0] = Qx::distance(qRed(pixel), qRed(refPixel)) & mMask;
-            mBuffer[1] = Qx::distance(qGreen(pixel), qGreen(refPixel)) & mMask;
-            mBuffer[2] = Qx::distance(qBlue(pixel), qBlue(refPixel)) & mMask;
+            mBuffer[Channel::Red] = Qx::distance(qRed(pixel), qRed(refPixel)) & mMask;
+            mBuffer[Channel::Green] = Qx::distance(qGreen(pixel), qGreen(refPixel)) & mMask;
+            mBuffer[Channel::Blue] = Qx::distance(qBlue(pixel), qBlue(refPixel)) & mMask;
             break;
         }
 
@@ -67,17 +67,15 @@ quint8 PxSkimmer::next()
         return 0;
     }
 
-    quint8 chunk = mBuffer[mChannel];
+    quint8 chunk = mBuffer[mChSequence.next()];
 
-    if(mChannel == 2)
+    if(mChSequence.pixelExhausted())
     {
-        if(mSequence.hasNext())
+        if(mPxSequence.hasNext())
             advance();
         else
             mLimitReached = true;
     }
-    else
-        mChannel++;
 
     return chunk;
 }
