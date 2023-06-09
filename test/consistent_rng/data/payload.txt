@@ -1,0 +1,81 @@
+Hackdirt is a village with an inn between Chorrol and Skingrad (quest-related).
+
+Hackdirt is a small mining village founded by Vlanhonder Moslin's grandfather, Irlav. The town's residents turned to worshipping the "Deep Ones" they encountered in their mines, but the cult's activities apparently got out of hand, with travelers being murdered, and the village was burned to the ground by the Imperial Legion in the ensuing hostilities. Its citizens took this as oppression by the "outsiders" and have since rebuilt part of the town, though its new buildings are still surrounded by burnt-out rubble. They are notoriously intolerant of outsiders, so much so that some will become downright hostile with the right provocation. It appears that their shifty activities have not ceased, as the daughter of a prominent merchant in Chorrol has gone missing while making a delivery to the town.
+
+Services in the village consist of an inn and a shop. Underneath the town there are some caverns accessed through trapdoors. Two of the trapdoors are outside, but five more trapdoors are located inside the town's buildings. The Chapel of the Brethren can be found in the southern part of town and contains the Bible of the Deep Ones.
+
+The citizens of Hackdirt are so aggressive to outsiders that, while committing crimes against them WILL increase the player's bounty, they will refuse to call the Imperial Legion, and Guards will never arrive to arrest the player. Instead, he or she will be swarmed by Hackdirt Brethren.
+
+Chorrol
+To initiate this quest you must first meet Dar-Ma, a young Argonian woman who lives in Chorrol; the following events will not be set in motion until you've chatted with her. Luckily, meeting her is very easy: she is likely to run up to you in the street and introduce herself. You can also try looking for her at Northern Goods and Trade, the store run by her mother Seed-Neeus.
+
+After you leave and return to Chorrol at least two days later you will start to hear rumors that Dar-Ma has gone missing; two new topics, "Dar-Ma" and "Missing Daughter," will pop up in conversation. Following up on these topics will point you towards Seed-Neeus, who can be found at Northern Goods and Trade. Seed-Neeus explains that Dar-Ma never returned from a delivery she was making to Hackdirt. She suggests talking to Etira Moslin in Hackdirt, or looking for Dar-Ma's horse, Blossom, because Dar-Ma would never "willingly abandon" her horse. A map marker will be added for Hackdirt, which is south of Chorrol.
+
+Alternatively, you can skip the Chorrol rumor mill and just show up in Hackdirt without actually being given the quest. Getting a room at the inn and napping for a few hours will quickly put you in the middle of the action.
+
+Your Warm Welcome in Hackdirt
+
+Moslin's Inn, Dar-Ma's last known whereabouts
+Hackdirt is a singularly unpleasant place. The town itself is surrounded by burnt-out ruins. Everyone you meet makes it clear that they wish you weren't there. Start asking about Dar-Ma, and almost everyone will tell you they know nothing.
+
+If you explore a bit on your own, you'll find proof that the townspeople are lying to you. In one of the burnt-out shells behind (west of the building) Moslin's Dry Goods, you will find the horse, Blossom; confront Etira Moslin about Blossom and she will claim that she owns Blossom. (Even if you don't particularly care about the horse, it's worth your time to find Blossom now so you can locate her quickly when needed later in the quest.) More evidence of Dar-Ma's presence can be found in the inn. The ransacked room upstairs is evidently the room where Dar-Ma had been staying: her diary is still there. Read it to learn more about what happened. The Moslins will again lie to you if confronted with the diary: Vlanhonder Moslin will say she left without her diary.
+
+Only one local makes any attempt to be helpful: Jiv Hiriel will tell you that Dar-Ma is in danger and to meet him in his house after dark. Find Jiv's house (southeast of the other houses), and meet him there in the evening to learn that Dar-Ma is being held in the caverns under the town and that she is due to be sacrificed. He gives you a key that opens any of the trapdoors in the town that lead into the caverns. He suggests that the trapdoor in Moslin's Inn is the best entrance to the caverns, since it is closest to where Dar-Ma is being held. He further suggests that rescuing her in the middle of the night will be easiest, since all the villagers will be at the Gathering.
+
+There are many possible entrances to the caverns, and you don't need to obtain a key; lockpicking will get you in, too. Every house in town contains a trapdoor, including Jiv's, though Moslin's Inn is the only unlocked building. There are also two trapdoors outside in the burnt-out ruins: one to the north of town and one to the south. If you feel like fully exploring the caverns, any entrance will work. If you just want to rescue Dar-Ma, Moslin's Inn is one good entrance, as is the outside trapdoor near the Inn. Both of these will allow you to avoid the townspeople.
+
+The Brethren
+As you search for Dar-Ma you will come across many references to the Brethren. Technically, you don't need to figure out the story behind the Brethren to complete this quest, but it helps you to figure out what is really going on in Hackdirt.
+
+Evidently, some thirty years earlier, the Legion had to be called in to Hackdirt and they burned the town to the ground.
+
+Although "Brethren" will show up as a conversation entry, the locals will be just as unhelpful on that topic as any other. After you confront her about Blossom, Etira becomes a bit chattier and tells you that they will come to visit you soon. And indeed, they do: six half-naked lunatics with giant eyes will attack you. You should be able to find a Hackdirt Key on at least one of them. Another alternative to being "greeted" by the Brethren is to talk about the Brethren once and spend the night in the Moslin Inn. When you wake up, you will be attacked by a Brother armed with a club.
+
+Another clue you can collect in your early stages of exploring the town is in the chapel. It may look like a standard chapel, except for the Bible of the Deep Ones. It doesn't appear to have anything to do with the sanctioned nine deities, especially since most of it is written in Daedric lettering. (If you explore the chapel early, before the "Brethren" topic appears in your conversations, you can freely take the Bible; later, it is considered stealing.)
+
+A full exploration of the caverns will lead to encounters with many more Brethren. The Brethren are very aware of your presence: even with good Sneak skill and Chameleon enchantments, they are likely to notice you. Invisibility (or 100% Chameleon) is necessary to Sneak past them safely.
+
+Rescuing Dar-Ma
+
+The Hackdirt Caverns
+If you follow Jiv's advice and enter the caverns at Moslin's Inn, a left turn will lead you to Dar-Ma's cell. The key is conveniently located on the stool right next to the cell. Dar-Ma will follow you out of the caverns, but then she insists that she can't leave without her horse, Blossom. The safest option is to escort her to where Blossom is located. It is also possible to ask Dar-Ma to wait, and go retrieve Blossom (which officially requires stealing Blossom in order to ride her); however, Dar-Ma apparently can get impatient and wander back to Chorrol on her own if left alone for too long. (As long as she survives the trip through the forest, you will still get your full reward.)
+
+If you are seen in the caverns by the wandering Brethren, you will be attacked on sight. Note that at night the townsfolk will be in the caverns as well, but they will not attack you unless you attack one of them first – they do not seem to mind when Brethren are slaughtered before them. If Dar-Ma's cage is open when the Brethren are attacking, they will attack Dar-Ma and possibly kill her. However, if you drop a weapon near her (there are some in the crate nearby), she will pick it up and defend herself valiantly. After her rescue, she continues to wear the weapon on her around town.
+
+All that is left is to return Dar-Ma to Chorrol. The safest and easiest way is to fast travel to North Country Stables once she retrieves Blossom. Because of a bug (see below) she will walk very slowly, although her diary indicates that this may be because Blossom threw a shoe on the way to Hackdirt. If you choose to walk or ride back to Chorrol with her, you need to be sure to stay right near her, because she can get attacked by wild creatures as you travel through the forest. If she dies at this point, you will have failed the quest. Also, during such an attack, it is possible for Dar-Ma to take off for Chorrol on foot, abandoning her beloved Blossom.
+
+Once the two of you are safely back to Chorrol, visit Seed-Neeus. She will be very thankful (Disposition=100) and will grant you a free five-point skill boost in Mercantile. Note that if you have Mercantile as a Major skill and are pursuing efficient leveling, you have to take into consideration the 5 point increase awarded by Seed-Neeus.
+
+If you return to Hackdirt after rescuing Dar-Ma your reception will be even more hostile than before: many of the townsfolk will attack you on sight and more "Brethren" will emerge to join in the fight. If you feel compelled to rid Tamriel of Deep Ones worshippers, you will find that you can kill off most townspeople without a bounty as long as they hit you first. The only townspeople who prefer to run rather than attack are the two Moslins and Jiv; killing them is considered murder.
+
+Notes
+You have to be outside Chorrol before Dar-Ma will be moved to Hackdirt.
+If you tell Dar-Ma to wait inside Moslin's Inn before going out, you can clear the area, bring Blossom back to the entrance to Moslin's Inn, then bring Dar-Ma out and fast-travel to Chorrol to complete the quest.
+If you talk to Jiv before doing anything else and not being seen while infiltrating the caverns, the townsfolk may not attack you after completing the quest.
+In the Hackdirt Caverns one can hear animal-like growls every few seconds. This is especially noticeable if you turn the music volume down to zero. No explanation is ever given for these growling sounds, although it is reasonable to assume they are the sounds from the Deep Ones.
+Natch Pinder's house contains a Nirnroot; you might as well grab it while you're in town.
+You will still get the five-point bonus to Mercantile even if your Mercantile skill is already above 70 (Seed-Neeus' normal training limit).
+If either Vlanhonder or Etira Moslin are killed before you receive the quest, Dar-Ma is never kidnapped and the quest will never start.
+If you are aiming for 100% completion you should wait to complete this quest until you have invested in both Moslin's Inn (Vlanhonder Moslin) and Moslin's Dry Goods (Etira Moslin). Otherwise, when you have completed this quest, the store owners will be hostile and will not let you talk with them.
+After completing the quest, Blossom remains outside the South gate to Chorrol unless you used fast travel, in which case she can be found in the corral of North Country Stables.
+In the event Dar-Ma is rescued during a time where the villagers are active in the town, they will attempt to kill her if spotted. In this case, killing the villagers will not incur any bounty or penalty, as they are also hostile towards you in this state.
+If the quest is completed and/or at some point in the quest you decide to kill all of the villagers in Hackdirt, you will not be penalized by city guards for the deaths, except any that incur a bounty, as noted above. You may be able to use Stealth techniques to avoid that situation.
+If you do decide to escort Dar-Ma and Blossom through the forest, it presents a great opportunity to improve your Sneak skill. Since they move so slowly, you can sneak behind them the whole way.
+The Brethren and any forest encounters are leveled, while Dar-Ma is not. And it is not practical to ride her horse (see Bugs, below). Therefore, if you want Dar-Ma to survive (and to get your 5 point bonus to Mercantile), it is best to either complete this quest in whatever fashion as early as possible, or to do it later in this specific order: find Blossom behind the store; ask around about Dar-Ma until Jiv suggests a secret meeting to talk about her; meet with Jiv just after nightfall while the other townsfolk are in their chapel; enter the caverns through Jiv's house (he should not follow you into them if you do so, as he is anxious to get to the chapel); clear out all the Brethren and gather loot (from cavern-connected homes, too, if you like); free Dar-Ma and leave with her immediately through either hatch to the Hackdirt exterior; escort her to her horse, then fast travel to Chorrol after she mounts. This method avoids all post-rescue encounters.
+The quest is based on the H.P. Lovecraft novella "The Shadow over Innsmouth".
+Bugs
+Even though she is on horseback and fleeing from danger, Dar-Ma travels very slowly towards Chorrol after she is rescued.
+PC Only This bug is fixed by the Unofficial Oblivion Patch.
+Seed-Neeus does not seem to recognize Dar-Ma's rescue when she is spoken to at quest completion. This is because the player needs to pick the "Missing Daughter" dialog topic again, and it doesn't stand out by being highlighted in gold as it's already been chosen. Seed-Neeus will then ask "Have you found her? Is she safe?" and the new response "Yes, Dar-Ma is safe" can be chosen to complete the quest.
+PC Only This bug is fixed by the Unofficial Oblivion Patch.
+There can be a bug in regards to stealing and trespassing. The red hand/icon will not show up on chests in the houses or the tunnels, however you will still be reported if someone sees you take anything, and if they find a guard you will receive a bounty. This even includes Jiv, who will follow you around the tunnels after you have defeated everyone else. For some reason, both of the Moslins have a Responsibility of 100, meaning that if they see you take anything, you will get an immediate bounty, even if no guards are present.
+PC Only This bug is fixed by the Unofficial Oblivion Patch.
+If Dar-Ma does die, there seems to be a dialogue glitch. If you speak to Rasheda about it, she will tell you "Dar-Ma's daughter went missing" instead of Seed-Neeus'.
+PC Only This bug is fixed by the Unofficial Oblivion Patch.
+If you bring Dar-Ma out of the tunnels via Natch Pinder's house (unverified for all houses), then when you tell her to follow she will make a beeline for where Blossom is originally found. Even if you ride Blossom and leave her in front of the door, Dar-ma will not recognize her horse and will go look for her. However, if at this point you ride her horse Dar-Ma will call you a thief.
+It is possible to rescue Dar-Ma from Hackdirt without hearing about her missing. This will render the quest unfinishable, because the "Missing Daughter" dialog option will also be missing. To fix this, walk around town, until you hear someone talking about the rumor that Dar-Ma has gone missing. This will make the necessary dialog option appear and the quest can be finished.
+PC This may not work, as NPCs may simply never start this conversation on this specific topic. To end the quest, go to Seed-Neeus, open the console, click on Seed-Neeus, and type startconversation player MS45MissingDaughter. Close the console, and Seed-Neeus will then ask "Have you found her? Is she safe?" as expected.
+It is possible that, while going through the trapdoor in Moslin's Inn to rescue Dar-Ma, a Hackdirt Brethren will spawn inside Dar-Ma's cage. Because of this, he will walk out of the cage and leave the door to the cage open. ?
+If you kill Dar-Ma immediately after she introduces herself in Chorrol, her corpse will transport to the cell after you rest in Hackdirt. Otherwise the quest will not progress (dialog options, ransacked hotel room, rumors on the street in Chorrol). ?
+If you talk to Dar-Ma while she is asleep before she approaches you, you will not get her special introduction dialogue. Later she may not approach you and the quest will not start. ?
+Journal Entries
