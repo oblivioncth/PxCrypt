@@ -132,7 +132,7 @@ void tst_encode_decode::full_data_cycle_data()
 
     QString pfTag = "Perfect Fit Test"; // 16 char
     qsizetype pfPayload = 4;
-    QImage pfMedium(8, 3, QImage::Format_RGBA8888);
+    QImage pfMedium(8, 3, QImage::Format_ARGB32);
     pfMedium.fill(Qt::gray);
 
     QVERIFY2(_PxCrypt::calculateMaximumPayloadBits(pfMedium.size(), pfTag.size(), 4) == pfPayload * 8, "Perfect fit test payload/image size needs adjustment");
@@ -169,7 +169,7 @@ void tst_encode_decode::full_data_cycle_data()
      */
     QString denseTag = "Max Density Test"; // 16 char
     qsizetype densePayload = 2;
-    QImage denseMedium(7, 2, QImage::Format_RGBA8888);
+    QImage denseMedium(7, 2, QImage::Format_ARGB32);
     denseMedium.fill(Qt::gray);
 
     QVERIFY2(PxCrypt::calculateMaximumStorage(denseMedium.size(), denseTag.size(), 7) == densePayload, "Max density test payload/image size needs adjustment");

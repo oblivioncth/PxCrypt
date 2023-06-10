@@ -5,6 +5,7 @@
 #include <QString>
 #include <QCryptographicHash>
 #include <QSize>
+#include <QImage>
 
 // Qx Includes
 #include <qx/utility/qx-macros.h>
@@ -40,6 +41,7 @@ static inline const QByteArray DEFAULT_SEED = QBAL("The best and most secure see
 //-Namespace Functions-------------------------------------------------------------------------------------------------
 quint64 calcMaxPayloadBits(const QSize& dim, quint16 tagSize, quint8 bpc);
 quint64 calcMaxPayloadBytes(const QSize& dim, quint16 tagSize, quint8 bpc);
+QImage standardizeImage(const QImage& img);
 
 /*! @endcond */
 }

@@ -121,7 +121,8 @@ quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloa
  *  @param[in] set Tuneables for the encoding technique
  *  @return An error object that describes cause of failure if encoding fails.
  *
- *  @a enc will always use the format `QImage::Format_RGBA8888` regardless of the format of @a medium.
+ *  @a enc will always use the format `QImage::Format_ARGB32` or `QImage::Format_RGB32`
+ *  (depending on if an alpha channel is present) regardless of the format of @a medium.
  *
  *  @warning
  *  @parblock
@@ -215,8 +216,8 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     fullData.append(tagData);
     fullData.append(payload);
 
-    // Copy base image, normalize to standard 32-bit format
-    enc = medium.convertToFormat(QImage::Format_RGBA8888);
+    // Copy base image, normalize to standard format
+    enc = standardizeImage(medium);
 
     // Setup pixel access, marks meta data on image
     PxAccessWrite pAccess(&enc, !set.psk.isEmpty() ? set.psk : DEFAULT_SEED, set.bpc, set.type);

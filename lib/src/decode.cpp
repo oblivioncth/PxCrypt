@@ -81,9 +81,7 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, QByteA
         return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
 
     // Ensure standard pixel format
-    QImage encStd = enc; // Because of Qt's CoW system this occurs almost no penalty if the format is already correct
-    if(encStd.format() != QImage::Format_RGBA8888)
-        encStd.convertTo(QImage::Format_RGBA8888);
+    QImage encStd = standardizeImage(enc);
 
     // Prepare pixel access, automatically reads meta pixels
     PxAccessRead pAccess(&encStd, !psk.isEmpty() ? psk : DEFAULT_SEED);
@@ -107,16 +105,13 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, QByteA
     QImage mediumStd;
     if(pAccess.type() == EncType::Relative)
     {
-        mediumStd = medium;
-
-        if(mediumStd.isNull())
+        if(medium.isNull())
             return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_MISSING_MEDIUM);
 
-        if(mediumStd.size() != encStd.size())
+        if(medium.size() != encStd.size())
             return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_DIMMENSION_MISTMATCH);
 
-        if(!mediumStd.isNull() && mediumStd.format() != QImage::Format_RGBA8888)
-            mediumStd.convertTo(QImage::Format_RGBA8888);
+        mediumStd = standardizeImage(medium);
     }
 
     // Prepare pixel skimmer and byte compositer
