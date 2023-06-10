@@ -11,83 +11,73 @@ namespace PxCrypt
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxWeaver::PxWeaver(QImage* canvas, QByteArrayView psk, quint8 bpc, EncType type) :
-    mType(type),
-    mPixels(reinterpret_cast<QRgb*>(canvas->bits())),
-    mPxSequence(canvas->size(), psk),
-    mChSequence(psk),
-    mClearMask(~((0b1 << bpc) - 1)),
-    mAtEnd(false)
+PxWeaver::PxWeaver(PxAccessWrite* canvasAccess) :
+    mCanvasAccess(canvasAccess),
+    mClearMask(~((0b1 << mCanvasAccess->bpc()) - 1))
 {
-    advance();
+    fill();
 }
 
 //-Instance Functions--------------------------------------------------------------------------------------------
 //Private:
-void PxWeaver::advance()
+void PxWeaver::fill()
 {
-    if(mPxSequence.hasNext())
-    {
-        mPxIndex = mPxSequence.next();
-
-        QRgb& currentPixel = mPixels[mPxIndex];
-        mBuffer[Channel::Red] = qRed(currentPixel);
-        mBuffer[Channel::Green] = qGreen(currentPixel);
-        mBuffer[Channel::Blue] = qBlue(currentPixel);
-        mBuffer[Channel::Alpha] = qAlpha(currentPixel);
-    }
-    else
-        mAtEnd = true;
+    mBuffer[Channel::Red] = mCanvasAccess->red();
+    mBuffer[Channel::Green] = mCanvasAccess->green();
+    mBuffer[Channel::Blue] = mCanvasAccess->blue();
+    mBuffer[Channel::Alpha] = mCanvasAccess->alpha();
 }
 
 //Public:
 void PxWeaver::weave(quint8 chunk)
 {
-    if(!mAtEnd)
+    if(mCanvasAccess->atEnd())
+        return;
+
+    Channel ch = mCanvasAccess->channel();
+
+    switch(mCanvasAccess->type())
     {
-        Channel ch = mChSequence.next();
-
-        switch(mType)
+        case EncType::Absolute:
         {
-            case EncType::Absolute:
-            {
-                quint8& val = mBuffer[ch];
-                val = (val & mClearMask) | chunk;
-                break;
-            }
-
-            case EncType::Relative:
-            {
-                quint8& val = mBuffer[ch];
-                if(val > 127)
-                    val -= chunk;
-                else
-                    val += chunk;
-                break;
-            }
-
-            default:
-                qCritical("unhandled encoding type.");
+            quint8& val = mBuffer[ch];
+            val = (val & mClearMask) | chunk;
+            break;
         }
 
-        if(mChSequence.pixelExhausted())
+        case EncType::Relative:
         {
-            flush();
-            advance();
+            quint8& val = mBuffer[ch];
+            if(val > 127)
+                val -= chunk;
+            else
+                val += chunk;
+            break;
         }
+
+        default:
+            qCritical("unhandled encoding type.");
     }
+
+    // Flush if going to next pixel
+    bool flushing = mCanvasAccess->pixelExhausted();
+    if(flushing)
+        flush();
+
+    // Advance channels, fill after flushing if not at end
+    if(mCanvasAccess->nextChannel() && flushing)
+        fill();
 }
 
 void PxWeaver::flush()
 {
-    if(!mAtEnd)
-    {
-        QRgb& currentPixel = mPixels[mPxIndex];
-        currentPixel = qRgba(mBuffer[Channel::Red],
+    if(mCanvasAccess->atEnd())
+        return;
+
+    mCanvasAccess->pixel() = qRgba(mBuffer[Channel::Red],
                              mBuffer[Channel::Green],
                              mBuffer[Channel::Blue],
                              mBuffer[Channel::Alpha]);
-    }
 }
 
 /*! @endcond */

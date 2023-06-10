@@ -4,12 +4,8 @@
 // Qt Includes
 #include <QImage>
 
-// Qx Includes
-
 // Project Includes
-#include "pxcrypt/encdec.h"
-#include "px_sequence_generator.h"
-#include "ch_sequence_generator.h"
+#include "px_access_write.h"
 
 namespace PxCrypt
 {
@@ -19,23 +15,17 @@ class PxWeaver
 {
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
-    EncType mType;
-    QRgb* mPixels;
-    PxSequenceGenerator mPxSequence;
-    ChSequenceGenerator mChSequence;
+    PxAccessWrite* mCanvasAccess;
     quint8 mClearMask;
-
-    quint64 mPxIndex;
     quint8 mBuffer[4];
-    bool mAtEnd;
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxWeaver(QImage* canvas, QByteArrayView psk, quint8 bpc, EncType type);
+    PxWeaver(PxAccessWrite* canvasAccess);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:
-    void advance();
+    void fill();
 
 public:
     void weave(quint8 chunk);

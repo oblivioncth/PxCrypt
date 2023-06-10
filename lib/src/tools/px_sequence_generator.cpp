@@ -12,8 +12,7 @@ namespace PxCrypt
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
 PxSequenceGenerator::PxSequenceGenerator(const QSize& dim, QByteArrayView seed) :
-    mDimensions(dim),
-    mPixelTracker(0, (dim.width() * dim.height()) - 1, {0})
+    mPixelTracker(0, (dim.width() * dim.height()) - 1)
 {
     Q_ASSERT(!seed.isEmpty());
 
@@ -24,6 +23,8 @@ PxSequenceGenerator::PxSequenceGenerator(const QSize& dim, QByteArrayView seed) 
 
 //-Instance Functions--------------------------------------------------------------------------------------------
 //Public:
+quint64 PxSequenceGenerator::pixelCoverage() const { return mPixelTracker.reserved(); }
+
 int PxSequenceGenerator::next()
 {
     // Return if all pixels are accounted for

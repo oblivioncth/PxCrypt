@@ -32,6 +32,8 @@ private:
 
 public:
     bool pixelExhausted() const;
+
+    void exhaust();
     Channel next();
 };
 

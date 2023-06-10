@@ -34,6 +34,8 @@ void ChSequenceGenerator::reset()
 //Public:
 bool ChSequenceGenerator::pixelExhausted() const { return mExhausted; }
 
+void ChSequenceGenerator::exhaust() { mExhausted = true; }
+
 Channel ChSequenceGenerator::next()
 {
     // Reset if on new pixels
@@ -42,7 +44,7 @@ Channel ChSequenceGenerator::next()
 
     // Determine next channel
     quint32 min;
-    for(auto i = 0; i < 3; i++)
+    for(uint i = Channel::Red; i <= Channel::Blue; i++)
     {
         if(!mUsedChannels[i])
         {
@@ -52,7 +54,7 @@ Channel ChSequenceGenerator::next()
     }
 
     quint32 max;
-    for(auto i = 2; i >= 0; i--)
+    for(uint i = Channel::Blue; i >= Channel::Red; i--)
     {
         if(!mUsedChannels[i])
         {
@@ -61,7 +63,7 @@ Channel ChSequenceGenerator::next()
         }
     }
 
-    if(min == max)
+    if(min == max) // Ignore warning about garbage value
     {
         mExhausted = true;
         // No need to update mUsedChannels, it will be reset on next call

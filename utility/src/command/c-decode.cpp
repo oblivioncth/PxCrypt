@@ -49,30 +49,6 @@ ErrorCode CDecode::process(const QStringList& commandLine)
         return ErrorCode::INVALID_ARGS;
     }
 
-    // Evaluate type
-    PxCrypt::EncType aType;
-    QString typeStr = mParser.value(CL_OPTION_TYPE);
-
-    auto potentialType = magic_enum::enum_cast<PxCrypt::EncType>(typeStr.toStdString());
-    if(potentialType.has_value())
-        aType = potentialType.value();
-    else
-    {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, Core::ERR_INVALID_PARAM, ERR_INVALID_ENC_TYPE));
-        return ErrorCode::INVALID_ARGS;
-    }
-    mCore.printMessage(NAME, MSG_ENCODING_TYPE.arg(ENUM_NAME(aType)));
-
-    // Ensure medium was provided if type is Relative
-    if(aType == PxCrypt::EncType::Relative)
-    {
-        if(!mParser.isSet(CL_OPTION_MEDIUM))
-        {
-            mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, Core::ERR_INVALID_PARAM, ERR_MISSING_MEDIUM));
-            return ErrorCode::INVALID_ARGS;
-        }
-    }
-
     // Get key
     QByteArray aKey = mParser.value(CL_OPTION_KEY).toUtf8();
 
@@ -83,9 +59,9 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     //-Decoding---------------------------------------
     QImageReader imgReader;
 
-    // Load medium if applicable
+    // Load medium if provided
     QImage aMedium;
-    if(aType == PxCrypt::EncType::Relative)
+    if(mParser.isSet(CL_OPTION_MEDIUM))
     {
         QString mediumPath = mParser.value(CL_OPTION_MEDIUM);
         imgReader.setFileName(mediumPath);
@@ -106,15 +82,11 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     }
 
     // Decode
-    PxCrypt::DecodeSettings ds{
-        .psk = aKey,
-        .type = aType
-    };
     QString tag;
     QByteArray decoded;
 
     mCore.printMessage(NAME, MSG_DECODING);
-    Qx::GenericError decError = PxCrypt::decode(decoded, tag, aEncoded, ds, aMedium);
+    Qx::GenericError decError = PxCrypt::decode(decoded, tag, aEncoded, aKey, aMedium);
     if(decError.isValid())
     {
         mCore.printError(NAME, decError);
