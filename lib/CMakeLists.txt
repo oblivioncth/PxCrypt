@@ -10,31 +10,42 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         tools/bit_chunker.h
         tools/byte_compositer.h
         tools/ch_sequence_generator.h
+        tools/px_access_read.h
+        tools/px_access_write.h
         tools/px_sequence_generator.h
         tools/px_skimmer.h
         tools/px_weaver.h
     HEADERS_API
         COMMON "${PROJECT_NAMESPACE_LC}"
         FILES
+            _internal.h
             decode.h
             encdec.h
             encode.h
     IMPLEMENTATION
+        _internal.cpp
         decode.cpp
         encode.cpp
         encdec_p.cpp
         tools/bit_chunker.cpp
         tools/byte_compositer.cpp
         tools/ch_sequence_generator.cpp
+        tools/px_access_read.cpp
+        tools/px_access_write.cpp
         tools/px_sequence_generator.cpp
         tools/px_skimmer.cpp
         tools/px_weaver.cpp
     DOC_ONLY
         encdec.dox
     LINKS
+        PRIVATE
+            $<BUILD_INTERFACE:magic_enum::magic_enum>
         PUBLIC
             Qt6::Core
             Qt6::Gui
             Qx::Core
     CONFIG STANDARD
 )
+
+# Build interface wrapper for magic_enum is a workaround for a CMake limitation.
+# See https://github.com/oblivioncth/STARpp/blob/500d19354fe394ba5a1c84e56208d2186866c5e8/lib/CMakeLists.txt

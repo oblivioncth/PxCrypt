@@ -14,7 +14,7 @@ namespace PxCrypt
 //-Namespace Enums-----------------------------------------------------------------------------------------------------
 enum EncType : quint8 {
     Relative = 0,
-    Absolute = 1
+    Absolute = 4
 };
 
 }

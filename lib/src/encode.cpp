@@ -4,6 +4,7 @@
 // Project Includes
 #include "pxcrypt/encdec.h"
 #include "encdec_p.h"
+#include "tools/px_access_write.h"
 #include "tools/px_weaver.h"
 #include "tools/bit_chunker.h"
 
@@ -72,6 +73,21 @@ namespace
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
 /*!
+ *  Returns the maximum number of bytes that can be stored within an image of dimensions @a dim and tag of size
+ *  @a tagSize when using @a bpc bits per channel.
+ *
+ *  @sa calculateOptimalDensity().
+ */
+quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
+{
+    /* NOTE: Both decode.h and encode.h need the internal version of this function
+     * so using a wrapper for the public version prevents including decode.h from
+     * automatically including encode.h
+     */
+    return calcMaxPayloadBytes(dim, tagSize, bpc);
+}
+
+/*!
  *  Returns the minimum number of bits per channel required to store a payload of @a payloadSize along with a tag
  *  of @a tagSize within a medium image of @a dim dimensions. @c 0 is returned if the payload/tag cannot fit within
  *  those dimensions.
@@ -89,25 +105,10 @@ quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloa
         return 0;
 
     double bits = (payloadSize + tagSize + HEADER_BYTES) * 8.0;
-    double chunks = dim.width() * dim.height() * 3.0;
+    double chunks = (dim.width() * dim.height() - META_PIXELS) * 3.0;
     double bpc = std::ceil(bits/chunks);
 
     return bpc < 8 ? bpc : 0;
-}
-
-/*!
- *  Returns the maximum number of bytes that can be stored within an image of dimensions @a dim and tag of size
- *  @a tagSize when using @a bpc bits per channel.
- *
- *  @sa calculateOptimalDensity().
- */
-quint64 calculateMaximumStorage(const QSize& dim, quint16 tagSize, quint8 bpc)
-{
-    /* NOTE: Both decode.h and encode.h need the internal version of this function
-     * so using a wrapper for the public version prevents including decode.h from
-     * automatically including encode.h
-     */
-    return calcMaxPayloadSize(dim, tagSize, bpc);
 }
 
 /*!
@@ -189,13 +190,13 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
         if(set.bpc == 0)
         {
             // Check how short at max density
-            quint64 max = calcMaxPayloadSize(medium.size(), tagData.size(), 7);
+            quint64 max = calcMaxPayloadBytes(medium.size(), tagData.size(), 7);
             return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - max)/1024.0, 0, 'f', 2));
         }
     }
 
     // Ensure data will fit
-    quint64 maxStorage = calcMaxPayloadSize(medium.size(), tagData.size(), set.bpc);
+    quint64 maxStorage = calcMaxPayloadBytes(medium.size(), tagData.size(), set.bpc);
     if(static_cast<quint64>(payload.size()) > maxStorage)
         return Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - maxStorage)/1024.0, 0, 'f', 2));
 
@@ -206,7 +207,6 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     // Add header to array
     QDataStream hs(&fullData, QIODeviceBase::WriteOnly);
     hs.writeRawData(MAGIC_NUM, MAGIC_SIZE);
-    hs << set.type,
     hs << Qx::Integrity::crc32(payload);
     hs << static_cast<quint16>(tagData.size());
     hs << static_cast<quint32>(payload.size());
@@ -218,18 +218,11 @@ Qx::GenericError encode(QImage& enc, const QImage& medium, QStringView tag, QByt
     // Copy base image, normalize to standard 32-bit format
     enc = medium.convertToFormat(QImage::Format_RGBA8888);
 
-    // Mark BPC
-    Qx::BitArray bpcBits = Qx::BitArray::fromInteger(set.bpc);
-
-    QRgb first = enc.pixel(0, 0);
-    quint32 r = (qRed(first) & 0xFFFE) | static_cast<quint32>(bpcBits.testBit(0));
-    quint32 g = (qGreen(first) & 0xFFFE) | static_cast<quint32>(bpcBits.testBit(1));
-    quint32 b = (qBlue(first) & 0xFFFE) | static_cast<quint32>(bpcBits.testBit(2));
-    quint32 a = qAlpha(first);
-    enc.setPixel(0, 0, qRgba(r, g, b, a));
+    // Setup pixel access, marks meta data on image
+    PxAccessWrite pAccess(&enc, !set.psk.isEmpty() ? set.psk : DEFAULT_SEED, set.bpc, set.type);
 
     // Prepare pixel weaver
-    PxWeaver pWeaver(&enc, !set.psk.isEmpty() ? set.psk : DEFAULT_SEED, set.bpc, set.type);
+    PxWeaver pWeaver(&pAccess);
 
     // Encode full array
     BitChunker bChunker(fullData, set.bpc);

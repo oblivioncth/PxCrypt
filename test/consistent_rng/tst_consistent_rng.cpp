@@ -73,7 +73,7 @@ void tst_consistent_rng::multi_platform_decode()
     QByteArray decoded;
     QString tagDecoded;
 
-    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded, PxCrypt::DecodeSettings());
+    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded);
     QVERIFY2(!de.isValid(), C_STR(de.secondaryInfo()));
 
     // Compare

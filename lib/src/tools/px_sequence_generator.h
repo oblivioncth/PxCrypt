@@ -18,7 +18,6 @@ class PxSequenceGenerator
 {
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
-    QSize mDimensions;
     QRandomGenerator mGenerator;
     Qx::FreeIndexTracker mPixelTracker;
 
@@ -28,6 +27,8 @@ public:
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 public:
+    quint64 pixelCoverage() const;
+
     int next();
     bool hasNext() const;
 };

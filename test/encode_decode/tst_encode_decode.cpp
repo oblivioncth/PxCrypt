@@ -4,6 +4,7 @@
 // Project Includes
 #include <pxcrypt/encode.h>
 #include <pxcrypt/decode.h>
+#include <pxcrypt/_internal.h>
 
 // Qx Includes
 #include <qx/utility/qx-macros.h>
@@ -67,12 +68,12 @@ void tst_encode_decode::full_data_cycle_data()
         QTest::newRow(C_STR(t.testName)) << t.medium << t.testName << payload << t.psk << t.bpc << t.encType;
     };
 
-    //-Populate test table rows with each case-----------------------------
+    //### Populate test table rows with each case ################################
 
     QImage realWorldImage(":/data/real_world_image.jpg");
     QVERIFY2(!realWorldImage.isNull(), "failed to load real world image.");
 
-    // Relative BPC Tests
+    //-Relative BPC Tests---------------------------------------------------------
     const CycleTest relativeBPC{
         .testName = "Relative BPC - ",
         .medium = realWorldImage,
@@ -106,6 +107,85 @@ void tst_encode_decode::full_data_cycle_data()
         addTestRow(t);
     }
 
+    /* Perfect fit test ---------------------------------------------------------------------
+     *
+     * This test stores data that fits perfectly (i.e. 100% bit capacity used) within an image
+     * as densely as possible. Uses 2 BPC because then the byte size of the data just needs to
+     * be a multiple of 3 to fit perfectly
+     *
+     * Bytes = header + payloadSize + tagSize
+     *       = (3 + 4 + 2 + 4) + 4 + 16
+     *       = (13) + 20
+     *       = 33
+     *
+     * Bits = bytes * 8
+     *      = 264
+     *
+     * Pixels = ceil(bits / (bpc * 3)) + metaPixels
+     *        = ceil(256 / (4 * 3)) + 2
+     *        = ceil(22) + 2
+     *        = 22 + 2
+     *        = 24
+     *
+     * Size: 8 x 3
+     */
+
+    QString pfTag = "Perfect Fit Test"; // 16 char
+    qsizetype pfPayload = 4;
+    QImage pfMedium(8, 3, QImage::Format_RGBA8888);
+    pfMedium.fill(Qt::gray);
+
+    QVERIFY2(_PxCrypt::calculateMaximumPayloadBits(pfMedium.size(), pfTag.size(), 4) == pfPayload * 8, "Perfect fit test payload/image size needs adjustment");
+    CycleTest perfectFitTest{
+        .testName = pfTag,
+        .medium = pfMedium,
+        .payloadSize = pfPayload,
+        .psk = QBAL("\38\xDF\xE1\x4F"),
+        .bpc = 4,
+        .encType = PxCrypt::EncType::Absolute
+    };
+
+    addTestRow(perfectFitTest);
+
+    /* Maximum density test (max capacity at smallest possible size) ----------------------------
+     *
+     * This test stores 1 pixel of payload data at 7 BPC within the smallest possible image
+     *
+     * Bytes = header + payloadSize + tagSize
+     *       = (3 + 4 + 2 + 4) + 2 + 16
+     *       = (13) + 18
+     *       = 31
+     *
+     * Bits = bytes * 8
+     *      = 248
+     *
+     * Pixels = ceil(bits / (bpc * 3)) + metaPixels
+     *        = ceil(248 / (7 * 3)) + 2
+     *        = ceil(11.8095) + 2
+     *        = 12 + 2
+     *        = 14
+     *
+     * Size: 7 x 2
+     */
+    QString denseTag = "Max Density Test"; // 16 char
+    qsizetype densePayload = 2;
+    QImage denseMedium(7, 2, QImage::Format_RGBA8888);
+    denseMedium.fill(Qt::gray);
+
+    QVERIFY2(PxCrypt::calculateMaximumStorage(denseMedium.size(), denseTag.size(), 7) == densePayload, "Max density test payload/image size needs adjustment");
+    CycleTest densityTest{
+        .testName = denseTag,
+        .medium = denseMedium,
+        .payloadSize = densePayload,
+        .psk = QBAL("\x25\xE6\x1A\x83"),
+        .bpc = 7,
+        .encType = PxCrypt::EncType::Absolute
+    };
+
+    addTestRow(densityTest);
+
+    //-"Real world" Max capacity tests------------------------------------------------------
+
     // Max capacity tests
     QString mttR = "Maximum Capacity Test - Relative";
     qsizetype mpsR = PxCrypt::calculateMaximumStorage(realWorldImage.size(), mttR.size(), 7);
@@ -133,7 +213,7 @@ void tst_encode_decode::full_data_cycle_data()
     addTestRow(maxTestR);
     addTestRow(maxTestA);
 
-    // Non-native format test
+    //-Non-native format test----------------------------------------------------------------
     QImage nn(200, 200, QImage::Format_Indexed8);
     nn.fill(Qt::gray);
 
@@ -171,14 +251,9 @@ void tst_encode_decode::full_data_cycle()
     QVERIFY2(!ee.isValid(), C_STR(ee.secondaryInfo()));
 
     // Decode
-    PxCrypt::DecodeSettings ds{
-        .psk = psk,
-        .type = encType
-    };
-
     QByteArray decoded;
     QString tagDecoded;
-    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded, ds, medium);
+    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded, psk, medium);
     QVERIFY2(!de.isValid(), C_STR(de.secondaryInfo()));
 
     // Compare

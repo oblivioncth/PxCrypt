@@ -10,20 +10,10 @@
 // Qx Includes
 #include <qx/core/qx-genericerror.h>
 
-// Project Includes
-#include "pxcrypt/encdec.h"
-
 namespace PxCrypt
 {
-//-Namespace Types ---------------------------------------------------------------------------------------------
-struct DecodeSettings
-{
-    QByteArray psk;
-    EncType type = Absolute;
-};
-
 //-Namespace Functions-------------------------------------------------------------------------------------------------
-PXCRYPT_CODEC_EXPORT Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, DecodeSettings set, const QImage& medium = QImage());
+PXCRYPT_CODEC_EXPORT Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, QByteArrayView psk = QByteArrayView(), const QImage& medium = QImage());
 
 }
 
