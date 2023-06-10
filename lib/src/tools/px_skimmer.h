@@ -1,5 +1,5 @@
-#ifndef PX_SKIMMER
-#define PX_SKIMMER
+#ifndef PX_SKIMMER_H
+#define PX_SKIMMER_H
 
 // Qt Includes
 #include <QImage>
@@ -36,4 +36,4 @@ public:
 /*! @endcond */
 }
 
-#endif // PX_SKIMMER
+#endif // PX_SKIMMER_H

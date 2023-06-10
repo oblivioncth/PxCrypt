@@ -1,5 +1,5 @@
-#ifndef PX_WEAVER
-#define PX_WEAVER
+#ifndef PX_WEAVER_H
+#define PX_WEAVER_H
 
 // Qt Includes
 #include <QImage>
@@ -35,4 +35,4 @@ public:
 /*! @endcond */
 }
 
-#endif // PX_WEAVER
+#endif // PX_WEAVER_H

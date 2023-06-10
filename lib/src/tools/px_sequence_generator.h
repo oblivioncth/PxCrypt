@@ -1,5 +1,5 @@
-#ifndef PX_SEQUENCE_GENERATOR
-#define PX_SEQUENCE_GENERATOR
+#ifndef PX_SEQUENCE_GENERATOR_H
+#define PX_SEQUENCE_GENERATOR_H
 
 // Qt Includes
 #include <QRandomGenerator>
@@ -36,4 +36,4 @@ public:
 /*! @endcond */
 }
 
-#endif // PX_SEQUENCE_GENERATOR
+#endif // PX_SEQUENCE_GENERATOR_H

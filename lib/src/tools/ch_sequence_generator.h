@@ -1,5 +1,5 @@
-#ifndef CH_SEQUENCE_GENERATOR
-#define CH_SEQUENCE_GENERATOR
+#ifndef CH_SEQUENCE_GENERATOR_H
+#define CH_SEQUENCE_GENERATOR_H
 
 // Qt Includes
 #include <QRandomGenerator>
@@ -40,4 +40,4 @@ public:
 /*! @endcond */
 }
 
-#endif // CH_SEQUENCE_GENERATOR
+#endif // CH_SEQUENCE_GENERATOR_H
