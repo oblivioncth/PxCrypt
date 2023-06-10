@@ -8,13 +8,14 @@ ob_add_basic_standard_test(
 )
 
 # Bundle test data
-file(GLOB test_data
+file(GLOB encoded_images
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "data/*.*"
+    "data/encoded_*.png"
 )
 
 qt_add_resources(${test_target} "tst_consistent_rng_data"
     PREFIX "/"
     FILES
-        ${test_data}
+        ${encoded_images}
+        "data/payload.txt"
 )
