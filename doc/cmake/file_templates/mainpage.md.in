@@ -74,12 +74,16 @@ Minimal Example
 #include <pxcrypt/decode.h>
 #include <iostream>
 
+#include <pxcrypt/encode.h>
+#include <pxcrypt/decode.h>
+#include <iostream>
+
 int main()
 {
     //-Prepare for Encoding-------------------------
 
     // Create medium (for demonstration purposes, load a real image instead)
-    QImage medium(1920, 1080, QImage::Format_RGBA8888);
+    QImage medium(1920, 1080, QImage::Format_ARGB32);
     medium.fill(Qt::GlobalColor::red);
 
     // Tag
@@ -102,18 +106,10 @@ int main()
     Qx::GenericError encodeError = PxCrypt::encode(encoded, medium, tagIn, payloadIn, es);
     Q_ASSERT(!encodeError.isValid());
 
-    //-Prepare for Decoding-------------------------
-
-    // Settings
-    PxCrypt::DecodeSettings ds{
-        .psk = presharedKey,
-        .type = PxCrypt::EncType::Relative
-    };
-
     //-Decode-------------------------
     QByteArray payloadOut;
     QString tagOut;
-    Qx::GenericError decodeError = PxCrypt::decode(payloadOut, tagOut, encoded, ds, medium);
+    Qx::GenericError decodeError = PxCrypt::decode(payloadOut, tagOut, encoded, presharedKey, medium);
     Q_ASSERT(!decodeError.isValid());
 
     //-Compare-------------------------
@@ -126,7 +122,7 @@ int main()
 
 Building From Source
 --------------------
-The latest *generally* stable source is available in the 'main' branch of https://github.com/oblivioncth/PxCrypt, while the most up-to-date source can be found in the 'dev' branch.
+The latest generally stable source is available in the 'main' branch of https://github.com/oblivioncth/PxCrypt, while the most up-to-date source can be found in the 'dev' branch.
 
 The requirements for building from Git are the same as for using PxCrypt, with the obvious exception that Doxygen (as well as Graphviz) is also needed to build the documentation.
 

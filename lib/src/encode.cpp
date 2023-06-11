@@ -122,7 +122,7 @@ quint8 calculateOptimalDensity(const QSize& dim, quint16 tagSize, quint32 payloa
  *  @return An error object that describes cause of failure if encoding fails.
  *
  *  @a enc will always use the format `QImage::Format_ARGB32` or `QImage::Format_RGB32`
- *  (depending on if an alpha channel is present) regardless of the format of @a medium.
+ *  (depending on if @a medium has an alpha channel) regardless of the format of @a medium.
  *
  *  @warning
  *  @parblock
