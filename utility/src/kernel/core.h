@@ -56,7 +56,7 @@ private:
 
     // Messages
     static inline const QString MSG_VERSION = QSL(PROJECT_SHORT_NAME " version " PROJECT_VERSION_STR "\n");
-    static inline const QString MSG_FORMATS = QSL(PROJECT_SHORT_NAME " supports the following image formats:\n%1\n");
+    static inline const QString MSG_FORMATS = QSL(PROJECT_SHORT_NAME " supports the following image formats as input:\n%1\n");
 
     // Meta
     static inline const QString NAME = QSL("Core");
