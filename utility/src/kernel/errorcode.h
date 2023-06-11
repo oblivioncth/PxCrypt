@@ -10,7 +10,10 @@ enum ErrorCode{
     ENCODE_FAILED = 100,
 
     // Decode
-    DECODE_FAILED = 200
+    DECODE_FAILED = 200,
+
+    // Measure
+    MEASURE_FAILED = 300
 };
 
 #endif // ERRORCODE_H

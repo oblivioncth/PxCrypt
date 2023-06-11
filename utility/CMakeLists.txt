@@ -18,6 +18,8 @@ ob_add_standard_executable(${APP_TARGET_NAME}
         command/c-encode.cpp
         command/c-decode.h
         command/c-decode.cpp
+        command/c-measure.h
+        command/c-measure.cpp
         command/command.h
         command/command.cpp
         kernel/core.h

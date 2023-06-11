@@ -100,6 +100,20 @@ Requires:
 
 --------------------------------------------------------------------------------
 
+**measure** - Determine how much data can be encoded within a given image
+
+Options:
+ -  **-i | --input:** Path to the image to measure
+ -  **-f | --filename:** Name of potential payload file. Defaults to 'filename.txt'
+
+Requires:
+**-i**
+
+*Notes:*
+A filename is needed since the original name of encoded files are stored within PxCrypt images, and therefore consume some of their capacity.
+
+--------------------------------------------------------------------------------
+
 ## Image Artifacts
 It can be surprising how much information can be encoding within an image little-to-no perceptible distortion.
 
