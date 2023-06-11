@@ -14,7 +14,7 @@ The project also includes a command-line utility through which one can evaluate 
 - Stores 1-7 bits of information per-color-channel, per-pixel
 - Optionally augments data obfuscation with basic encryption via a pre-shared key that scrambles the payload data sequence
 - Optionally encode data in a manner that also requires the original, unaltered image in order to decode the payload (can be combined with a pre-shared key)
-- Always produces a 32-bit RGBA images (saves as a PNG from the command-line)
+- Always produces lossless 24/32-bit images (saves as a PNG from the command-line)
 
 ## Library
 Detailed documentation of this library, facilitated by Doxygen, is available at: https://oblivioncth.github.io/PxCrypt/
@@ -91,7 +91,6 @@ Options:
  -  **-o | --output:** Directory to place the decoded output. Defaults to the input path's directory
  - **-m | --medium:** Path to the original image used to encode the data (ignored for encoding types other than 'Relative')
  - **-k | --key:** The key for images protected with one
- - **-t | --type:** "The type of encoding that was used to create the encoded input (defaults to Absolute)
 
 Requires:
 **-i**
