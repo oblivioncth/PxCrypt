@@ -22,7 +22,7 @@ CEncode::CEncode(Core& coreRef) : Command(coreRef)
 
 //-Instance Functions-------------------------------------------------------------
 //Protected:
-const QList<const QCommandLineOption*> CEncode::options() { return CL_OPTIONS_SPECIFIC + Command::options(); }
+const QList<const QCommandLineOption*> CEncode::options() { return Command::options() + CL_OPTIONS_SPECIFIC; }
 const QSet<const QCommandLineOption*> CEncode::requiredOptions() { return CL_OPTIONS_REQUIRED; }
 const QString CEncode::name() { return NAME; }
 

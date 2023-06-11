@@ -22,7 +22,7 @@ CDecode::CDecode(Core& coreRef) : Command(coreRef)
 
 //-Instance Functions-------------------------------------------------------------
 //Protected:
-const QList<const QCommandLineOption*> CDecode::options() { return CL_OPTIONS_SPECIFIC + Command::options(); }
+const QList<const QCommandLineOption*> CDecode::options() { return Command::options() + CL_OPTIONS_SPECIFIC; }
 const QSet<const QCommandLineOption*> CDecode::requiredOptions() { return CL_OPTIONS_REQUIRED; }
 const QString CDecode::name() { return NAME; }
 
