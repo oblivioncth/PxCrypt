@@ -4,6 +4,8 @@ PxCrypt is a C++ library that facilitates a form of digital visual steganography
 
 The project also includes a command-line utility through which one can evaluate the library's functionality, or simply encode/decode images as an end-user.
 
+Overall an images capacity for encoding is determined by its dimensions. The larger the row and column count, the more data can be stored.
+
 [![Dev Builds](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml/badge.svg?branch=dev)](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml)
 
 ## Features
@@ -14,7 +16,7 @@ The project also includes a command-line utility through which one can evaluate 
 - Stores 1-7 bits of information per-color-channel, per-pixel
 - Optionally augments data obfuscation with basic encryption via a pre-shared key that scrambles the payload data sequence
 - Optionally encode data in a manner that also requires the original, unaltered image in order to decode the payload (can be combined with a pre-shared key)
-- Always produces lossless 24/32-bit images (saves as a PNG from the command-line)
+- Always produces a 32-bit RGBA images (saves as a PNG from the command-line)
 
 ## Library
 Detailed documentation of this library, facilitated by Doxygen, is available at: https://oblivioncth.github.io/PxCrypt/
@@ -91,11 +93,35 @@ Options:
  -  **-o | --output:** Directory to place the decoded output. Defaults to the input path's directory
  - **-m | --medium:** Path to the original image used to encode the data (ignored for encoding types other than 'Relative')
  - **-k | --key:** The key for images protected with one
+ - **-t | --type:** "The type of encoding that was used to create the encoded input (defaults to Absolute)
 
 Requires:
 **-i**
 
 --------------------------------------------------------------------------------
+
+## Image Artifacts
+It can be surprising how much information can be encoding within an image little-to-no perceptible distortion.
+
+While the degree to which an image becomes visually distorted when used as an encoding medium is partially influenced by the content of the payload, it is largely a function of how densely the payload is packed within the image.
+
+In this regard there are two factors: How much data is allocated per channel, and how many pixels are allocated for encoded data.
+
+The first metric, known as bits-per-channel, or BPC (which is set with the option **-d** of the utility), determines the maximum severity distortion of a single pixel, while the second affects the overall proximity of distortion artifacts. 
+
+The following images demonstrate the effect the encoding process has on an image at various BPC levels and overall capacity usage (i.e. both factors), using the Absolute encoding type:
+
+![Distortion at 1 BPC & 20%, 50%, 80% Capacity](https://i.imgur.com/AoMad91.png)
+BPC 1 - 20% Capacity (Left), 50% Capacity (Center), 80% Capacity (Right)
+
+![Distortion at 1 BPC & 20%, 50%, 80% Capacity](https://i.imgur.com/rrt7TMb.png)
+BPC 3 - 20% Capacity (Left), 50% Capacity (Center), 80% Capacity (Right)
+
+![Distortion at 1 BPC & 20%, 50%, 80% Capacity](https://i.imgur.com/Jv8wtBq.png)
+BPC 5 - 20% Capacity (Left), 50% Capacity (Center), 80% Capacity (Right)
+
+![Distortion at 1 BPC & 20%, 50%, 80% Capacity](https://i.imgur.com/waJEUsd.png)
+BPC 7 - 20% Capacity (Left), 50% Capacity (Center), 80% Capacity (Right)
 
 ## Source
 
