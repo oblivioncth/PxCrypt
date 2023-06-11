@@ -34,7 +34,8 @@ namespace
     const QString ERR_MISSING_MEDIUM = QSL("The encoded image requires a medium to be decoded but none was provided.");
     const QString ERR_DIMMENSION_MISTMATCH = QSL("The required medium image has different dimmensions than the encoded image.");
     const QString ERR_NOT_LARGE_ENOUGH = QSL("The provided image is not large enough to be an encoded image.");
-    const QString ERR_NOT_MAGIC = QSL("The provided image is not encoded or the password/medium are incorrect.");
+    const QString ERR_INVALID_META = QSL("The provided image is not encoded.");
+    const QString ERR_INVALID_HEADER = QSL("The provided image is not encoded or the password/medium are incorrect.");
     const QString ERR_LENGTH_MISMATCH = QSL("The encoded image's header indicates it contains more data than possible.");
     const QString ERR_UNEXPECTED_END = QSL("All pixels were skimmed before the expected payload size was reached.");
     const QString ERR_CHECKSUM_MISMATCH = QSL("The payload's checksum did not match the expected value.");
@@ -88,11 +89,11 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, QByteA
 
     // Ensure BPC is valid
     if(pAccess.bpc() < 1 || pAccess.bpc() > 7)
-        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_MAGIC);
+        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_META);
 
     // Ensure type is valid
     if(!magic_enum::enum_contains(pAccess.type()))
-        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_MAGIC);
+        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_META);
 
     // Ensure at least header can fit
     if(!canFitHeader(encStd.size(), pAccess.bpc()))
@@ -136,7 +137,7 @@ Qx::GenericError decode(QByteArray& dec, QString& tag, const QImage& enc, QByteA
 
     // Ensure header is valid
     if(hMagic != MAGIC_NUM)
-        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_MAGIC);
+        return Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_HEADER);
 
     quint64 maxStorage = calcMaxPayloadBytes(encStd.size(), hTagSize, pAccess.bpc());
     if(hPayloadSize > maxStorage)
