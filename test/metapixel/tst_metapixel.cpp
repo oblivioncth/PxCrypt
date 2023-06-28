@@ -2,8 +2,8 @@
 #include <QtTest>
 
 // Project Includes
-#include <pxcrypt/encode.h>
-#include <pxcrypt/decode.h>
+#include <pxcrypt/encoder.h>
+#include <pxcrypt/decoder.h>
 
 // Qx Includes
 #include <qx/utility/qx-macros.h>
@@ -49,9 +49,9 @@ void tst_metapixel::invalid_meta_data()
     QString metaError = "The provided image is not encoded.";
     QDir data(":/data");
     QTest::newRow("invalid_bpc") << data.absoluteFilePath("invalid_bpc.png") << metaError;
-    QTest::newRow("invalid_enc_type") << data.absoluteFilePath("invalid_enc_type.png") << metaError;
+    QTest::newRow("invalid_encoding") << data.absoluteFilePath("invalid_encoding.png") << metaError;
 
-    // NOTE: Current invalid enc type test uses value of 7, if that value ends up occupied then this
+    // NOTE: Current invalid encoding test uses value of 7, if that value ends up occupied then this
     // needs to change
 }
 
@@ -66,12 +66,11 @@ void tst_metapixel::invalid_meta()
     QVERIFY(!encoded.isNull());
 
     // Decode
-    QByteArray decoded;
-    QString tagDecoded;
+    PxCrypt::Decoder dec;
 
-    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded);
-    QVERIFY2(de.isValid(), "Image is not purposely flawed correctly");
-    QCOMPARE(de.secondaryInfo(), expectedError);
+    dec.decode(encoded);
+    QVERIFY2(dec.hasError(), "Image is not purposely flawed correctly");
+    QCOMPARE(dec.error().secondaryInfo(), expectedError);
 }
 
 QTEST_APPLESS_MAIN(tst_metapixel)

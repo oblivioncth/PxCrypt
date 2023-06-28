@@ -13,15 +13,13 @@ class CDecode : public Command
 private:
     // Messages
     static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Decode\n--------------");
-    static inline const QString MSG_ENCODING_TYPE = QSL("Encoding Type: %1");
+    static inline const QString MSG_ENCODING_TYPE = QSL("Encoding: %1");
     static inline const QString MSG_DECODING = QSL("Decoding...");
     static inline const QString MSG_PAYLOAD_SIZE = QSL("Decoded %1 KiB");
     static inline const QString MSG_TAG = QSL("Data tag: %1");
     static inline const QString MSG_DATA_SAVED = QSL("Wrote decoded data to '%1'");
 
     // Error Messages
-    static inline const QString ERR_INVALID_ENC_TYPE = QSL("Invalid encoding type.");
-    static inline const QString ERR_MISSING_MEDIUM = QSL("A medium is required to decode Relative type images.");
     static inline const QString ERR_MEDIUM_READ_FAILED = QSL("Failed reading the medium image.");
     static inline const QString ERR_INPUT_READ_FAILED = QSL("Failed reading the input encoded image.");
 

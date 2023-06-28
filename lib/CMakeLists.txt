@@ -6,7 +6,7 @@ ob_add_standard_library(${LIB_TARGET_NAME}
     EXPORT_HEADER
         PATH "${PROJECT_NAMESPACE_LC}/${PROJECT_NAMESPACE_LC}_${LIB_ALIAS_NAME_LC}_export.h"
     HEADERS_PRIVATE
-        encdec_p.h
+        encdec.h
         tools/bit_chunker.h
         tools/byte_compositer.h
         tools/ch_sequence_generator.h
@@ -19,14 +19,13 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         COMMON "${PROJECT_NAMESPACE_LC}"
         FILES
             _internal.h
-            decode.h
-            encdec.h
-            encode.h
+            decoder.h
+            encoder.h
     IMPLEMENTATION
         _internal.cpp
-        decode.cpp
-        encode.cpp
-        encdec_p.cpp
+        decoder.cpp
+        encoder.cpp
+        encdec.cpp
         tools/bit_chunker.cpp
         tools/byte_compositer.cpp
         tools/ch_sequence_generator.cpp
@@ -35,8 +34,6 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         tools/px_sequence_generator.cpp
         tools/px_skimmer.cpp
         tools/px_weaver.cpp
-    DOC_ONLY
-        encdec.dox
     LINKS
         PRIVATE
             $<BUILD_INTERFACE:magic_enum::magic_enum>

@@ -50,7 +50,7 @@ jobs:
         os: windows
         credentials: ${{ secrets.qt_ffynnon_cred }}
     - name: Install Graphviz
-      run: choco install graphviz  
+      run: choco install graphviz
     - name: Checkout PxCrypt
       uses: actions/checkout@v3
       with:

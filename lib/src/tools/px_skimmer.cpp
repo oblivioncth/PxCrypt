@@ -16,7 +16,7 @@ PxSkimmer::PxSkimmer(PxAccessRead* surfaceAccess, const QImage* medium) :
     mRefPixels(!medium ? nullptr : reinterpret_cast<const QRgb*>(medium->bits())),
     mMask((0b1 << surfaceAccess->bpc()) - 1)
 {
-    if(mSurfaceAccess->type() == EncType::Relative)
+    if(mSurfaceAccess->strat() == EncStrat::Displaced)
         Q_ASSERT(medium);
 }
 
@@ -55,18 +55,18 @@ quint8 PxSkimmer::next()
 
     quint8 chunk;
 
-    switch(mSurfaceAccess->type())
+    switch(mSurfaceAccess->strat())
     {
-        case EncType::Absolute:
+        case EncStrat::Direct:
             chunk = mSurfaceAccess->channelValue() & mMask;
             break;
 
-        case EncType::Relative:
+        case EncStrat::Displaced:
             chunk = Qx::distance(referenceChannelValue(), mSurfaceAccess->channelValue()) & mMask;
             break;
 
         default:
-            qCritical("unhandled encoding type.");
+            qCritical("unhandled encoding strat.");
     }
 
     mSurfaceAccess->nextChannel();

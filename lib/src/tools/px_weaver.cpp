@@ -36,16 +36,16 @@ void PxWeaver::weave(quint8 chunk)
 
     Channel ch = mCanvasAccess->channel();
 
-    switch(mCanvasAccess->type())
+    switch(mCanvasAccess->strat())
     {
-        case EncType::Absolute:
+        case EncStrat::Direct:
         {
             quint8& val = mBuffer[ch];
             val = (val & mClearMask) | chunk;
             break;
         }
 
-        case EncType::Relative:
+        case EncStrat::Displaced:
         {
             quint8& val = mBuffer[ch];
             if(val > 127)
@@ -56,7 +56,7 @@ void PxWeaver::weave(quint8 chunk)
         }
 
         default:
-            qCritical("unhandled encoding type.");
+            qCritical("unhandled encoding strat.");
     }
 
     // Flush if going to next pixel

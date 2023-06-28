@@ -1,5 +1,5 @@
 // Unit Includes
-#include "encdec_p.h"
+#include "encdec.h"
 
 // Qt Includes
 #include <QSize>

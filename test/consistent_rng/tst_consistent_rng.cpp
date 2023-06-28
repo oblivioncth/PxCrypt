@@ -2,8 +2,8 @@
 #include <QtTest>
 
 // Project Includes
-#include <pxcrypt/encode.h>
-#include <pxcrypt/decode.h>
+#include <pxcrypt/encoder.h>
+#include <pxcrypt/decoder.h>
 
 // Qx Includes
 #include <qx/utility/qx-macros.h>
@@ -38,7 +38,7 @@ private slots:
 tst_consistent_rng::tst_consistent_rng()
 {
     // Load payload
-    mPayloadName = QSL("payload.txt");
+    mPayloadName = QSL("payload.bin");
     QFile payloadFile(":/data/" + mPayloadName);
     payloadFile.open(QIODevice::ReadOnly);
     mPayload = payloadFile.readAll();
@@ -70,15 +70,14 @@ void tst_consistent_rng::multi_platform_decode()
     QVERIFY(!encoded.isNull());
 
     // Decode
-    QByteArray decoded;
-    QString tagDecoded;
+    PxCrypt::Decoder dec;
 
-    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded);
-    QVERIFY2(!de.isValid(), C_STR(de.secondaryInfo()));
+    QByteArray decoded = dec.decode(encoded);
+    QVERIFY2(!dec.hasError(), C_STR(dec.error().secondaryInfo()));
 
     // Compare
-    QCOMPARE(mPayload, decoded);
-    QCOMPARE(mPayloadName, tagDecoded);
+    QCOMPARE(decoded, mPayload);
+    QCOMPARE(dec.tag(), mPayloadName);
 }
 
 QTEST_APPLESS_MAIN(tst_consistent_rng)

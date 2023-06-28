@@ -8,9 +8,6 @@
 // Qx Includes
 #include <qx/io/qx-common-io.h>
 
-// Project Includes
-#include "pxcrypt/encode.h"
-
 //===============================================================================================================
 // CEncode
 //===============================================================================================================
@@ -49,19 +46,19 @@ ErrorCode CEncode::process(const QStringList& commandLine)
         return ErrorCode::INVALID_ARGS;
     }
 
-    // Evaluate type
-    PxCrypt::EncType aType;
+    // Evaluate encoding type
+    PxCrypt::Encoder::Encoding aEncoding;
     QString typeStr = mParser.value(CL_OPTION_TYPE);
 
-    auto potentialType = magic_enum::enum_cast<PxCrypt::EncType>(typeStr.toStdString());
+    auto potentialType = magic_enum::enum_cast<PxCrypt::Encoder::Encoding>(typeStr.toStdString());
     if(potentialType.has_value())
-        aType = potentialType.value();
+        aEncoding = potentialType.value();
     else
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, Core::ERR_INVALID_PARAM, ERR_INVALID_ENC_TYPE));
+        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, Core::ERR_INVALID_PARAM, ERR_INVALID_ENCODING));
         return ErrorCode::INVALID_ARGS;
     }
-    mCore.printMessage(NAME, MSG_ENCODING_TYPE.arg(ENUM_NAME(aType)));
+    mCore.printMessage(NAME, MSG_ENCODING.arg(ENUM_NAME(aEncoding)));
 
     // Evaluate BPC
     quint8 aBpc;
@@ -116,23 +113,22 @@ ErrorCode CEncode::process(const QStringList& commandLine)
     mCore.printMessage(NAME, MSG_MEDIUM_DIM.arg(mediumSize.width()).arg(mediumSize.height()));
 
     // Encode
-    PxCrypt::EncodeSettings es{
-        .bpc = aBpc,
-        .psk = aKey,
-        .type = aType
-    };
-    QImage encoded;
+    PxCrypt::Encoder encoder;
+    encoder.setBpc(aBpc);
+    encoder.setPresharedKey(aKey);
+    encoder.setEncoding(aEncoding);
+    encoder.setTag(aTag);
 
     mCore.printMessage(NAME, MSG_ENCODING);
-    Qx::GenericError encError = PxCrypt::encode(encoded, aMedium, aTag, aPayload, es);
-    if(encError.isValid())
+    QImage encoded = encoder.encode(aPayload, aMedium);
+    if(encoder.hasError())
     {
-        mCore.printError(NAME, encError);
+        mCore.printError(NAME, encoder.error());
         return ErrorCode::ENCODE_FAILED;
     }
 
     // Print density (largely for when set to auto)
-    mCore.printMessage(NAME, MSG_BPC.arg(es.bpc));
+    mCore.printMessage(NAME, MSG_BPC.arg(encoder.bpc()));
 
     // Write encoded image
     QString outputPath;

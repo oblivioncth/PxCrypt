@@ -6,7 +6,7 @@
 #include <QImageReader>
 
 // Project Includes
-#include "pxcrypt/encode.h"
+#include "pxcrypt/encoder.h"
 
 //===============================================================================================================
 // CMeasure
@@ -66,7 +66,7 @@ ErrorCode CMeasure::process(const QStringList& commandLine)
     QList<quint64> capacities(7);
 
     for(quint8 bpc = 1; bpc <= 7; bpc++)
-        capacities[bpc - 1] = PxCrypt::calculateMaximumStorage(imageSize, filename.size(), bpc);
+        capacities[bpc - 1] = PxCrypt::Encoder::calculateMaximumStorage(imageSize, filename.size(), bpc);
 
     // Check if image can't fit anything
     if(*std::max_element(capacities.cbegin(), capacities.cend()) == 0)

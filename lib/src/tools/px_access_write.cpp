@@ -17,10 +17,10 @@ namespace PxCrypt
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxAccessWrite::PxAccessWrite(QImage* image, QByteArrayView seed, quint8 bpc, EncType type) :
+PxAccessWrite::PxAccessWrite(QImage* image, QByteArrayView seed, quint8 bpc, EncStrat strat) :
     mPixels(reinterpret_cast<QRgb*>(image->bits())),
     mBpc(bpc),
-    mType(type),
+    mStrat(strat),
     mPxSequence(image->size(), seed),
     mChSequence(seed),
     mCurrentIndex(mPxSequence.next()),
@@ -73,23 +73,20 @@ void PxAccessWrite::writeMetaValue(quint8 value)
 
 void PxAccessWrite::writeMetaPixels()
 {
-    /* This writes BPC and EncType to the canvas in sequence as normal, but with at
+    /* This writes BPC and EncStrat to the canvas in sequence as normal, but with at
      * a temporary standard density of 1 bpp.
      *
-     * This assumes that no EncType is > 7
+     * This assumes that no EncStrat is > 7
      */
-    //static_assert(std::max_element(magic_enum::enum_values<EncType>()) <= 7, "");
-    static_assert([]{
-       auto vals = magic_enum::enum_values<EncType>();
-       return *std::max_element(vals.cbegin(), vals.cend()) <= 7;
-    },
-    "EncType must have no members with a value > 7 for this to work!");
+    constexpr auto encStrats = magic_enum::enum_values<EncStrat>();
+    static_assert(*std::max_element(encStrats.cbegin(), encStrats.cend()) <= 7,
+    "EncStrat must have no members with a value > 7 for this to work!");
 
     // Set BPC on first pixel
     writeMetaValue(mBpc);
 
-    // Set encoding type on second pixel
-    writeMetaValue(static_cast<quint8>(mType));
+    // Set encoding strat on second pixel
+    writeMetaValue(static_cast<quint8>(mStrat));
 
     // Should be at 3rd pixel
     Q_ASSERT(mPxSequence.pixelCoverage() == 3);
@@ -97,7 +94,7 @@ void PxAccessWrite::writeMetaPixels()
 
 //Public:
 quint8 PxAccessWrite::bpc() const { return mBpc; }
-EncType PxAccessWrite::type() const { return mType; }
+EncStrat PxAccessWrite::strat() const { return mStrat; }
 
 bool PxAccessWrite::hasNextPixel() const { return mPxSequence.hasNext(); }
 bool PxAccessWrite::pixelExhausted() const { return mChSequence.pixelExhausted(); }

@@ -70,8 +70,8 @@ void PxAccessRead::readMetaPixels()
     // Read BPC from first pixel
     mBpc = readMetaValue();
 
-    // Read type from second pixel
-    mType = static_cast<EncType>(readMetaValue());
+    // Read strat from second pixel
+    mStrat = static_cast<EncStrat>(readMetaValue());
 
     // Should be at 3rd pixel
     Q_ASSERT(mPxSequence.pixelCoverage() == 3);
@@ -79,7 +79,7 @@ void PxAccessRead::readMetaPixels()
 
 //Public:
 quint8 PxAccessRead::bpc() const { return mBpc; }
-EncType PxAccessRead::type() const { return mType; }
+EncStrat PxAccessRead::strat() const { return mStrat; }
 
 bool PxAccessRead::hasNextPixel() const { return mPxSequence.hasNext(); }
 bool PxAccessRead::pixelExhausted() const { return mChSequence.pixelExhausted(); }

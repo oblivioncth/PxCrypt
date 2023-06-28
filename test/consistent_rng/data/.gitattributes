@@ -1,0 +1,2 @@
+# Except payload.bin from line ending conversion
+payload.bin -text

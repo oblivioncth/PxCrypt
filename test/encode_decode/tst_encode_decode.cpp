@@ -2,8 +2,8 @@
 #include <QtTest>
 
 // Project Includes
-#include <pxcrypt/encode.h>
-#include <pxcrypt/decode.h>
+#include <pxcrypt/encoder.h>
+#include <pxcrypt/decoder.h>
 #include <pxcrypt/_internal.h>
 
 // Qx Includes
@@ -43,7 +43,7 @@ void tst_encode_decode::full_data_cycle_data()
     QTest::addColumn<QByteArray>("payload");
     QTest::addColumn<QByteArray>("psk");
     QTest::addColumn<quint8>("bpc");
-    QTest::addColumn<PxCrypt::EncType>("encType");
+    QTest::addColumn<PxCrypt::Encoder::Encoding>("encoding");
 
     // Helper
     struct CycleTest
@@ -53,7 +53,7 @@ void tst_encode_decode::full_data_cycle_data()
         qsizetype payloadSize;
         QByteArray psk;
         quint8 bpc;
-        PxCrypt::EncType encType;
+        PxCrypt::Encoder::Encoding encoding;
     };
 
     auto addTestRow = [&](const CycleTest& t)
@@ -65,7 +65,7 @@ void tst_encode_decode::full_data_cycle_data()
         QByteArray payload(t.payloadSize, Qt::Uninitialized);
         std::generate(payload.begin(), payload.end(), [&rng]{ return rng.generate(); });
 
-        QTest::newRow(C_STR(t.testName)) << t.medium << t.testName << payload << t.psk << t.bpc << t.encType;
+        QTest::newRow(C_STR(t.testName)) << t.medium << t.testName << payload << t.psk << t.bpc << t.encoding;
     };
 
     //### Populate test table rows with each case ################################
@@ -79,7 +79,7 @@ void tst_encode_decode::full_data_cycle_data()
         .medium = realWorldImage,
         .payloadSize = 1000,
         .psk = QBAL("\x49\xAE\xC4\xDE"),
-        .encType = PxCrypt::EncType::Relative
+        .encoding = PxCrypt::Encoder::Relative
     };
 
     for(quint8 i = 0; i < 8; i++)
@@ -96,7 +96,7 @@ void tst_encode_decode::full_data_cycle_data()
         .medium = realWorldImage,
         .payloadSize = 1000,
         .psk = QBAL("\x20\x4F\xA9\xCA"),
-        .encType = PxCrypt::EncType::Absolute
+        .encoding = PxCrypt::Encoder::Absolute
     };
 
     for(quint8 i = 0; i < 8; i++)
@@ -142,7 +142,7 @@ void tst_encode_decode::full_data_cycle_data()
         .payloadSize = pfPayload,
         .psk = QBAL("\38\xDF\xE1\x4F"),
         .bpc = 4,
-        .encType = PxCrypt::EncType::Absolute
+        .encoding = PxCrypt::Encoder::Absolute
     };
 
     addTestRow(perfectFitTest);
@@ -172,14 +172,14 @@ void tst_encode_decode::full_data_cycle_data()
     QImage denseMedium(7, 2, QImage::Format_ARGB32);
     denseMedium.fill(Qt::gray);
 
-    QVERIFY2(PxCrypt::calculateMaximumStorage(denseMedium.size(), denseTag.size(), 7) == densePayload, "Max density test payload/image size needs adjustment");
+    QVERIFY2(PxCrypt::Encoder::calculateMaximumStorage(denseMedium.size(), denseTag.size(), 7) == densePayload, "Max density test payload/image size needs adjustment");
     CycleTest densityTest{
         .testName = denseTag,
         .medium = denseMedium,
         .payloadSize = densePayload,
         .psk = QBAL("\x25\xE6\x1A\x83"),
         .bpc = 7,
-        .encType = PxCrypt::EncType::Absolute
+        .encoding = PxCrypt::Encoder::Absolute
     };
 
     addTestRow(densityTest);
@@ -188,9 +188,9 @@ void tst_encode_decode::full_data_cycle_data()
 
     // Max capacity tests
     QString mttR = "Maximum Capacity Test - Relative";
-    qsizetype mpsR = PxCrypt::calculateMaximumStorage(realWorldImage.size(), mttR.size(), 7);
+    qsizetype mpsR = PxCrypt::Encoder::calculateMaximumStorage(realWorldImage.size(), mttR.size(), 7);
     QString mttA = "Maximum Capacity Test - Absolute";
-    qsizetype mpsA = PxCrypt::calculateMaximumStorage(realWorldImage.size(), mttA.size(), 7);
+    qsizetype mpsA = PxCrypt::Encoder::calculateMaximumStorage(realWorldImage.size(), mttA.size(), 7);
 
     CycleTest maxTestR{
         .testName = mttR,
@@ -198,7 +198,7 @@ void tst_encode_decode::full_data_cycle_data()
         .payloadSize = mpsR,
         .psk = QBAL("\x88\x39\xAB\xF7"),
         .bpc = 7,
-        .encType = PxCrypt::EncType::Relative
+        .encoding = PxCrypt::Encoder::Relative
     };
 
     CycleTest maxTestA{
@@ -207,7 +207,7 @@ void tst_encode_decode::full_data_cycle_data()
         .payloadSize = mpsA,
         .psk = QBAL("\x69\x3D\xE4\xB0"),
         .bpc = 7,
-        .encType = PxCrypt::EncType::Absolute
+        .encoding = PxCrypt::Encoder::Absolute
     };
 
     addTestRow(maxTestR);
@@ -223,7 +223,7 @@ void tst_encode_decode::full_data_cycle_data()
         .payloadSize = 1000,
         .psk = QBAL("\x50\x60\x70\x80"),
         .bpc = 1,
-        .encType = PxCrypt::EncType::Relative
+        .encoding = PxCrypt::Encoder::Relative
     };
 
     addTestRow(nonNativeTest);
@@ -237,28 +237,28 @@ void tst_encode_decode::full_data_cycle()
     QFETCH(QByteArray, payload);
     QFETCH(QByteArray, psk);
     QFETCH(quint8, bpc);
-    QFETCH(PxCrypt::EncType, encType);
+    QFETCH(PxCrypt::Encoder::Encoding, encoding);
 
     // Encode
-    PxCrypt::EncodeSettings es{
-        .bpc = bpc,
-        .psk = psk,
-        .type = encType
-    };
+    PxCrypt::Encoder enc;
+    enc.setBpc(bpc);
+    enc.setPresharedKey(psk);
+    enc.setEncoding(encoding);
+    enc.setTag(tag);
 
-    QImage encoded;
-    Qx::GenericError ee = PxCrypt::encode(encoded, medium, tag, payload, es);
-    QVERIFY2(!ee.isValid(), C_STR(ee.secondaryInfo()));
+    QImage encoded = enc.encode(payload, medium);
+    QVERIFY2(!enc.hasError(), C_STR(enc.error().secondaryInfo()));
 
     // Decode
-    QByteArray decoded;
-    QString tagDecoded;
-    Qx::GenericError de = PxCrypt::decode(decoded, tagDecoded, encoded, psk, medium);
-    QVERIFY2(!de.isValid(), C_STR(de.secondaryInfo()));
+    PxCrypt::Decoder dec;
+    dec.setPresharedKey(psk);
+
+    QByteArray decoded = dec.decode(encoded, medium);
+    QVERIFY2(!dec.hasError(), C_STR(dec.error().secondaryInfo()));
 
     // Compare
-    QCOMPARE(payload, decoded);
-    QCOMPARE(tag, tagDecoded);
+    QCOMPARE(decoded, payload);
+    QCOMPARE(dec.tag(), tag);
 }
 
 QTEST_APPLESS_MAIN(tst_encode_decode)

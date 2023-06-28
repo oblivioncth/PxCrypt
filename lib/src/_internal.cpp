@@ -2,7 +2,7 @@
 #include "pxcrypt/_internal.h"
 
 // Project Includes
-#include "encdec_p.h"
+#include "encdec.h"
 
 namespace _PxCrypt
 {
