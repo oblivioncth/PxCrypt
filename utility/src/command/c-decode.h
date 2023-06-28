@@ -7,10 +7,56 @@
 // Project Includes
 #include "command.h"
 
+class QX_ERROR_TYPE(CDecodeError, "CDecodeError", 3001)
+{
+    friend class CDecode;
+
+//-Class Enums--------------------------------------------------------------------------------------------------------
+public:
+    enum Type
+    {
+        NoError = 0,
+        FailedReadingMedium = 1,
+        FailedReadingInput = 2
+    };
+
+//-Instance Variables------------------------------------------------------------------------------------------------
+private:
+    Type mType;
+    QString mGeneral;
+    QString mSpecific;
+
+//-Constructor----------------------------------------------------------------------------------------------------------
+public:
+    CDecodeError();
+
+private:
+    CDecodeError(Type type, const QString& gen);
+
+//-Instance Functions---------------------------------------------------------------------------------------------------
+private:
+    quint32 deriveValue() const override;
+    QString derivePrimary() const override;
+    QString deriveSecondary() const override;
+
+    CDecodeError wSpecific(const QString& spec) const;
+
+public:
+    bool isValid() const;
+    Type type() const;
+    QString errorString() const;
+};
+
 class CDecode : public Command
 {
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
+    // Error
+    static inline const CDecodeError ERR_MEDIUM_READ_FAILED =
+            CDecodeError(CDecodeError::FailedReadingMedium, "Failed reading the medium image.");
+    static inline const CDecodeError ERR_INPUT_READ_FAILED =
+            CDecodeError(CDecodeError::FailedReadingInput, "Failed reading the input encoded image.");
+
     // Messages
     static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Decode\n--------------");
     static inline const QString MSG_ENCODING_TYPE = QSL("Encoding: %1");
@@ -18,10 +64,6 @@ private:
     static inline const QString MSG_PAYLOAD_SIZE = QSL("Decoded %1 KiB");
     static inline const QString MSG_TAG = QSL("Data tag: %1");
     static inline const QString MSG_DATA_SAVED = QSL("Wrote decoded data to '%1'");
-
-    // Error Messages
-    static inline const QString ERR_MEDIUM_READ_FAILED = QSL("Failed reading the medium image.");
-    static inline const QString ERR_INPUT_READ_FAILED = QSL("Failed reading the input encoded image.");
 
     // Command line option strings
     static inline const QString CL_OPT_INPUT_S_NAME = QSL("i");
@@ -67,7 +109,7 @@ protected:
     const QString name() override;
 
 public:
-    ErrorCode process(const QStringList& commandLine) override;
+    Qx::Error process(const QStringList& commandLine) override;
 };
 REGISTER_COMMAND(CDecode::NAME, CDecode, CDecode::DESCRIPTION);
 

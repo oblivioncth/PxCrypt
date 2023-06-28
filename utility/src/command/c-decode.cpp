@@ -12,6 +12,39 @@
 #include "pxcrypt/decoder.h"
 
 //===============================================================================================================
+// CDecodeError
+//===============================================================================================================
+
+//-Constructor-----------------------------------------------------------------------------------------------------
+//Public:
+CDecodeError::CDecodeError() :
+    mType(NoError)
+{}
+
+//Private:
+CDecodeError::CDecodeError(Type type, const QString& gen) :
+    mType(type),
+    mGeneral(gen)
+{}
+
+//-Instance Functions----------------------------------------------------------------------------------------------
+//Private:
+quint32 CDecodeError::deriveValue() const { return static_cast<quint32>(mType); }
+QString CDecodeError::derivePrimary() const { return mGeneral; }
+QString CDecodeError::deriveSecondary() const { return mSpecific; }
+CDecodeError CDecodeError::wSpecific(const QString& spec) const
+{
+    CDecodeError s = *this;
+    s.mSpecific = spec;
+    return s;
+}
+
+//Public:
+bool CDecodeError::isValid() const { return mType != NoError; }
+CDecodeError::Type CDecodeError::type() const { return mType; }
+QString CDecodeError::errorString() const { return mGeneral + " " + mSpecific; }
+
+//===============================================================================================================
 // CDecode
 //===============================================================================================================
 
@@ -27,26 +60,26 @@ const QSet<const QCommandLineOption*> CDecode::requiredOptions() { return CL_OPT
 const QString CDecode::name() { return NAME; }
 
 //Public:
-ErrorCode CDecode::process(const QStringList& commandLine)
+Qx::Error CDecode::process(const QStringList& commandLine)
 {
     //-Preparation---------------------------------------
     mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
 
     // Parse and check for valid arguments
-    ErrorCode parseError = parse(commandLine);
-    if(parseError)
+    CommandError parseError = parse(commandLine);
+    if(parseError.isValid())
         return parseError;
 
     // Handle standard options
     if(checkStandardOptions())
-        return ErrorCode::NO_ERR;
+        return CDecodeError();
 
     // Check for required options
-    Qx::GenericError reqCheck = checkRequiredOptions();
+    CommandError reqCheck = checkRequiredOptions();
     if(reqCheck.isValid())
     {
         mCore.printError(NAME, reqCheck);
-        return ErrorCode::INVALID_ARGS;
+        return reqCheck;
     }
 
     // Get key
@@ -67,8 +100,9 @@ ErrorCode CDecode::process(const QStringList& commandLine)
         imgReader.setFileName(mediumPath);
         if(!imgReader.read(&aMedium))
         {
-            mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_MEDIUM_READ_FAILED, imgReader.errorString()));
-            return ErrorCode::ENCODE_FAILED;
+            CDecodeError err = ERR_MEDIUM_READ_FAILED.wSpecific(imgReader.errorString());
+            mCore.printError(NAME, err);
+            return err;
         }
     }
 
@@ -77,8 +111,9 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     imgReader.setFileName(encodedPath);
     if(!imgReader.read(&aEncoded))
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_MEDIUM_READ_FAILED, imgReader.errorString()));
-        return ErrorCode::ENCODE_FAILED;
+        CDecodeError err = ERR_INPUT_READ_FAILED.wSpecific(imgReader.errorString());
+        mCore.printError(NAME, err);
+        return err;
     }
 
     // Decode
@@ -89,8 +124,9 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     QByteArray decoded = decoder.decode(aEncoded, aMedium);
     if(decoder.hasError())
     {
-        mCore.printError(NAME, decoder.error());
-        return ErrorCode::ENCODE_FAILED;
+        PxCrypt::DecodeError err = decoder.error();
+        mCore.printError(NAME, err);
+        return err;
     }
 
     mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(decoded.size()/1024.0, 0, 'f', 2));
@@ -103,10 +139,10 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     Qx::IoOpReport wr = Qx::writeBytesToFile(outputFile, decoded, Qx::WriteMode::Truncate, 0, Qx::WriteOption::NewOnly);
     if(wr.isFailure())
     {
-        mCore.printError(NAME, wr.toGenericError().setErrorLevel(Qx::GenericError::Error));
-        return ErrorCode::ENCODE_FAILED;
+        mCore.printError(NAME, wr);
+        return wr;
     }
     mCore.printMessage(NAME, MSG_DATA_SAVED.arg(outputFile.fileName()));
 
-    return ErrorCode::NO_ERR;
+    return CDecodeError();
 }

@@ -9,6 +9,39 @@
 #include <qx/io/qx-common-io.h>
 
 //===============================================================================================================
+// CEncodeError
+//===============================================================================================================
+
+//-Constructor-----------------------------------------------------------------------------------------------------
+//Public:
+CEncodeError::CEncodeError() :
+    mType(NoError)
+{}
+
+//Private:
+CEncodeError::CEncodeError(Type type, const QString& gen) :
+    mType(type),
+    mGeneral(gen)
+{}
+
+//-Instance Functions----------------------------------------------------------------------------------------------
+//Private:
+quint32 CEncodeError::deriveValue() const { return static_cast<quint32>(mType); }
+QString CEncodeError::derivePrimary() const { return mGeneral; }
+QString CEncodeError::deriveSecondary() const { return mSpecific; }
+CEncodeError CEncodeError::wSpecific(const QString& spec) const
+{
+    CEncodeError s = *this;
+    s.mSpecific = spec;
+    return s;
+}
+
+//Public:
+bool CEncodeError::isValid() const { return mType != NoError; }
+CEncodeError::Type CEncodeError::type() const { return mType; }
+QString CEncodeError::errorString() const { return mGeneral + " " + mSpecific; }
+
+//===============================================================================================================
 // CEncode
 //===============================================================================================================
 
@@ -24,26 +57,26 @@ const QSet<const QCommandLineOption*> CEncode::requiredOptions() { return CL_OPT
 const QString CEncode::name() { return NAME; }
 
 //Public:
-ErrorCode CEncode::process(const QStringList& commandLine)
+Qx::Error CEncode::process(const QStringList& commandLine)
 {
     //-Preparation---------------------------------------
     mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
 
     // Parse and check for valid arguments
-    ErrorCode parseError = parse(commandLine);
-    if(parseError)
+    CommandError parseError = parse(commandLine);
+    if(parseError.isValid())
         return parseError;
 
     // Handle standard options
     if(checkStandardOptions())
-        return ErrorCode::NO_ERR;
+        return CEncodeError();
 
     // Check for required options
-    Qx::GenericError reqCheck = checkRequiredOptions();
+    CommandError reqCheck = checkRequiredOptions();
     if(reqCheck.isValid())
     {
         mCore.printError(NAME, reqCheck);
-        return ErrorCode::INVALID_ARGS;
+        return reqCheck;
     }
 
     // Evaluate encoding type
@@ -55,8 +88,9 @@ ErrorCode CEncode::process(const QStringList& commandLine)
         aEncoding = potentialType.value();
     else
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, Core::ERR_INVALID_PARAM, ERR_INVALID_ENCODING));
-        return ErrorCode::INVALID_ARGS;
+        CEncodeError err = ERR_INVALID_OPTION.wSpecific(QSL("Invalid encoding."));
+        mCore.printError(NAME, err);
+        return err;
     }
     mCore.printMessage(NAME, MSG_ENCODING.arg(ENUM_NAME(aEncoding)));
 
@@ -73,8 +107,9 @@ ErrorCode CEncode::process(const QStringList& commandLine)
 
         if(!valid)
         {
-            mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, Core::ERR_INVALID_PARAM, ERR_INVALID_DENSITY));
-            return ErrorCode::INVALID_ARGS;
+            CEncodeError err = ERR_INVALID_OPTION.wSpecific(QSL("Invalid data density."));
+            mCore.printError(NAME, err);
+            return err;
         }
     }
 
@@ -94,8 +129,8 @@ ErrorCode CEncode::process(const QStringList& commandLine)
     Qx::IoOpReport lr = Qx::readBytesFromFile(aPayload, inputFile);
     if(lr.isFailure())
     {
-        mCore.printError(NAME, lr.toGenericError().setErrorLevel(Qx::GenericError::Error));
-        return ErrorCode::ENCODE_FAILED;
+        mCore.printError(NAME, lr);
+        return lr;
     }
     mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(aPayload.size()/1024.0, 0, 'f', 2));
 
@@ -104,8 +139,9 @@ ErrorCode CEncode::process(const QStringList& commandLine)
     QImage aMedium;
     if(!imgReader.read(&aMedium))
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_MEDIUM_READ_FAILED, imgReader.errorString()));
-        return ErrorCode::ENCODE_FAILED;
+        CEncodeError err = ERR_MEDIUM_READ_FAILED.wSpecific(imgReader.errorString());
+        mCore.printError(NAME, err);
+        return err;
     }
 
     // Print medium size
@@ -123,8 +159,9 @@ ErrorCode CEncode::process(const QStringList& commandLine)
     QImage encoded = encoder.encode(aPayload, aMedium);
     if(encoder.hasError())
     {
-        mCore.printError(NAME, encoder.error());
-        return ErrorCode::ENCODE_FAILED;
+        PxCrypt::EncodeError err = encoder.error();
+        mCore.printError(NAME, err);
+        return err;
     }
 
     // Print density (largely for when set to auto)
@@ -143,18 +180,20 @@ ErrorCode CEncode::process(const QStringList& commandLine)
 
     if(QFile::exists(outputPath))
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_OUTPUT_WRITE_FAILED, ERR_OUTPUT_ALREADY_EXISTS));
-        return ErrorCode::ENCODE_FAILED;
+        CEncodeError err = ERR_OUTPUT_WRITE_FAILED.wSpecific(QSL("The file already exists."));
+        mCore.printError(NAME, err);
+        return err;
     }
 
     QImageWriter imgWriter(outputPath);
     if(!imgWriter.write(encoded))
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_OUTPUT_WRITE_FAILED, imgWriter.errorString()));
-        return ErrorCode::ENCODE_FAILED;
+        CEncodeError err = ERR_OUTPUT_WRITE_FAILED.wSpecific(imgWriter.errorString());
+        mCore.printError(NAME, err);
+        return err;
     }
     mCore.printMessage(NAME, MSG_IMAGE_SAVED.arg(outputPath));
 
-    return ErrorCode::NO_ERR;
+    return CEncodeError();
 }
 

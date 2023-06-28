@@ -7,10 +7,56 @@
 // Project Includes
 #include "command.h"
 
+class QX_ERROR_TYPE(CMeasureError, "CEncodeError", 3003)
+{
+    friend class CMeasure;
+
+//-Class Enums--------------------------------------------------------------------------------------------------------
+public:
+    enum Type
+    {
+        NoError = 0,
+        FailedReadingInput = 1,
+        InputTooSmall = 2
+    };
+
+//-Instance Variables------------------------------------------------------------------------------------------------
+private:
+    Type mType;
+    QString mGeneral;
+    QString mSpecific;
+
+//-Constructor----------------------------------------------------------------------------------------------------------
+public:
+    CMeasureError();
+
+private:
+    CMeasureError(Type type, const QString& gen);
+
+//-Instance Functions---------------------------------------------------------------------------------------------------
+private:
+    quint32 deriveValue() const override;
+    QString derivePrimary() const override;
+    QString deriveSecondary() const override;
+
+    CMeasureError wSpecific(const QString& spec) const;
+
+public:
+    bool isValid() const;
+    Type type() const;
+    QString errorString() const;
+};
+
 class CMeasure : public Command
 {
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
+    // Error
+    static inline const CMeasureError ERR_INPUT_READ_FAILED =
+            CMeasureError(CMeasureError::FailedReadingInput, "Failed reading the input image.");
+    static inline const CMeasureError ERR_INPUT_TOO_SMALL =
+            CMeasureError(CMeasureError::InputTooSmall, "The provided image's dimensions are too small for it to act as a medium.");
+
     // Measurement
     static inline const QString MEASUREMENT_LINE = QSL("BPC %1 - %2 bytes (%3 KiB)\n");
 
@@ -19,10 +65,6 @@ private:
     static inline const QString MSG_IMAGE_DIMENSIONS = QSL("Image Dimmensions: %1 x %2");
     static inline const QString MSG_TAG_CONSUMPTION = QSL("Filename Consumes: %1 bytes");
     static inline const QString MSG_PAYLOAD_CAPACITY = QSL("Payload Capacities:");
-
-    // Error Messages
-    static inline const QString ERR_INPUT_READ_FAILED = QSL("Failed reading the input image.");
-    static inline const QString ERR_INPUT_TOO_SMALL = QSL("The provided image .");
 
     // Command line option strings
     static inline const QString CL_OPT_INPUT_S_NAME = QSL("i");
@@ -57,7 +99,7 @@ protected:
     const QString name() override;
 
 public:
-    ErrorCode process(const QStringList& commandLine) override;
+    Qx::Error process(const QStringList& commandLine) override;
 };
 REGISTER_COMMAND(CMeasure::NAME, CMeasure, CMeasure::DESCRIPTION);
 

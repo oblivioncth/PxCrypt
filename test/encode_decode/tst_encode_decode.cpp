@@ -247,14 +247,14 @@ void tst_encode_decode::full_data_cycle()
     enc.setTag(tag);
 
     QImage encoded = enc.encode(payload, medium);
-    QVERIFY2(!enc.hasError(), C_STR(enc.error().secondaryInfo()));
+    QVERIFY2(!enc.hasError(), C_STR(enc.error().errorString()));
 
     // Decode
     PxCrypt::Decoder dec;
     dec.setPresharedKey(psk);
 
     QByteArray decoded = dec.decode(encoded, medium);
-    QVERIFY2(!dec.hasError(), C_STR(dec.error().secondaryInfo()));
+    QVERIFY2(!dec.hasError(), C_STR(dec.error().errorString()));
 
     // Compare
     QCOMPARE(decoded, payload);

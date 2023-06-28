@@ -9,10 +9,59 @@
 #include "project_vars.h"
 #include "pxcrypt/encoder.h"
 
+class QX_ERROR_TYPE(CEncodeError, "CEncodeError", 3002)
+{
+    friend class CEncode;
+
+//-Class Enums--------------------------------------------------------------------------------------------------------
+public:
+    enum Type
+    {
+        NoError = 0,
+        InvalidOption = 1,
+        FailedReadingMedium = 2,
+        FailedWritingEncoded = 3
+    };
+
+//-Instance Variables------------------------------------------------------------------------------------------------
+private:
+    Type mType;
+    QString mGeneral;
+    QString mSpecific;
+
+//-Constructor----------------------------------------------------------------------------------------------------------
+public:
+    CEncodeError();
+
+private:
+    CEncodeError(Type type, const QString& gen);
+
+//-Instance Functions---------------------------------------------------------------------------------------------------
+private:
+    quint32 deriveValue() const override;
+    QString derivePrimary() const override;
+    QString deriveSecondary() const override;
+
+    CEncodeError wSpecific(const QString& spec) const;
+
+public:
+    bool isValid() const;
+    Type type() const;
+    QString errorString() const;
+};
+
 class CEncode : public Command
 {
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
+    // Error
+    static inline const CEncodeError ERR_INVALID_OPTION =
+            CEncodeError(CEncodeError::InvalidOption, "Invalid encoding.");
+    static inline const CEncodeError ERR_MEDIUM_READ_FAILED =
+            CEncodeError(CEncodeError::FailedReadingMedium, "Failed reading the medium image.");
+    static inline const CEncodeError ERR_OUTPUT_WRITE_FAILED =
+            CEncodeError(CEncodeError::FailedWritingEncoded, "Failed writing the encoded image.");
+
     // Encoding
     static inline const QString OUTPUT_EXT = QSL("png");
 
@@ -23,13 +72,6 @@ private:
     static inline const QString MSG_MEDIUM_DIM = QSL("Medium dimmensions: %1 x %2");
     static inline const QString MSG_ENCODING = QSL("Encoding...");
     static inline const QString MSG_IMAGE_SAVED = QSL("Wrote encoded image to '%1'");
-
-    // Error Messages
-    static inline const QString ERR_INVALID_ENCODING = QSL("Invalid encoding.");
-    static inline const QString ERR_INVALID_DENSITY = QSL("Invalid data density.");
-    static inline const QString ERR_MEDIUM_READ_FAILED = QSL("Failed reading the medium image.");
-    static inline const QString ERR_OUTPUT_WRITE_FAILED = QSL("Failed writing the encoded image.");
-    static inline const QString ERR_OUTPUT_ALREADY_EXISTS = QSL("The file already exists.");
 
     // Command line option strings
     static inline const QString CL_OPT_INPUT_S_NAME = QSL("i");
@@ -103,7 +145,7 @@ protected:
     const QString name() override;
 
 public:
-    ErrorCode process(const QStringList& commandLine) override;
+    Qx::Error process(const QStringList& commandLine) override;
 };
 REGISTER_COMMAND(CEncode::NAME, CEncode, CEncode::DESCRIPTION);
 

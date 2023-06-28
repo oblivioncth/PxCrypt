@@ -43,13 +43,12 @@ void tst_metapixel::invalid_meta_data()
 {
     // Ensure all images from various platforms can be decoded on this platform
     QTest::addColumn<QString>("encodedPath");
-    QTest::addColumn<QString>("expectedError");
+    QTest::addColumn<PxCrypt::DecodeError::Type>("expectedError");
 
     // Add test rows
-    QString metaError = "The provided image is not encoded.";
     QDir data(":/data");
-    QTest::newRow("invalid_bpc") << data.absoluteFilePath("invalid_bpc.png") << metaError;
-    QTest::newRow("invalid_encoding") << data.absoluteFilePath("invalid_encoding.png") << metaError;
+    QTest::newRow("invalid_bpc") << data.absoluteFilePath("invalid_bpc.png") << PxCrypt::DecodeError::InvalidMeta;
+    QTest::newRow("invalid_encoding") << data.absoluteFilePath("invalid_encoding.png") << PxCrypt::DecodeError::InvalidMeta;
 
     // NOTE: Current invalid encoding test uses value of 7, if that value ends up occupied then this
     // needs to change
@@ -59,7 +58,7 @@ void tst_metapixel::invalid_meta()
 {
     // Fetch data from test table
     QFETCH(QString, encodedPath);
-    QFETCH(QString, expectedError);
+    QFETCH(PxCrypt::DecodeError::Type, expectedError);
 
     // Load image
     QImage encoded(encodedPath);
@@ -70,7 +69,7 @@ void tst_metapixel::invalid_meta()
 
     dec.decode(encoded);
     QVERIFY2(dec.hasError(), "Image is not purposely flawed correctly");
-    QCOMPARE(dec.error().secondaryInfo(), expectedError);
+    QCOMPARE(dec.error().type(), expectedError);
 }
 
 QTEST_APPLESS_MAIN(tst_metapixel)

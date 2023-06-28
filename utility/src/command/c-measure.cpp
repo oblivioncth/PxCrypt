@@ -9,6 +9,39 @@
 #include "pxcrypt/encoder.h"
 
 //===============================================================================================================
+// CMeasureError
+//===============================================================================================================
+
+//-Constructor-----------------------------------------------------------------------------------------------------
+//Public:
+CMeasureError::CMeasureError() :
+    mType(NoError)
+{}
+
+//Private:
+CMeasureError::CMeasureError(Type type, const QString& gen) :
+    mType(type),
+    mGeneral(gen)
+{}
+
+//-Instance Functions----------------------------------------------------------------------------------------------
+//Private:
+quint32 CMeasureError::deriveValue() const { return static_cast<quint32>(mType); }
+QString CMeasureError::derivePrimary() const { return mGeneral; }
+QString CMeasureError::deriveSecondary() const { return mSpecific; }
+CMeasureError CMeasureError::wSpecific(const QString& spec) const
+{
+    CMeasureError s = *this;
+    s.mSpecific = spec;
+    return s;
+}
+
+//Public:
+bool CMeasureError::isValid() const { return mType != NoError; }
+CMeasureError::Type CMeasureError::type() const { return mType; }
+QString CMeasureError::errorString() const { return mGeneral + " " + mSpecific; }
+
+//===============================================================================================================
 // CMeasure
 //===============================================================================================================
 
@@ -24,26 +57,26 @@ const QSet<const QCommandLineOption*> CMeasure::requiredOptions() { return CL_OP
 const QString CMeasure::name() { return NAME; }
 
 //Public:
-ErrorCode CMeasure::process(const QStringList& commandLine)
+Qx::Error CMeasure::process(const QStringList& commandLine)
 {
     //-Preparation---------------------------------------
     mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
 
     // Parse and check for valid arguments
-    ErrorCode parseError = parse(commandLine);
-    if(parseError)
+    CommandError parseError = parse(commandLine);
+    if(parseError.isValid())
         return parseError;
 
     // Handle standard options
     if(checkStandardOptions())
-        return ErrorCode::NO_ERR;
+        return CMeasureError();
 
     // Check for required options
-    Qx::GenericError reqCheck = checkRequiredOptions();
+    CommandError reqCheck = checkRequiredOptions();
     if(reqCheck.isValid())
     {
         mCore.printError(NAME, reqCheck);
-        return ErrorCode::INVALID_ARGS;
+        return reqCheck;
     }
 
     // Get input file info
@@ -55,8 +88,9 @@ ErrorCode CMeasure::process(const QStringList& commandLine)
 
     if(!imageSize.isValid())
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_INPUT_READ_FAILED, imageReader.errorString()));
-        return ErrorCode::MEASURE_FAILED;
+        CMeasureError err = ERR_INPUT_READ_FAILED.wSpecific(imageReader.errorString());
+        mCore.printError(NAME, err);
+        return err;
     }
 
     // Get filename
@@ -71,8 +105,9 @@ ErrorCode CMeasure::process(const QStringList& commandLine)
     // Check if image can't fit anything
     if(*std::max_element(capacities.cbegin(), capacities.cend()) == 0)
     {
-        mCore.printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_INPUT_TOO_SMALL));
-        return ErrorCode::MEASURE_FAILED;
+        CMeasureError err = ERR_INPUT_TOO_SMALL;
+        mCore.printError(NAME, err);
+        return err;
     }
 
     // Print stats
@@ -89,5 +124,5 @@ ErrorCode CMeasure::process(const QStringList& commandLine)
     }
     mCore.printMessage(NAME, measurement);
 
-    return ErrorCode::NO_ERR;
+    return CMeasureError();
 }
