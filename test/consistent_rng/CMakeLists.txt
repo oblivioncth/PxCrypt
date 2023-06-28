@@ -17,5 +17,5 @@ qt_add_resources(${test_target} "tst_consistent_rng_data"
     PREFIX "/"
     FILES
         ${encoded_images}
-        "data/payload.txt"
+        "data/payload.bin"
 )

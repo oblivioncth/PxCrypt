@@ -9,7 +9,7 @@
 #include <qx/io/qx-common-io.h>
 
 // Project Includes
-#include "pxcrypt/decode.h"
+#include "pxcrypt/decoder.h"
 
 //===============================================================================================================
 // CDecode
@@ -82,23 +82,23 @@ ErrorCode CDecode::process(const QStringList& commandLine)
     }
 
     // Decode
-    QString tag;
-    QByteArray decoded;
+    PxCrypt::Decoder decoder;
+    decoder.setPresharedKey(aKey);
 
     mCore.printMessage(NAME, MSG_DECODING);
-    Qx::GenericError decError = PxCrypt::decode(decoded, tag, aEncoded, aKey, aMedium);
-    if(decError.isValid())
+    QByteArray decoded = decoder.decode(aEncoded, aMedium);
+    if(decoder.hasError())
     {
-        mCore.printError(NAME, decError);
+        mCore.printError(NAME, decoder.error());
         return ErrorCode::ENCODE_FAILED;
     }
 
     mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(decoded.size()/1024.0, 0, 'f', 2));
-    mCore.printMessage(NAME, MSG_TAG.arg(tag));
+    mCore.printMessage(NAME, MSG_TAG.arg(decoder.tag()));
 
     // Write decoded data
     QDir outputDir(mParser.isSet(CL_OPTION_OUTPUT) ? mParser.value(CL_OPTION_OUTPUT) : encodedFileInfo.absoluteDir());
-    QFile outputFile(outputDir.absoluteFilePath(tag));
+    QFile outputFile(outputDir.absoluteFilePath(decoder.tag()));
 
     Qx::IoOpReport wr = Qx::writeBytesToFile(outputFile, decoded, Qx::WriteMode::Truncate, 0, Qx::WriteOption::NewOnly);
     if(wr.isFailure())

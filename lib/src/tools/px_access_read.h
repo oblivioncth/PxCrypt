@@ -5,7 +5,7 @@
 #include <QImage>
 
 // Project Includes
-#include "pxcrypt/encdec.h"
+#include "../encdec.h"
 #include "ch_sequence_generator.h"
 #include "px_sequence_generator.h"
 
@@ -19,7 +19,7 @@ class PxAccessRead
 private:
     const QRgb* mPixels;
     quint8 mBpc;
-    EncType mType;
+    EncStrat mStrat;
     PxSequenceGenerator mPxSequence;
     ChSequenceGenerator mChSequence;
 
@@ -40,7 +40,7 @@ private:
 
 public:
     quint8 bpc() const;
-    EncType type() const;
+    EncStrat strat() const;
 
     bool hasNextPixel() const;
     bool pixelExhausted() const;

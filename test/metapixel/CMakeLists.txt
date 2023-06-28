@@ -12,5 +12,5 @@ qt_add_resources(${test_target} "tst_metapixel_data"
     PREFIX "/"
     FILES
         "data/invalid_bpc.png"
-        "data/invalid_enc_type.png"
+        "data/invalid_encoding.png"
 )

@@ -22,6 +22,14 @@ enum Channel : quint8{
     Alpha = 3
 };
 
+// These are essentially the same as Encoder::Encoding, but exist to keep the usage of that enum strictly within
+// the public API so that encoder.h is not a required include in private parts of the code base.
+enum EncStrat
+{
+    Displaced = 0,
+    Direct = 4
+};
+
 //-Namespace Variables-------------------------------------------------------------------------------------------------
 const QByteArray MAGIC_NUM = QBAL("PXC");
 

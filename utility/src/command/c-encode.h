@@ -6,8 +6,8 @@
 
 // Project Includes
 #include "command.h"
-#include "pxcrypt/encdec.h"
 #include "project_vars.h"
+#include "pxcrypt/encoder.h"
 
 class CEncode : public Command
 {
@@ -18,7 +18,6 @@ private:
 
     // Messages
     static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Encode\n--------------");
-    static inline const QString MSG_ENCODING_TYPE = QSL("Encoding Type: %1");
     static inline const QString MSG_BPC = QSL("Bits per channel: %1");
     static inline const QString MSG_PAYLOAD_SIZE = QSL("Payload size: %1 KiB");
     static inline const QString MSG_MEDIUM_DIM = QSL("Medium dimmensions: %1 x %2");
@@ -26,7 +25,7 @@ private:
     static inline const QString MSG_IMAGE_SAVED = QSL("Wrote encoded image to '%1'");
 
     // Error Messages
-    static inline const QString ERR_INVALID_ENC_TYPE = QSL("Invalid encoding type.");
+    static inline const QString ERR_INVALID_ENCODING = QSL("Invalid encoding.");
     static inline const QString ERR_INVALID_DENSITY = QSL("Invalid data density.");
     static inline const QString ERR_MEDIUM_READ_FAILED = QSL("Failed reading the medium image.");
     static inline const QString ERR_OUTPUT_WRITE_FAILED = QSL("Failed writing the encoded image.");
@@ -56,24 +55,24 @@ private:
     static inline const QString CL_OPT_KEY_DESC = QSL("An optional key to require in order to decode the encoded image.");
     static inline const QString CL_OPT_KEY_DEFAULT = QSL("");
 
-    static inline const QString CL_OPT_TYPE_S_NAME = QSL("t");
-    static inline const QString CL_OPT_TYPE_L_NAME = QSL("type");
-    static inline const QString CL_OPT_TYPE_DESC = QSL(
+    static inline const QString CL_OPT_ENCODING_S_NAME = QSL("e");
+    static inline const QString CL_OPT_ENCODING_L_NAME = QSL("encoding");
+    static inline const QString CL_OPT_ENCODING_DESC = QSL(
         "The type of encoding to use (defaults to Absolute):\n"
         "\n"
         "Relative - Requires the original medium to decode\n"
         "Absolute - Doesn't require the original medium to decode\n"
     );
-    static inline const QString CL_OPT_TYPE_DEFAULT = QSL("Absolute");
+    static inline const QString CL_OPT_ENCODING_DEFAULT = QSL("Absolute");
 
     /* NOTE: This will cause a compilation error when changing PxCrypt::EncType in order to prompt the developer
      * to ensure any new options have been described above and then manually check them off here
      */
-    static_assert(magic_enum::enum_values<PxCrypt::EncType>() == std::array<PxCrypt::EncType, 2>{
-            PxCrypt::EncType::Relative,
-            PxCrypt::EncType::Absolute
+    static_assert(magic_enum::enum_values<PxCrypt::Encoder::Encoding>() == std::array<PxCrypt::Encoder::Encoding, 2>{
+            PxCrypt::Encoder::Encoding::Relative,
+            PxCrypt::Encoder::Encoding::Absolute
         },
-        "Missing description for a encoding type"
+        "Missing description for an encoding type"
     );
 
     // Command line options
@@ -82,7 +81,7 @@ private:
     static inline const QCommandLineOption CL_OPTION_MEDIUM{{CL_OPT_MEDIUM_S_NAME, CL_OPT_MEDIUM_L_NAME}, CL_OPT_MEDIUM_DESC, "medium"}; // Takes value
     static inline const QCommandLineOption CL_OPTION_DENSITY{{CL_OPT_DENSITY_S_NAME, CL_OPT_DENSITY_L_NAME}, CL_OPT_DENSITY_DESC, "density", CL_OPT_DENSITY_DEFAULT}; // Takes value
     static inline const QCommandLineOption CL_OPTION_KEY{{CL_OPT_KEY_S_NAME, CL_OPT_KEY_L_NAME}, CL_OPT_KEY_DESC, "key", CL_OPT_KEY_DEFAULT}; // Takes value
-    static inline const QCommandLineOption CL_OPTION_TYPE{{CL_OPT_TYPE_S_NAME, CL_OPT_TYPE_L_NAME}, CL_OPT_TYPE_DESC, "type", CL_OPT_TYPE_DEFAULT}; // Takes value
+    static inline const QCommandLineOption CL_OPTION_TYPE{{CL_OPT_ENCODING_S_NAME, CL_OPT_ENCODING_L_NAME}, CL_OPT_ENCODING_DESC, "encoding", CL_OPT_ENCODING_DEFAULT}; // Takes value
 
     static inline const QList<const QCommandLineOption*> CL_OPTIONS_SPECIFIC{&CL_OPTION_INPUT, &CL_OPTION_OUTPUT, &CL_OPTION_MEDIUM,
                                                                              &CL_OPTION_DENSITY, &CL_OPTION_KEY, &CL_OPTION_TYPE};
