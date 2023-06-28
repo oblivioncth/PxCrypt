@@ -5,19 +5,62 @@
 #include <QCommandLineParser>
 
 // Qx Includes
-#include <qx/core/qx-genericerror.h>
+#include <qx/core/qx-error.h>
 #include <qx/utility/qx-macros.h>
 
 // Project Includes
-#include "errorcode.h"
 #include "project_vars.h"
 
 #define ENUM_NAME(eenum) QString(magic_enum::enum_name(eenum).data())
+
+class QX_ERROR_TYPE(CoreError, "CoreError", 2000)
+{
+    friend class Core;
+
+//-Class Enums--------------------------------------------------------------------------------------------------------
+public:
+    enum Type
+    {
+        NoError = 0,
+        InvalidArguments = 1
+    };
+
+//-Instance Variables------------------------------------------------------------------------------------------------
+private:
+    Type mType;
+    QString mGeneral;
+    QString mSpecific;
+
+//-Constructor----------------------------------------------------------------------------------------------------------
+public:
+    CoreError();
+
+private:
+    CoreError(Type type, const QString& gen);
+
+//-Instance Functions---------------------------------------------------------------------------------------------------
+private:
+    quint32 deriveValue() const override;
+    QString derivePrimary() const override;
+    QString deriveSecondary() const override;
+    Qx::Severity deriveSeverity() const override;
+
+    CoreError wSpecific(const QString& spec) const;
+
+public:
+    bool isValid() const;
+    Type type() const;
+    QString errorString() const;
+};
 
 class Core
 {
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
+    // Error
+    static inline const CoreError ERR_INVALID_ARGS =
+            CoreError(CoreError::InvalidArguments, "Invalid arguments.");
+
     // Global command line option strings
     static inline const QString CL_OPT_HELP_S_NAME = QSL("h");
     static inline const QString CL_OPT_HELP_L_NAME = QSL("help");
@@ -84,12 +127,12 @@ private:
     void showFormats();
 
 public:
-    ErrorCode initialize(QString& command, QStringList& commandParam);
+    CoreError initialize(QString& command, QStringList& commandParam);
 
     QStringList imageFormatFilter() const;
     QStringList supportedImageFormats() const;
 
-    void printError(QString src, Qx::GenericError error);
+    void printError(QString src, Qx::Error error);
     void printMessage(QString src, QString msg);
 };
 

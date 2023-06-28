@@ -19,6 +19,60 @@ class CommandFactory;
     }; \
     static command##Factory _##command##Factory;
 
+class QX_ERROR_TYPE(CommandError, "CommandError", 3000)
+{
+    friend class Command;
+
+//-Class Enums--------------------------------------------------------------------------------------------------------
+public:
+    enum Type
+    {
+        NoError = 0,
+        InvalidArguments = 1,
+        InvalidCommand = 2,
+        MissingRequiredOption = 3
+    };
+
+//-Class Variables------------------------------------------------------------------------------------------------
+private:
+    static inline const QString PRIMARY_STRING = QSL("Command parsing error.");
+
+//-Instance Variables------------------------------------------------------------------------------------------------
+private:
+    Type mType;
+    QString mString;
+    QString mDetails;
+
+//-Constructor----------------------------------------------------------------------------------------------------------
+public:
+    CommandError();
+
+private:
+    CommandError(Type type, const QString& errStr);
+
+//-Instance Functions---------------------------------------------------------------------------------------------------
+private:
+    quint32 deriveValue() const override;
+    QString derivePrimary() const override;
+    QString deriveSecondary() const override;
+    QString deriveDetails() const override;
+    Qx::Severity deriveSeverity() const override;
+
+    template<typename... Args>
+    CommandError arged(Args... args) const
+    {
+        CommandError a = *this;
+        a.mString = a.mString.arg(args...);
+        return a;
+    }
+
+    CommandError& wDetails(const QString& det);
+
+public:
+    bool isValid() const;
+    Type type() const;
+    QString errorString() const;
+};
 
 class Command
 {
@@ -33,7 +87,12 @@ protected:
 //-Class Variables--------------------------------------------------------------------------------------------------------
 private:
     // Error
-    static inline const QString ERR_MISSING_REQ_OPT = QSL("Missing required options for '%1'");
+    static inline const CommandError ERR_INVALID_ARGS =
+            CommandError(CommandError::InvalidArguments, QSL("Invalid command arguments."));
+    static inline const CommandError ERR_INVALID_COMMAND =
+            CommandError(CommandError::InvalidCommand, QSL("'%1' is not a valid command"));
+    static inline const CommandError ERR_MISSING_REQ_OPT =
+            CommandError(CommandError::MissingRequiredOption, QSL("Missing required options for '%1'"));
 
     // Help template
     static inline const QString HELP_TEMPL = QSL("Usage:\n"
@@ -81,7 +140,7 @@ private:
 
 public:
     static void registerCommand(const QString& name, CommandFactory* factory, const QString& desc);
-    static bool isRegistered(const QString& name);
+    static CommandError isRegistered(const QString& name);
     static QList<QString> registered();
     static std::unique_ptr<Command> acquire(const QString& name, Core& coreRef);
     static QString describe(const QString& name);
@@ -91,13 +150,13 @@ protected:
     virtual const QList<const QCommandLineOption*> options() = 0;
     virtual const QSet<const QCommandLineOption*> requiredOptions() = 0;
     virtual const QString name() = 0;
-    ErrorCode parse(const QStringList& commandLine);
+    CommandError parse(const QStringList& commandLine);
     bool checkStandardOptions();
-    Qx::GenericError checkRequiredOptions();
+    CommandError checkRequiredOptions();
     void showHelp();
 
 public:
-    virtual ErrorCode process(const QStringList& commandLine) = 0;
+    virtual Qx::Error process(const QStringList& commandLine) = 0;
 };
 
 class CommandFactory

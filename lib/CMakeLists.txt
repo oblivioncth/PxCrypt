@@ -20,11 +20,15 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         FILES
             _internal.h
             decoder.h
+            decode_error.h
             encoder.h
+            encode_error.h
     IMPLEMENTATION
         _internal.cpp
         decoder.cpp
+        decode_error.cpp
         encoder.cpp
+        encode_error.cpp
         encdec.cpp
         tools/bit_chunker.cpp
         tools/byte_compositer.cpp

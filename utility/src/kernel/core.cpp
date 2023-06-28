@@ -16,7 +16,41 @@
 #define ENUM_NAME(eenum) QString(magic_enum::enum_name(eenum).data())
 
 //===============================================================================================================
-// CORE
+// CoreError
+//===============================================================================================================
+
+//-Constructor-----------------------------------------------------------------------------------------------------
+//Public:
+CoreError::CoreError() :
+    mType(NoError)
+{}
+
+//Private:
+CoreError::CoreError(Type type, const QString& gen) :
+    mType(type),
+    mGeneral(gen)
+{}
+
+//-Instance Functions----------------------------------------------------------------------------------------------
+//Private:
+quint32 CoreError::deriveValue() const { return static_cast<quint32>(mType); }
+QString CoreError::derivePrimary() const { return mGeneral; }
+QString CoreError::deriveSecondary() const { return mSpecific; }
+Qx::Severity CoreError::deriveSeverity() const { return Qx::Critical; }
+CoreError CoreError::wSpecific(const QString& spec) const
+{
+    CoreError s = *this;
+    s.mSpecific = spec;
+    return s;
+}
+
+//Public:
+bool CoreError::isValid() const { return mType != NoError; }
+CoreError::Type CoreError::type() const { return mType; }
+QString CoreError::errorString() const { return mGeneral + " " + mSpecific; }
+
+//===============================================================================================================
+// Core
 //===============================================================================================================
 
 //-Constructor-------------------------------------------------------------
@@ -72,7 +106,7 @@ void Core::showVersion() { printMessage(NAME, MSG_VERSION); }
 void Core::showFormats() { printMessage(NAME, MSG_FORMATS.arg(mImageFormats.join('\n'))); }
 
 //Public:
-ErrorCode Core::initialize(QString& command, QStringList& commandParam)
+CoreError Core::initialize(QString& command, QStringList& commandParam)
 {
     // Clear return buffers
     command.clear();
@@ -87,9 +121,10 @@ ErrorCode Core::initialize(QString& command, QStringList& commandParam)
     // Parse
     if(!clParser.parse(mArguments))
     {
-        printError(NAME, Qx::GenericError(Qx::GenericError::Error, ERR_INVALID_PARAM, clParser.errorText()));
+        CoreError initError = ERR_INVALID_ARGS.wSpecific(clParser.errorText());
+        printError(NAME, initError);
         showHelp();
-        return ErrorCode::INVALID_ARGS;
+        return initError;
     }
 
     QStringList cmdPart = clParser.positionalArguments();
@@ -107,13 +142,13 @@ ErrorCode Core::initialize(QString& command, QStringList& commandParam)
     }
 
     // Return success
-    return ErrorCode::NO_ERR;
+    return CoreError();
 }
 
 QStringList Core::imageFormatFilter() const { return mImageFormatFilter; }
 QStringList Core::supportedImageFormats() const { return mImageFormats; }
 
-void Core::printError(QString src, Qx::GenericError error)
+void Core::printError(QString src, Qx::Error error)
 {
     Q_UNUSED(src); // TODO: Incorporate
     Qx::cout << error << Qt::endl;

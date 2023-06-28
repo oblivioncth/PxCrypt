@@ -179,7 +179,7 @@ bool Encoder::hasError() const { return mError.isValid(); }
  *
  *  @sa hasError() and reset().
  */
-Qx::GenericError Encoder::error() const { return mError; }
+EncodeError Encoder::error() const { return mError; }
 
 /*!
  *  Resets the error status of the encoder.
@@ -314,21 +314,21 @@ QImage Encoder::encode(QByteArrayView payload, const QImage& medium)
     // Ensure data was provided
     if(payload.isEmpty())
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_NO_DATA);
+        mError = ERR_MISSING_PAYLOAD;
         return QImage();
     }
 
     // Ensure bits-per-channel is valid (TODO: optionally could clamp instead)
     if(mBpc > 7)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_INVALID_BPC);
+        mError = ERR_INVALID_BPC;
         return QImage();
     }
 
     // Ensure image is valid
     if(medium.isNull())
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_INVALID_IMAGE);
+        mError = ERR_INVALID_IMAGE;
         return QImage();
     }
 
@@ -345,7 +345,7 @@ QImage Encoder::encode(QByteArrayView payload, const QImage& medium)
         {
             // Check how short at max density
             quint64 max = calcMaxPayloadBytes(medium.size(), tagData.size(), 7);
-            mError =  Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - max)/1024.0, 0, 'f', 2));
+            mError = ERR_WONT_FIT.arged((payload.size() - max)/1024.0, 0, 'f', 2);
             return QImage();
         }
     }
@@ -354,7 +354,7 @@ QImage Encoder::encode(QByteArrayView payload, const QImage& medium)
     quint64 maxStorage = calcMaxPayloadBytes(medium.size(), tagData.size(), mBpc);
     if(static_cast<quint64>(payload.size()) > maxStorage)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_ENCODING_FAILED, ERR_WONT_FIT.arg((payload.size() - maxStorage)/1024.0, 0, 'f', 2));
+        mError = ERR_WONT_FIT.arged((payload.size() - maxStorage)/1024.0, 0, 'f', 2);
         return QImage();
     }
 

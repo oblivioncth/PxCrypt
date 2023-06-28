@@ -73,7 +73,7 @@ void tst_consistent_rng::multi_platform_decode()
     PxCrypt::Decoder dec;
 
     QByteArray decoded = dec.decode(encoded);
-    QVERIFY2(!dec.hasError(), C_STR(dec.error().secondaryInfo()));
+    QVERIFY2(!dec.hasError(), C_STR(dec.error().errorString()));
 
     // Compare
     QCOMPARE(decoded, mPayload);

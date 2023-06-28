@@ -24,7 +24,6 @@ ob_add_standard_executable(${APP_TARGET_NAME}
         command/command.cpp
         kernel/core.h
         kernel/core.cpp
-        kernel/errorcode.h
         main.cpp
     LINKS
         PRIVATE

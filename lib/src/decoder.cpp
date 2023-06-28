@@ -63,7 +63,7 @@ bool Decoder::hasError() const { return mError.isValid(); }
  *
  *  @sa hasError() and reset().
  */
-Qx::GenericError Decoder::error() const { return mError; }
+DecodeError Decoder::error() const { return mError; }
 
 /*!
  *  Resets the error status of the decoder.
@@ -117,14 +117,14 @@ QByteArray Decoder::decode(const QImage& encoded, const QImage& medium)
     // Ensure encoded image is valid
     if(encoded.isNull())
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_SOURCE);
+        mError = ERR_INVALID_SOURCE;
         return QByteArray();
     }
 
     // Ensure image meets bare minimum space for meta pixels
     if(encoded.size().width() * encoded.size().height() < META_PIXELS)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
+        mError = ERR_NOT_LARGE_ENOUGH;
         return QByteArray();
     }
 
@@ -137,21 +137,21 @@ QByteArray Decoder::decode(const QImage& encoded, const QImage& medium)
     // Ensure BPC is valid
     if(pAccess.bpc() < 1 || pAccess.bpc() > 7)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_META);
+        mError = ERR_INVALID_META;
         return QByteArray();
     }
 
     // Ensure strat is valid
     if(!magic_enum::enum_contains(pAccess.strat()))
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_META);
+        mError = ERR_INVALID_META;
         return QByteArray();
     }
 
     // Ensure at least header can fit
     if(!canFitHeader(encStd.size(), pAccess.bpc()))
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
+        mError = ERR_NOT_LARGE_ENOUGH;
         return QByteArray();
     }
 
@@ -165,13 +165,13 @@ QByteArray Decoder::decode(const QImage& encoded, const QImage& medium)
     {
         if(medium.isNull())
         {
-            mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_MISSING_MEDIUM);
+            mError = ERR_MISSING_MEDIUM;
             return QByteArray();
         }
 
         if(medium.size() != encStd.size())
         {
-            mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_DIMMENSION_MISTMATCH);
+            mError = ERR_DIMENSION_MISTMATCH;
             return QByteArray();
         }
 
@@ -201,14 +201,14 @@ QByteArray Decoder::decode(const QImage& encoded, const QImage& medium)
     // Ensure header is valid
     if(hMagic != MAGIC_NUM)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_INVALID_HEADER);
+        mError = ERR_INVALID_HEADER;
         return QByteArray();
     }
 
     quint64 maxStorage = calcMaxPayloadBytes(encStd.size(), hTagSize, pAccess.bpc());
     if(hPayloadSize > maxStorage)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_NOT_LARGE_ENOUGH);
+        mError = ERR_NOT_LARGE_ENOUGH;
         return QByteArray();
     }
 
@@ -231,7 +231,7 @@ QByteArray Decoder::decode(const QImage& encoded, const QImage& medium)
 
     if(decoded.size() != hPayloadSize)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_UNEXPECTED_END);
+        mError = ERR_UNEXPECTED_END;
         return QByteArray();
     }
 
@@ -239,7 +239,7 @@ QByteArray Decoder::decode(const QImage& encoded, const QImage& medium)
     quint32 checksum = Qx::Integrity::crc32(decoded);
     if(checksum != hPayloadChecksum)
     {
-        mError = Qx::GenericError(Qx::GenericError::Critical, ERR_DECODING_FAILED, ERR_CHECKSUM_MISMATCH);
+        mError = ERR_CHECKSUM_MISMATCH;
         return QByteArray();
     }
 

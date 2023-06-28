@@ -9,9 +9,6 @@
 #include "command/command.h"
 #include "project_vars.h"
 
-// Error Messages
-const QString ERR_INVALID_COMMAND = R"("%1" is not a valid command)";
-
 // Meta
 const QString NAME = "main";
 
@@ -30,24 +27,25 @@ int main(int argc, char *argv[])
     Core core(&app);
     QString command;
     QStringList commandParam;
-    ErrorCode initError = core.initialize(command, commandParam);
-    if(initError)
-        return initError;
+    CoreError initError = core.initialize(command, commandParam);
+    if(initError.isValid())
+        return Qx::Error(initError).code();
 
     // Terminate if no command
     if(command.isEmpty())
-        return ErrorCode::NO_ERR;
+        return 0;
 
     // Check for valid command
-    if(!Command::isRegistered(command))
+    CommandError commandCheckErr = Command::isRegistered(command);
+    if(commandCheckErr.isValid())
     {
-        core.printError(NAME, Qx::GenericError(Qx::GenericError::Critical, ERR_INVALID_COMMAND.arg(command)));
-        return ErrorCode::INVALID_ARGS;
+        core.printError(NAME, commandCheckErr);
+        return Qx::Error(commandCheckErr).code();
     }
 
     // Create command instance
     std::unique_ptr<Command> commandProcessor = Command::acquire(command, core);
 
     // Process command
-    return commandProcessor->process(commandParam);
+    return commandProcessor->process(commandParam).code();
 }

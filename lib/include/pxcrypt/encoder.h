@@ -8,8 +8,10 @@
 #include <QImage>
 
 // Qx Includes
-#include <qx/core/qx-genericerror.h>
 #include <qx/utility/qx-macros.h>
+
+// Project Includes
+#include "pxcrypt/encode_error.h"
 
 namespace PxCrypt
 {
@@ -27,11 +29,14 @@ public:
 //-Class Variables----------------------------------------------------------------------------------------------
 private:
     // Errors
-    const QString ERR_ENCODING_FAILED = QSL("Encoding failed.");
-    const QString ERR_NO_DATA = QSL("No data was provided");
-    const QString ERR_INVALID_IMAGE = QSL("The medium is invalid.");
-    const QString ERR_WONT_FIT = QSL("The medium's dimmensions are not large enough to fit the payload (%1 KiB short).");
-    const QString ERR_INVALID_BPC = QSL("Bits-per-channel must be between 1 and 7.");
+    static inline const EncodeError ERR_MISSING_PAYLOAD =
+            EncodeError(EncodeError::MissingPayload, QSL("No payload data was provided."));
+    static inline const EncodeError ERR_INVALID_IMAGE =
+            EncodeError(EncodeError::InvalidImage, QSL("The medium is invalid."));
+    static inline const EncodeError ERR_WONT_FIT =
+            EncodeError(EncodeError::WontFit, QSL("The medium's dimensions are not large enough to fit the payload (%1 KiB short)."));
+    static inline const EncodeError ERR_INVALID_BPC =
+            EncodeError(EncodeError::InvalidBpc, QSL("Bits-per-channel must be between 1 and 7."));
 
 //-Instance Variables----------------------------------------------------------------------------------------------
 private:
@@ -44,7 +49,7 @@ private:
     QString mTag;
 
     // Error Status
-    Qx::GenericError mError;
+    EncodeError mError;
 
 //-Constructor---------------------------------------------------------------------------------------------------
 public:
@@ -58,7 +63,7 @@ public:
 //-Instance Functions----------------------------------------------------------------------------------------------
 public:
     bool hasError() const;
-    Qx::GenericError error() const;
+    EncodeError error() const;
     void reset();
 
     quint8 bpc() const;
