@@ -7,7 +7,7 @@
 // Project Includes
 #include "command.h"
 
-class QX_ERROR_TYPE(CMeasureError, "CEncodeError", 3003)
+class QX_ERROR_TYPE(CMeasureError, "CMeasureError", 3003)
 {
     friend class CMeasure;
 

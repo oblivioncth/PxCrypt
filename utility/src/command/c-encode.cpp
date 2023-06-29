@@ -88,7 +88,7 @@ Qx::Error CEncode::process(const QStringList& commandLine)
         aEncoding = potentialType.value();
     else
     {
-        CEncodeError err = ERR_INVALID_OPTION.wSpecific(QSL("Invalid encoding."));
+        CEncodeError err = ERR_INVALID_ENCODING.wSpecific(typeStr);
         mCore.printError(NAME, err);
         return err;
     }
@@ -107,11 +107,12 @@ Qx::Error CEncode::process(const QStringList& commandLine)
 
         if(!valid)
         {
-            CEncodeError err = ERR_INVALID_OPTION.wSpecific(QSL("Invalid data density."));
+            CEncodeError err = ERR_INVALID_DENSITY.wSpecific(bpcStr);
             mCore.printError(NAME, err);
             return err;
         }
     }
+    mCore.printMessage(NAME, MSG_BPC.arg(aBpc));
 
     // Get key
     QByteArray aKey = mParser.value(CL_OPTION_KEY).toUtf8();
@@ -155,7 +156,7 @@ Qx::Error CEncode::process(const QStringList& commandLine)
     encoder.setEncoding(aEncoding);
     encoder.setTag(aTag);
 
-    mCore.printMessage(NAME, MSG_ENCODING);
+    mCore.printMessage(NAME, MSG_START_ENCODING);
     QImage encoded = encoder.encode(aPayload, aMedium);
     if(encoder.hasError())
     {
@@ -164,8 +165,9 @@ Qx::Error CEncode::process(const QStringList& commandLine)
         return err;
     }
 
-    // Print density (largely for when set to auto)
-    mCore.printMessage(NAME, MSG_BPC.arg(encoder.bpc()));
+    // Print true density if auto was used
+    if(autoDensity)
+        mCore.printMessage(NAME, MSG_ACTUAL_BPC.arg(encoder.bpc()));
 
     // Write encoded image
     QString outputPath;

@@ -18,9 +18,10 @@ public:
     enum Type
     {
         NoError = 0,
-        InvalidOption = 1,
-        FailedReadingMedium = 2,
-        FailedWritingEncoded = 3
+        InvalidEncoding = 1,
+        InvalidDensity = 2,
+        FailedReadingMedium = 3,
+        FailedWritingEncoded = 4
     };
 
 //-Instance Variables------------------------------------------------------------------------------------------------
@@ -55,8 +56,10 @@ class CEncode : public Command
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
     // Error
-    static inline const CEncodeError ERR_INVALID_OPTION =
-            CEncodeError(CEncodeError::InvalidOption, "Invalid encoding.");
+    static inline const CEncodeError ERR_INVALID_ENCODING =
+            CEncodeError(CEncodeError::InvalidEncoding, "Invalid encoding:");
+    static inline const CEncodeError ERR_INVALID_DENSITY =
+            CEncodeError(CEncodeError::InvalidDensity, "Invalid data density:");
     static inline const CEncodeError ERR_MEDIUM_READ_FAILED =
             CEncodeError(CEncodeError::FailedReadingMedium, "Failed reading the medium image.");
     static inline const CEncodeError ERR_OUTPUT_WRITE_FAILED =
@@ -70,7 +73,9 @@ private:
     static inline const QString MSG_BPC = QSL("Bits per channel: %1");
     static inline const QString MSG_PAYLOAD_SIZE = QSL("Payload size: %1 KiB");
     static inline const QString MSG_MEDIUM_DIM = QSL("Medium dimmensions: %1 x %2");
-    static inline const QString MSG_ENCODING = QSL("Encoding...");
+    static inline const QString MSG_ENCODING = QSL("Encoding: %1");
+    static inline const QString MSG_START_ENCODING = QSL("Encoding image...");
+    static inline const QString MSG_ACTUAL_BPC = QSL("Final bits per channel: %1");
     static inline const QString MSG_IMAGE_SAVED = QSL("Wrote encoded image to '%1'");
 
     // Command line option strings
