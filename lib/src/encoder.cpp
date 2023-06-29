@@ -63,8 +63,7 @@ namespace // Implementation details
  *  Because the data is not stored directly in the image, but rather as the difference between the
  *  original image and the encrypted image, the is no way to know what the offset for each channel
  *  was without a point of reference, and thus the original medium image is required in order to
- *  decode the encoded data. When coupled with a complex pre-shared key, data can been encoded
- *  quite securely using this strategy.
+ *  decode the encoded data. Payloads are more securely protected using this method.
  *
  *  The effect each frame has on a given channel is directly proportional to its magnitude, with
  *  higher value frames causing greater distortion in the original image. The best case scenario
