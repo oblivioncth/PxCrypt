@@ -18,6 +18,9 @@ Overall an images capacity for encoding is determined by its dimensions. The lar
 - Optionally encode data in a manner that also requires the original, unaltered image in order to decode the payload (can be combined with a pre-shared key)
 - Always produces a 32-bit RGBA images (saves as a PNG from the command-line)
 
+### Note on Security
+While the this technique results in embedded data that's highly scrambled and difficult to decode, and the underlying sequence generator cannot be meaningfully sampled for state recreation in this application, it is not a CSPRNG (MT19937). The purpose of this technique is largely data obfuscation, with a basic level of encryption. **For maximum data security, pre-encrypt payloads using a cryptographically secure algorithm, like AES.** 
+
 ## Library
 Detailed documentation of this library, facilitated by Doxygen, is available at: https://oblivioncth.github.io/PxCrypt/
 
