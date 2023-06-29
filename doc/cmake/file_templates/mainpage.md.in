@@ -70,12 +70,8 @@ target_link_libraries(example_app PUBLIC PxCrypt::Codec)
 Minimal Example
 ---------------
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-#include <pxcrypt/encode.h>
-#include <pxcrypt/decode.h>
-#include <iostream>
-
-#include <pxcrypt/encode.h>
-#include <pxcrypt/decode.h>
+#include <pxcrypt/encoder.h>
+#include <pxcrypt/decoder.h>
 #include <iostream>
 
 int main()
@@ -86,31 +82,32 @@ int main()
     QImage medium(1920, 1080, QImage::Format_ARGB32);
     medium.fill(Qt::GlobalColor::red);
 
-    // Tag
+    // Input
     QString tagIn = "Minimal Example";
-
-    // Payload
     QByteArray payloadIn = QByteArrayLiteral("Some text data");
-
-    // Settings
-    QByteArray presharedKey = QByteArrayLiteral("A Password");
-    PxCrypt::EncodeSettings es{
-        .bpc = 0, // Auto
-        .psk = presharedKey,
-        .type = PxCrypt::EncType::Relative
-    };
+    QByteArray psk = QByteArrayLiteral("A Password");
 
     //-Encode-------------------------
 
-    QImage encoded;
-    Qx::GenericError encodeError = PxCrypt::encode(encoded, medium, tagIn, payloadIn, es);
-    Q_ASSERT(!encodeError.isValid());
+    // Encoder
+    PxCrypt::Encoder enc;
+    enc.setTag(tagIn);
+    enc.setBpc(0); // Auto
+    enc.setPresharedKey(psk);
+    enc.setEncoding(PxCrypt::Encoder::Relative);
+
+    QImage encoded = enc.encode(payloadIn, medium);
+    Q_ASSERT(!enc.hasError());
 
     //-Decode-------------------------
-    QByteArray payloadOut;
-    QString tagOut;
-    Qx::GenericError decodeError = PxCrypt::decode(payloadOut, tagOut, encoded, presharedKey, medium);
-    Q_ASSERT(!decodeError.isValid());
+
+    // Decoder
+    PxCrypt::Decoder dec;
+    dec.setPresharedKey(psk);
+
+    QByteArray payloadOut = dec.decode(encoded, medium);
+    QString tagOut = dec.tag();
+    Q_ASSERT(!dec.hasError());
 
     //-Compare-------------------------
     std::cout << (payloadIn == payloadOut && tagIn == tagOut ? "Success" : "Fail")
