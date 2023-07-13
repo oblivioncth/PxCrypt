@@ -72,7 +72,7 @@ CommandError Command::parse(const QStringList& commandLine)
     if(mParser.parse(commandLine))
         return CommandError();
     else
-        return ERR_INVALID_ARGS;
+        return CommandError(ERR_INVALID_ARGS).wDetails(mParser.errorText());
 }
 
 bool Command::checkStandardOptions()
