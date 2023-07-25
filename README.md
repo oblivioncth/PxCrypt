@@ -156,7 +156,7 @@ BPC 7 - 20% Capacity (Left), 50% Capacity (Center), 80% Capacity (Right)
 - [Neargye's Magic Enum](https://github.com/Neargye/magic_enum)
 - [OBCMake](https://github.com/oblivioncth/OBCmake) (build script support, fetched automatically)
 - [Doxygen](https://www.doxygen.nl/)  (for documentation)
-- 
+ 
 ## Pre-built Releases/Artifacts
 
 Releases and some workflows currently provide builds of PxCrypt in various combinations of platforms and compilers. View the repository [Actions](https://github.com/oblivioncth/PxCrypt/actions) or [Releases](https://github.com/oblivioncth/PxCrypt/releases) to see examples
