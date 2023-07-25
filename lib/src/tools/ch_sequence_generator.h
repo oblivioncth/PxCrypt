@@ -4,9 +4,6 @@
 // Qt Includes
 #include <QRandomGenerator>
 
-// Qx Includes
-#include <qx/utility/qx-macros.h>
-
 // Project Includes
 #include "../encdec.h"
 

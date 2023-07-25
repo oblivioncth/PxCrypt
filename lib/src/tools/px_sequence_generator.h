@@ -8,7 +8,6 @@
 
 // Qx Includes
 #include <qx/core/qx-freeindextracker.h>
-#include <qx/utility/qx-macros.h>
 
 namespace PxCrypt
 {

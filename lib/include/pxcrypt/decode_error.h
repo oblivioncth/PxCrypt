@@ -31,7 +31,7 @@ public:
 
 //-Class Variables------------------------------------------------------------------------------------------------
 private:
-    static inline const QString PRIMARY_STRING = QSL("Decoding failed.");
+    static inline const QString PRIMARY_STRING = u"Decoding failed."_s;
 
 //-Instance Variables------------------------------------------------------------------------------------------------
 private:

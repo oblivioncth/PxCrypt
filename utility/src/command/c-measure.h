@@ -53,28 +53,28 @@ class CMeasure : public Command
 private:
     // Error
     static inline const CMeasureError ERR_INPUT_READ_FAILED =
-            CMeasureError(CMeasureError::FailedReadingInput, "Failed reading the input image.");
+            CMeasureError(CMeasureError::FailedReadingInput, u"Failed reading the input image."_s);
     static inline const CMeasureError ERR_INPUT_TOO_SMALL =
-            CMeasureError(CMeasureError::InputTooSmall, "The provided image's dimensions are too small for it to act as a medium.");
+            CMeasureError(CMeasureError::InputTooSmall, u"The provided image's dimensions are too small for it to act as a medium."_s);
 
     // Measurement
-    static inline const QString MEASUREMENT_LINE = QSL("BPC %1 - %2 bytes (%3 KiB)\n");
+    static inline const QString MEASUREMENT_LINE = u"BPC %1 - %2 bytes (%3 KiB)\n"_s;
 
     // Messages
-    static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Measure\n--------------");
-    static inline const QString MSG_IMAGE_DIMENSIONS = QSL("Image Dimmensions: %1 x %2");
-    static inline const QString MSG_TAG_CONSUMPTION = QSL("Filename Consumes: %1 bytes");
-    static inline const QString MSG_PAYLOAD_CAPACITY = QSL("Payload Capacities:");
+    static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Measure\n--------------"_s;
+    static inline const QString MSG_IMAGE_DIMENSIONS = u"Image Dimmensions: %1 x %2"_s;
+    static inline const QString MSG_TAG_CONSUMPTION = u"Filename Consumes: %1 bytes"_s;
+    static inline const QString MSG_PAYLOAD_CAPACITY = u"Payload Capacities:"_s;
 
     // Command line option strings
-    static inline const QString CL_OPT_INPUT_S_NAME = QSL("i");
-    static inline const QString CL_OPT_INPUT_L_NAME = QSL("input");
-    static inline const QString CL_OPT_INPUT_DESC = QSL("Path to image to measure.");
+    static inline const QString CL_OPT_INPUT_S_NAME = u"i"_s;
+    static inline const QString CL_OPT_INPUT_L_NAME = u"input"_s;
+    static inline const QString CL_OPT_INPUT_DESC = u"Path to image to measure."_s;
 
-    static inline const QString CL_OPT_FILENAME_S_NAME = QSL("f");
-    static inline const QString CL_OPT_FILENAME_L_NAME = QSL("filename");
-    static inline const QString CL_OPT_FILENAME_DESC = QSL("Name of potential payload file. Defaults to 'filename.txt'");
-    static inline const QString CL_OPT_FILENAME_DEFAULT = QSL("filename.txt");
+    static inline const QString CL_OPT_FILENAME_S_NAME = u"f"_s;
+    static inline const QString CL_OPT_FILENAME_L_NAME = u"filename"_s;
+    static inline const QString CL_OPT_FILENAME_DESC = u"Name of potential payload file. Defaults to 'filename.txt'"_s;
+    static inline const QString CL_OPT_FILENAME_DEFAULT = u"filename.txt"_s;
 
     // Command line options
     static inline const QCommandLineOption CL_OPTION_INPUT{{CL_OPT_INPUT_S_NAME, CL_OPT_INPUT_L_NAME}, CL_OPT_INPUT_DESC, "input"}; // Takes value
@@ -85,8 +85,8 @@ private:
 
 public:
     // Meta
-    static inline const QString NAME = QSL("measure");
-    static inline const QString DESCRIPTION = QSL("Determine how much data can be encoded within a given image.");
+    static inline const QString NAME = u"measure"_s;
+    static inline const QString DESCRIPTION = u"Determine how much data can be encoded within a given image."_s;
 
 //-Constructor----------------------------------------------------------------------------------------------------------
 public:

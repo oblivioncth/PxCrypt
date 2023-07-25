@@ -7,8 +7,7 @@
 #include <QSize>
 #include <QImage>
 
-// Qx Includes
-#include <qx/utility/qx-macros.h>
+using namespace Qt::Literals::StringLiterals;
 
 namespace PxCrypt
 {
@@ -31,7 +30,7 @@ enum EncStrat
 };
 
 //-Namespace Variables-------------------------------------------------------------------------------------------------
-const QByteArray MAGIC_NUM = QBAL("PXC");
+const QByteArray MAGIC_NUM = "PXC"_ba;
 
 const int META_PIXELS = 2; // BPC + EncType
 
@@ -44,7 +43,7 @@ const int HEADER_BYTES = MAGIC_SIZE +
                          TAG_LENGTH_SIZE +
                          PAYLOAD_LENGTH_SIZE;
 
-static inline const QByteArray DEFAULT_SEED = QBAL("The best and most secure seed that is possible to exist!");
+static inline const QByteArray DEFAULT_SEED = "The best and most secure seed that is possible to exist!"_ba;
 
 //-Namespace Functions-------------------------------------------------------------------------------------------------
 quint64 calcMaxPayloadBits(const QSize& dim, quint16 tagSize, quint8 bpc);

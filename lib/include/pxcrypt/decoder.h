@@ -7,9 +7,6 @@
 // Qt Includes
 #include <QImage>
 
-// Qx Includes
-#include <qx/utility/qx-macros.h>
-
 // Project Includes
 #include "pxcrypt/decode_error.h"
 
@@ -22,23 +19,23 @@ class PXCRYPT_CODEC_EXPORT Decoder
 private:
     // Errors
     static inline const DecodeError ERR_INVALID_SOURCE =
-            DecodeError(DecodeError::InvalidSource, QSL("The encoded image is invalid."));
+        DecodeError(DecodeError::InvalidSource, u"The encoded image is invalid."_s);
     static inline const DecodeError ERR_MISSING_MEDIUM =
-            DecodeError(DecodeError::MissingMedium, QSL("The encoded image requires a medium to be decoded but none was provided."));
+        DecodeError(DecodeError::MissingMedium, u"The encoded image requires a medium to be decoded but none was provided."_s);
     static inline const DecodeError ERR_DIMENSION_MISTMATCH =
-            DecodeError(DecodeError::DimensionMismatch, QSL("The required medium image has different dimensions than the encoded image."));
+        DecodeError(DecodeError::DimensionMismatch, u"The required medium image has different dimensions than the encoded image."_s);
     static inline const DecodeError ERR_NOT_LARGE_ENOUGH =
-            DecodeError(DecodeError::NotLargeEnough, QSL("The provided image is not large enough to be an encoded image."));
+        DecodeError(DecodeError::NotLargeEnough, u"The provided image is not large enough to be an encoded image."_s);
     static inline const DecodeError ERR_INVALID_META =
-            DecodeError(DecodeError::InvalidMeta, QSL("The provided image is not encoded."));
+        DecodeError(DecodeError::InvalidMeta, u"The provided image is not encoded."_s);
     static inline const DecodeError ERR_INVALID_HEADER =
-            DecodeError(DecodeError::InvalidHeader, QSL("The provided image is not encoded or the password/medium are incorrect."));
+        DecodeError(DecodeError::InvalidHeader, u"The provided image is not encoded or the password/medium are incorrect."_s);
     static inline const DecodeError ERR_LENGTH_MISMATCH =
-            DecodeError(DecodeError::LengthMismatch, QSL("The encoded image's header indicates it contains more data than possible."));
+        DecodeError(DecodeError::LengthMismatch, u"The encoded image's header indicates it contains more data than possible."_s);
     static inline const DecodeError ERR_UNEXPECTED_END =
-            DecodeError(DecodeError::UnexpectedEnd, QSL("All pixels were skimmed before the expected payload size was reached."));
+        DecodeError(DecodeError::UnexpectedEnd, u"All pixels were skimmed before the expected payload size was reached."_s);
     static inline const DecodeError ERR_CHECKSUM_MISMATCH =
-            DecodeError(DecodeError::ChecksumMismatch, QSL("The payload's checksum did not match the expected value."));
+        DecodeError(DecodeError::ChecksumMismatch, u"The payload's checksum did not match the expected value."_s);
 
 //-Instance Variables----------------------------------------------------------------------------------------------
 private:

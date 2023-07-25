@@ -182,7 +182,7 @@ Qx::Error CEncode::process(const QStringList& commandLine)
 
     if(QFile::exists(outputPath))
     {
-        CEncodeError err = ERR_OUTPUT_WRITE_FAILED.wSpecific(QSL("The file already exists."));
+        CEncodeError err = ERR_OUTPUT_WRITE_FAILED.wSpecific(u"The file already exists."_s);
         mCore.printError(NAME, err);
         return err;
     }

@@ -7,9 +7,6 @@
 // Qt Includes
 #include <QImage>
 
-// Qx Includes
-#include <qx/utility/qx-macros.h>
-
 // Project Includes
 #include "pxcrypt/encode_error.h"
 
@@ -30,13 +27,13 @@ public:
 private:
     // Errors
     static inline const EncodeError ERR_MISSING_PAYLOAD =
-            EncodeError(EncodeError::MissingPayload, QSL("No payload data was provided."));
+        EncodeError(EncodeError::MissingPayload, u"No payload data was provided."_s);
     static inline const EncodeError ERR_INVALID_IMAGE =
-            EncodeError(EncodeError::InvalidImage, QSL("The medium is invalid."));
+        EncodeError(EncodeError::InvalidImage, u"The medium is invalid."_s);
     static inline const EncodeError ERR_WONT_FIT =
-            EncodeError(EncodeError::WontFit, QSL("The medium's dimensions are not large enough to fit the payload (%1 KiB short)."));
+        EncodeError(EncodeError::WontFit, u"The medium's dimensions are not large enough to fit the payload (%1 KiB short)."_s);
     static inline const EncodeError ERR_INVALID_BPC =
-            EncodeError(EncodeError::InvalidBpc, QSL("Bits-per-channel must be between 1 and 7."));
+        EncodeError(EncodeError::InvalidBpc, u"Bits-per-channel must be between 1 and 7."_s);
 
 //-Instance Variables----------------------------------------------------------------------------------------------
 private:

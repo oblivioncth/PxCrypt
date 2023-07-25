@@ -57,60 +57,59 @@ class CEncode : public Command
 private:
     // Error
     static inline const CEncodeError ERR_INVALID_ENCODING =
-            CEncodeError(CEncodeError::InvalidEncoding, "Invalid encoding:");
+            CEncodeError(CEncodeError::InvalidEncoding, u"Invalid encoding:"_s);
     static inline const CEncodeError ERR_INVALID_DENSITY =
-            CEncodeError(CEncodeError::InvalidDensity, "Invalid data density:");
+            CEncodeError(CEncodeError::InvalidDensity, u"Invalid data density:"_s);
     static inline const CEncodeError ERR_MEDIUM_READ_FAILED =
-            CEncodeError(CEncodeError::FailedReadingMedium, "Failed reading the medium image.");
+            CEncodeError(CEncodeError::FailedReadingMedium, u"Failed reading the medium image."_s);
     static inline const CEncodeError ERR_OUTPUT_WRITE_FAILED =
-            CEncodeError(CEncodeError::FailedWritingEncoded, "Failed writing the encoded image.");
+            CEncodeError(CEncodeError::FailedWritingEncoded, u"Failed writing the encoded image."_s);
 
     // Encoding
-    static inline const QString OUTPUT_EXT = QSL("png");
+    static inline const QString OUTPUT_EXT = u"png"_s;
 
     // Messages
-    static inline const QString MSG_COMMAND_INVOCATION = QSL(PROJECT_SHORT_NAME " Encode\n--------------");
-    static inline const QString MSG_BPC = QSL("Bits per channel: %1");
-    static inline const QString MSG_PAYLOAD_SIZE = QSL("Payload size: %1 KiB");
-    static inline const QString MSG_MEDIUM_DIM = QSL("Medium dimmensions: %1 x %2");
-    static inline const QString MSG_ENCODING = QSL("Encoding: %1");
-    static inline const QString MSG_START_ENCODING = QSL("Encoding image...");
-    static inline const QString MSG_ACTUAL_BPC = QSL("Final bits per channel: %1");
-    static inline const QString MSG_IMAGE_SAVED = QSL("Wrote encoded image to '%1'");
+    static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Encode\n--------------"_s;
+    static inline const QString MSG_BPC = u"Bits per channel: %1"_s;
+    static inline const QString MSG_PAYLOAD_SIZE = u"Payload size: %1 KiB"_s;
+    static inline const QString MSG_MEDIUM_DIM = u"Medium dimmensions: %1 x %2"_s;
+    static inline const QString MSG_ENCODING = u"Encoding: %1"_s;
+    static inline const QString MSG_START_ENCODING = u"Encoding image..."_s;
+    static inline const QString MSG_ACTUAL_BPC = u"Final bits per channel: %1"_s;
+    static inline const QString MSG_IMAGE_SAVED = u"Wrote encoded image to '%1'"_s;
 
     // Command line option strings
-    static inline const QString CL_OPT_INPUT_S_NAME = QSL("i");
-    static inline const QString CL_OPT_INPUT_L_NAME = QSL("input");
-    static inline const QString CL_OPT_INPUT_DESC = QSL("Path to input file for encoding.");
+    static inline const QString CL_OPT_INPUT_S_NAME = u"i"_s;
+    static inline const QString CL_OPT_INPUT_L_NAME = u"input"_s;
+    static inline const QString CL_OPT_INPUT_DESC = u"Path to input file for encoding."_s;
 
-    static inline const QString CL_OPT_OUTPUT_S_NAME = QSL("o");
-    static inline const QString CL_OPT_OUTPUT_L_NAME = QSL("output");
-    static inline const QString CL_OPT_OUTPUT_DESC = QSL("Path to encoded output file. Defaults to the input path with a '_enc' suffix.");
+    static inline const QString CL_OPT_OUTPUT_S_NAME = u"o"_s;
+    static inline const QString CL_OPT_OUTPUT_L_NAME = u"output"_s;
+    static inline const QString CL_OPT_OUTPUT_DESC = u"Path to encoded output file. Defaults to the input path with a '_enc' suffix."_s;
 
-    static inline const QString CL_OPT_MEDIUM_S_NAME = QSL("m");
-    static inline const QString CL_OPT_MEDIUM_L_NAME = QSL("medium");
-    static inline const QString CL_OPT_MEDIUM_DESC = QSL("The image to encode the data within.");
+    static inline const QString CL_OPT_MEDIUM_S_NAME = u"m"_s;
+    static inline const QString CL_OPT_MEDIUM_L_NAME = u"medium"_s;
+    static inline const QString CL_OPT_MEDIUM_DESC = u"The image to encode the data within."_s;
 
-    static inline const QString CL_OPT_DENSITY_S_NAME = QSL("d");
-    static inline const QString CL_OPT_DENSITY_L_NAME = QSL("density");
-    static inline const QString CL_OPT_DENSITY_DESC = QSL("How many bits-per-channel to use when encoding the image (auto | 1-7). "
-                                                          "Defaults to 'auto'");
-    static inline const QString CL_OPT_DENSITY_DEFAULT = QSL("auto");
+    static inline const QString CL_OPT_DENSITY_S_NAME = u"d"_s;
+    static inline const QString CL_OPT_DENSITY_L_NAME = u"density"_s;
+    static inline const QString CL_OPT_DENSITY_DESC = u"How many bits-per-channel to use when encoding the image (auto | 1-7)."
+                                                      "Defaults to 'auto'"_s;
+    static inline const QString CL_OPT_DENSITY_DEFAULT = u"auto"_s;
 
-    static inline const QString CL_OPT_KEY_S_NAME = QSL("k");
-    static inline const QString CL_OPT_KEY_L_NAME = QSL("key");
-    static inline const QString CL_OPT_KEY_DESC = QSL("An optional key to require in order to decode the encoded image.");
-    static inline const QString CL_OPT_KEY_DEFAULT = QSL("");
+    static inline const QString CL_OPT_KEY_S_NAME = u"k"_s;
+    static inline const QString CL_OPT_KEY_L_NAME = u"key"_s;
+    static inline const QString CL_OPT_KEY_DESC = u"An optional key to require in order to decode the encoded image."_s;
+    static inline const QString CL_OPT_KEY_DEFAULT = u""_s;
 
-    static inline const QString CL_OPT_ENCODING_S_NAME = QSL("e");
-    static inline const QString CL_OPT_ENCODING_L_NAME = QSL("encoding");
-    static inline const QString CL_OPT_ENCODING_DESC = QSL(
-        "The type of encoding to use (defaults to Absolute):\n"
+    static inline const QString CL_OPT_ENCODING_S_NAME = u"e"_s;
+    static inline const QString CL_OPT_ENCODING_L_NAME = u"encoding"_s;
+    static inline const QString CL_OPT_ENCODING_DESC =
+        u"The type of encoding to use (defaults to Absolute):\n"
         "\n"
         "Relative - Requires the original medium to decode\n"
-        "Absolute - Doesn't require the original medium to decode\n"
-    );
-    static inline const QString CL_OPT_ENCODING_DEFAULT = QSL("Absolute");
+        "Absolute - Doesn't require the original medium to decode\n"_s;
+    static inline const QString CL_OPT_ENCODING_DEFAULT = u"Absolute"_s;
 
     /* NOTE: This will cause a compilation error when changing PxCrypt::EncType in order to prompt the developer
      * to ensure any new options have been described above and then manually check them off here
@@ -136,8 +135,8 @@ private:
 
 public:
     // Meta
-    static inline const QString NAME = QSL("encode");
-    static inline const QString DESCRIPTION = QSL("Store a file within the color channel data of an image.");
+    static inline const QString NAME = u"encode"_s;
+    static inline const QString DESCRIPTION = u"Store a file within the color channel data of an image."_s;
 
 //-Constructor----------------------------------------------------------------------------------------------------------
 public:
