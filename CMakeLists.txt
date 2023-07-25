@@ -14,7 +14,7 @@ set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("d0b705d31f2c0e3608ee37dc51f8d51d5d588de8")
+fetch_ob_cmake("v0.3.2")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -61,14 +61,14 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "e2ceb0af9f1078dd0c84d5c35a5ab22d7f9b6579"
+    REF "v0.5.1"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )
 
 # Fetch Neargye's Magic Enum
 include(OB/FetchMagicEnum)
-ob_fetch_magicenum("v0.9.1")
+ob_fetch_magicenum("v0.9.3")
 
 # Process Targets
 set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_codec)
