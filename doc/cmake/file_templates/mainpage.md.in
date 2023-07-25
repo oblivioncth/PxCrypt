@@ -1,0 +1,276 @@
+PxCrypt {#mainpage}
+====================
+
+PxCrypt  is a C++ library that provides a codec for storing arbitrary binary data within images, a form of [steganography](https://en.wikipedia.org/wiki/Steganography).
+
+This project also includes a command-line encoder/decoder utility that allows for convenient access to the library's encoding/decoding facilities and acts as a sample application built using the library as a dependency. For more information regarding the application, see the project's [GitHub page](https://github.com/oblivioncth/PxCrypt).
+
+Requirements
+------------
+
+ - An x64, C++@CMAKE_CXX_STANDARD@ capable compiler
+ - Qt6
+ - CMake @PROJECT_CMAKE_MINIMUM_REQUIRED_VERSION@ or greater
+ - OS
+	 - Windows 10 or above
+	 - Linux (untested on more general Unix systems)
+ 
+Packaging
+----------
+PxCrypt is provided as a CMake package composed of a single library, several public header files, and the encoder/decoder utility.
+
+### Package Components:
+
+ - `Codec` - The main library
+ - `Utility` - The encoder/decoder utility
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Example PxCrypt Import
+find_package(PxCrypt)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If no components are specified in the `find_package()` call, only the main library will be imported.
+
+PxCrypt is also composed to gracefully support CMake's FetchContent mechanism. All exportable targets are named to match their corresponding component when packaged, and feature alias targets with the same names when building. This allows consumers to access the targets via the same name regardless of whether they are using a pre-built package of PxCrypt or building it as a sub-project.
+
+For example, the `Codec` component corresponds to the `pxcrypt_codec` target, which can also be referred to via `PxCrypt::Codec`.
+
+
+Getting Started
+---------------
+@note
+For a recommended alternative, see *Source Build as a Direct CMake Dependency*
+
+1) Download the latest [Release](https://github.com/oblivioncth/PxCrypt/releases)
+
+2) Place the package somewhere CMake can find it
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Add to a default search path or...
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} path\to\pxcrypt_package)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+3) Import the package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+find_package(PxCrypt 0.1) # Or whichever version
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4) Link to the library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+target_link_libraries(example_app PUBLIC PxCrypt::Codec)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5) Include the desired public headers in your code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+#include <pxcrypt/encode.h>
+#include <pxcrypt/decode.h>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+6) Review the rest of the documentation, primarily encode.h and decode.h. Also see PxCrypt::EncType for the difference between the available encoding strategies.
+
+Minimal Example
+---------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+#include <pxcrypt/encoder.h>
+#include <pxcrypt/decoder.h>
+#include <iostream>
+
+int main()
+{
+    //-Prepare for Encoding-------------------------
+
+    // Create medium (for demonstration purposes, load a real image instead)
+    QImage medium(1920, 1080, QImage::Format_ARGB32);
+    medium.fill(Qt::GlobalColor::red);
+
+    // Input
+    QString tagIn = "Minimal Example";
+    QByteArray payloadIn = QByteArrayLiteral("Some text data");
+    QByteArray psk = QByteArrayLiteral("A Password");
+
+    //-Encode-------------------------
+
+    // Encoder
+    PxCrypt::Encoder enc;
+    enc.setTag(tagIn);
+    enc.setBpc(0); // Auto
+    enc.setPresharedKey(psk);
+    enc.setEncoding(PxCrypt::Encoder::Relative);
+
+    QImage encoded = enc.encode(payloadIn, medium);
+    Q_ASSERT(!enc.hasError());
+
+    //-Decode-------------------------
+
+    // Decoder
+    PxCrypt::Decoder dec;
+    dec.setPresharedKey(psk);
+
+    QByteArray payloadOut = dec.decode(encoded, medium);
+    QString tagOut = dec.tag();
+    Q_ASSERT(!dec.hasError());
+
+    //-Compare-------------------------
+    std::cout << (payloadIn == payloadOut && tagIn == tagOut ? "Success" : "Fail")
+              << std::endl;
+
+    return 0;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Building From Source
+--------------------
+The latest generally stable source is available in the 'main' branch of https://github.com/oblivioncth/PxCrypt, while the most up-to-date source can be found in the 'dev' branch.
+
+The requirements for building from Git are the same as for using PxCrypt, with the obvious exception that Doxygen (as well as Graphviz) is also needed to build the documentation.
+
+If newer to working with Qt, it is easiest to build from within Qt creator as it handles a large portion of environment setup, including adding Qt to CMake's package search list, automatically. Simply make sure that a kit is configured in Qt Creator that uses a compatible version of Qt, open the CMakeLists.txt file as a project, and build with the desired configuration.
+
+Alternatively, you can use the `qt-cmake` wrapper for similar Qt environment automation when building the project on the command-line, which is shown further down.
+
+The CMake project is designed to be used with multi-configuration generators such as Visual Studio or Ninja Multi-Config (recommended), and may require some tweaking to work with single configuration generators.
+
+### CMake Options:
+
+ - `PXCRYPT_DOCS` - Set to `ON` in order to generate the documentation target (OFF)
+ - `PXCRYPT_TESTS` - Set to `ON` in order to generate the test targets (OFF)
+ - `BUILD_SHARED_LIBS` - Build PxCrypt as a shared library instead of a static one (OFF)
+ 
+### CMake Targets:
+
+ - `all` - Builds the PxCrypt library and encoder/decoder utility
+ - `install` - Installs the build output into `CMAKE_INSTALL_PREFIX`
+ - `pxcrypt_base` - Builds the PxCrypt library
+ - `pxcrypt_frontend` - Builds the PxCrypt encoder/decoder utility
+ - `pxcrypt_docs` - Builds the PxCrypt documentation
+ - `pxcrypt_tst_...` - Builds the various test targets. To actually run tests, just build the general CMake tests target `test`.
+
+### CMake Install Components:
+
+- `pxcrypt` - Installs top-level files (README.md, CMake package configuration files, etc.) 
+- `pxcrypt_base` - Installs the built library
+- `pxcrypt_frontend` - Installs the built encoder/decoder utility
+- `pxcrypt_docs` - Installs the built documentation
+
+If PxCrypt is configured as a sub-project, its install components are automatically removed from the `all` component, as to not pollute the install directory of the top-level project. They can still be installed by directly referencing their component names as shown above.
+
+### Documentation:
+In order for the `pxcrypt_docs` target to be generated the CMake cache variable **PXCRYPT_DOCS** must be set to *ON* when CMake is invoked:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cmake.exe (...) -D PXCRYPT_DOCS=ON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The PxCrypt documentation supports two optional, but highly recommended features:
+ - Linking to Qt documentation
+ - Generating a Qt Compressed Help (.qch) file for use in Qt Creator
+
+In order to enable these features, the CMake variables **QT_DOCS_DIR** and **QT_HELP_GEN_PATH** respectively must be available. PxCrypt tries to set them automatically according to the following defaults, but these can be overridden by passing definitions for the variables to CMake on the command line via @c -D.
+
+    # Optional documentation defaults
+    # Here <QT_ROOT> refers to the install directory of a given Qt build
+    QT_DOCS_DIR: <QT_ROOT>/doc
+    (Windows) QT_HELP_GEN_PATH: <QT_ROOT>/bin/qhelpgenerator.exe
+	(Linux) QT_HELP_GEN_PATH: <QT_ROOT>/libexec/qhelpgenerator
+
+If supplying **QT_DOCS_DIR** manually, it must be set to the root path that contains documentation for the Qt version you are building with. It should look something like this:
+
+    doc/
+    ├── config
+    ├── global
+    ├── qdoc
+    ├── qmake
+    ├── qtcmake
+    ├── qtconcurrent
+    ├── qtcore
+    ├── ...
+    ├── qdoc.qch
+    ├── qmake.qch
+    └── ...
+
+    # In this case QT_DOCS_DIR should point to the directory 'doc'.
+
+The path for this documentation varies depending on how you obtained Qt, but is generally placed in one of two locations:
+
+    # Official Qt Builds from Maintenance Tool/Installer
+    <QT_SOFTWARE>/Docs/Qt-<QT_VERSION>
+
+    # Self-built Qt
+    <QT_ROOT>/doc
+
+    # NOTE:
+    # By default on Windows <QT_SOFTWARE> is C:\Program Files\Qt
+    # On Linux it is often /usr/local/Qt
+    
+### Tests:
+The project contains a suite of tests to ensure that the library functions as intended. They will be expanded upon as the library matures.
+    
+### Package
+By default, the CMakeLists project configures CPack to create an artifact ZIP containing:
+ - The library
+ - The reference application
+ - Documentation
+
+The following is the general build process required to successfully generate this package via a shadow build on Windows. Adjust the configuration as you see fit:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Set the environment variables that follow as desired
+
+# Setup C++ Build Environment
+CALL "%VS_PATH%\Common7\Tools\VsDevCmd.bat" -arch=amd64
+
+# Configure CMake using Qt wrapper
+CALL "%Qt_ROOT%\bin\qt-cmake" -G "Ninja Multi-Config" -S "%PXCRYPT_SOURCE_DIR%" -B "%PXCRYPT_BUILD_DIR%" -D PXCRYPT_DOCS=ON
+
+# Go to Build directory
+cd /D "%PXCRYPT_BUILD_DIR%"
+
+# Build the Debug/Release library, reference app, and documentation
+cmake.exe --build . --target all --config Debug
+cmake.exe --build . --target all --config Release
+
+# Install Debug/Release libraries, reference application, and documentation
+cmake --install . --config Debug
+cmake --install . --config Release
+
+# Create the output package
+cpack.exe -C Debug;Release
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Source Build as a Direct CMake Dependency
+-----------------------------------------
+If you want to use PxCrypt compiled from source directly as a dependency in your CMake project and don't care about the intermediary redistributables, it is recommended to do the following.
+
+Create 'FetchPxCrypt.cmake' and add it to CMAKE_MODULE_PATH:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# FetchPxCrypt.cmake - REQUIRES GIT
+
+# This will checkout PxCrypt, make its targets available directly at configure time without needing to call
+# find_package(), and automatically build it as a dependency at build time.
+
+function(fetch_pxcrypt git_ref)
+    include(FetchContent)
+    FetchContent_Declare(PxCrypt
+        GIT_REPOSITORY "https://github.com/oblivioncth/PxCrypt"
+        GIT_TAG ${git_ref}
+    )
+    FetchContent_MakeAvailable(PxCrypt)
+endfunction()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Then in your CMake project:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+include(FetchPxCrypt)
+fetch_pxcrypt(<commitish_here>) # Get PxCrypt
+
+add_executable(SomeExe
+    ...
+)
+
+target_link_libraries(SomeExe
+    PRIVATE
+        PxCrypt::Codec
+)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This allows for more flexibility in downstream projects as they can more easily alter the configuration of PxCrypt on-the-fly as needed.
