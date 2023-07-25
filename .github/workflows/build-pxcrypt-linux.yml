@@ -119,7 +119,7 @@ jobs:
     - name: Set doc artifact name
       id: set_doc_artifact_name
       if: matrix.lib_linkage == 'static' && matrix.cxx_comp == 'clang++-14' 
-      run: echo "doc_artifact_name=${{ env.current_artifact_name }}" >> $Env:GITHUB_OUTPUT
+      run: echo "doc_artifact_name=${{ env.current_artifact_name }}" >> $GITHUB_OUTPUT
     - name: Upload PxCrypt build artifact
       uses: actions/upload-artifact@v3
       with:
