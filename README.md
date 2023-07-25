@@ -4,7 +4,7 @@ PxCrypt is a C++ library that facilitates a form of digital visual steganography
 
 The project also includes a command-line utility through which one can evaluate the library's functionality, or simply encode/decode images as an end-user.
 
-Overall an images capacity for encoding is determined by its dimensions. The larger the row and column count, the more data can be stored.
+Overall an image's capacity for encoding is determined by its dimensions. The larger the row and column count, the more data can be stored.
 
 [![Dev Builds](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml/badge.svg?branch=dev)](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml)
 
@@ -118,13 +118,13 @@ A filename is needed since the original name of encoded files are stored within 
 --------------------------------------------------------------------------------
 
 ## Image Artifacts
-It can be surprising how much information can be encoding within an image little-to-no perceptible distortion.
+It's surprising how much information can be encoded within an image while little-to-no perceptible distortion.
 
 While the degree to which an image becomes visually distorted when used as an encoding medium is partially influenced by the content of the payload, it is largely a function of how densely the payload is packed within the image.
 
 In this regard there are two factors: How much data is allocated per channel, and how many pixels are allocated for encoded data.
 
-The first metric, known as bits-per-channel, or BPC (which is set with the option **-d** of the utility), determines the maximum severity distortion of a single pixel, while the second affects the overall proximity of distortion artifacts. 
+The first metric, known as bits-per-channel, or BPC (which is set with the option **-d** of the utility), determines the maximum distortion severity of a single pixel, while the second affects the overall proximity of distortion artifacts. 
 
 The following images demonstrate the effect the encoding process has on an image at various BPC levels and overall capacity usage (i.e. both factors), using the Absolute encoding type:
 
