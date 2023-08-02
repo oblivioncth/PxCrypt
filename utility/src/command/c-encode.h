@@ -93,7 +93,7 @@ private:
 
     static inline const QString CL_OPT_DENSITY_S_NAME = u"d"_s;
     static inline const QString CL_OPT_DENSITY_L_NAME = u"density"_s;
-    static inline const QString CL_OPT_DENSITY_DESC = u"How many bits-per-channel to use when encoding the image (auto | 1-7)."
+    static inline const QString CL_OPT_DENSITY_DESC = u"How many bits-per-channel to use when encoding the image (auto | 1-7). "
                                                       "Defaults to 'auto'"_s;
     static inline const QString CL_OPT_DENSITY_DEFAULT = u"auto"_s;
 
