@@ -85,7 +85,7 @@ Requires:
 **-i** and **-m** 
 
 *Notes:*
-See the documentation for [PxCrypt::EncType](https://oblivioncth.github.io/PxCrypt/namespace_px_crypt.html#a750ea91c0809276e93ae9e113dcf9b41) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
+See the documentation for [PxCrypt::Encoder::Encoding](https://oblivioncth.github.io/PxCrypt/namespace_px_crypt.html#a750ea91c0809276e93ae9e113dcf9b41) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
 
 --------------------------------------------------------------------------------
 
@@ -96,7 +96,6 @@ Options:
  -  **-o | --output:** Directory to place the decoded output. Defaults to the input path's directory
  - **-m | --medium:** Path to the original image used to encode the data (ignored for encoding types other than 'Relative')
  - **-k | --key:** The key for images protected with one
- - **-t | --type:** "The type of encoding that was used to create the encoded input (defaults to Absolute)
 
 Requires:
 **-i**
@@ -118,7 +117,7 @@ A filename is needed since the original name of encoded files are stored within 
 --------------------------------------------------------------------------------
 
 ## Image Artifacts
-It's surprising how much information can be encoded within an image while little-to-no perceptible distortion.
+It's surprising how much information can be encoded within an image while inducing little-to-no perceptible distortion.
 
 While the degree to which an image becomes visually distorted when used as an encoding medium is partially influenced by the content of the payload, it is largely a function of how densely the payload is packed within the image.
 
