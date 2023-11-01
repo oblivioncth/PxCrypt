@@ -85,7 +85,7 @@ Requires:
 **-i** and **-m** 
 
 *Notes:*
-See the documentation for [PxCrypt::Encoder::Encoding](https://https://oblivioncth.github.io/PxCrypt/classPxCrypt_1_1Encoder.html#add57a5880fd161dfd3ae3943adb9aed3) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
+See the documentation for [PxCrypt::Encoder::Encoding](https://oblivioncth.github.io/PxCrypt/classPxCrypt_1_1Encoder.html#add57a5880fd161dfd3ae3943adb9aed3) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
 
 --------------------------------------------------------------------------------
 
