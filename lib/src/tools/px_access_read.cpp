@@ -65,8 +65,6 @@ quint8 PxAccessRead::readMetaValue()
 
 void PxAccessRead::readMetaPixels()
 {
-    Qx::BitArray metaBits(3);
-
     // Read BPC from first pixel
     mBpc = readMetaValue();
 
