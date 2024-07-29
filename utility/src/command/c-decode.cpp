@@ -9,7 +9,7 @@
 #include <qx/io/qx-common-io.h>
 
 // Project Includes
-#include "pxcrypt/decoder.h"
+#include "pxcrypt/codec/standard_decoder.h"
 
 //===============================================================================================================
 // CDecodeError
@@ -117,14 +117,14 @@ Qx::Error CDecode::process(const QStringList& commandLine)
     }
 
     // Decode
-    PxCrypt::Decoder decoder;
+    PxCrypt::StandardDecoder decoder;
     decoder.setPresharedKey(aKey);
 
     mCore.printMessage(NAME, MSG_DECODING);
-    QByteArray decoded = decoder.decode(aEncoded, aMedium);
-    if(decoder.hasError())
+    QByteArray decoded;
+    PxCrypt::StandardDecoder::Error err = decoder.decode(decoded, aEncoded, aMedium);
+    if(err)
     {
-        PxCrypt::DecodeError err = decoder.error();
         mCore.printError(NAME, err);
         return err;
     }

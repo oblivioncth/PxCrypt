@@ -5,6 +5,15 @@ include(OB/Documentation)
 set(DOXYGEN_HTML_COLORSTYLE_HUE 102)
 set(DOXYGEN_HTML_COLORSTYLE_SAT 255)
 set(DOXYGEN_HTML_COLORSTYLE_GAMMA 70)
+set(DOXYGEN_EXCLUDE_SYMBOLS
+    "PxCryptPrivate::*"
+) # Reduces 'cond' requirement
+#TODO: Improve the above to futher reduce the need of "@cond", though
+# this likely requires looking at Doxygen's source as patterns that
+# seem they should work don't
+set(DOXYGEN_PREDEFINED
+    "PXCRYPT_CODEC_EXPORT="
+)
 
 ob_standard_documentation(${DOC_TARGET_NAME}
     DOXY_VER 1.9.7

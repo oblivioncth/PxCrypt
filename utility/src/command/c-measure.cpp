@@ -6,7 +6,7 @@
 #include <QImageReader>
 
 // Project Includes
-#include "pxcrypt/encoder.h"
+#include "pxcrypt/codec/standard_encoder.h"
 
 //===============================================================================================================
 // CMeasureError
@@ -100,7 +100,7 @@ Qx::Error CMeasure::process(const QStringList& commandLine)
     QList<quint64> capacities(7);
 
     for(quint8 bpc = 1; bpc <= 7; bpc++)
-        capacities[bpc - 1] = PxCrypt::Encoder::calculateMaximumStorage(imageSize, filename.size(), bpc);
+        capacities[bpc - 1] = PxCrypt::StandardEncoder::calculateMaximumPayload(imageSize, filename.size(), bpc);
 
     // Check if image can't fit anything
     if(*std::max_element(capacities.cbegin(), capacities.cend()) == 0)
