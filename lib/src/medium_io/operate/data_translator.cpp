@@ -3,7 +3,7 @@
 
 namespace PxCryptPrivate
 {
-/*! @cond */ //TODO: Doxygen bug, this should be needed because namespace is excluded
+/*! @cond */ //TODO: Doxygen bug, this shouldn't be needed because namespace is excluded
 //===============================================================================================================
 // DataTranslator
 //===============================================================================================================
@@ -21,13 +21,12 @@ template<typename F>
 bool DataTranslator::translate(F procedure)
 {
     int byteBitIdx = 0;
-    quint8 bpc = mAccess.bpc();
 
     while(byteBitIdx < 8 && !mAccess.atEnd())
     {
         // Determine how many bits can be used
         int remaining = 8 - byteBitIdx;
-        int available = bpc - mAccess.bitIndex();
+        int available = mAccess.availableBits();
         int processing = std::min(remaining, available);
 
         // Perform procedure
@@ -52,7 +51,7 @@ void DataTranslator::weaveBits(quint8 bits, int count)
 
     // Update bits
     quint8& val = mAccess.bufferedValue();
-    if(mAccess.hasReferenceCanvas()) // Relative method
+    if(mAccess.hasReferenceImage()) // Relative method
     {
         if(mAccess.originalValue() > 127)
             val -= bits;
@@ -72,7 +71,7 @@ quint8 DataTranslator::skimBits(int count)
     quint8 keepMask = ((0b1 << count) - 1) << chBitIdx;
 
     quint8 bits;
-    if(mAccess.hasReferenceCanvas()) // Relative method
+    if(mAccess.hasReferenceImage()) // Relative method
         bits = Qx::distance(mAccess.referenceValue(), mAccess.constBufferedValue()) & keepMask;
     else // Absolute method
         bits = mAccess.constBufferedValue() & keepMask;

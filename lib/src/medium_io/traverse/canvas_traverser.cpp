@@ -2,7 +2,7 @@
 #include "canvas_traverser.h"
 
 // Project Includes
-#include "medium_io/frame.h"
+#include "medium_io/operate/meta_access.h"
 
 namespace PxCryptPrivate
 {
@@ -13,88 +13,116 @@ namespace PxCryptPrivate
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-CanvasTraverser::CanvasTraverser(const FrameTraverser& frameTraverser, quint8 bpc) :
-    mFrameTraverser(frameTraverser),
-    mBpc(bpc),
-    mChBitIdx(0)
+CanvasTraverser::CanvasTraverser(MetaAccess& meta) :
+    mMeta(meta),
+    mLinearPosition{0, 0, 0} // Ignore meta pixels
 {
-    // Should be created at first non-meta-pixel, start of byte boundary, much of the implementation relies on this
-    Q_ASSERT(mFrameTraverser.pixelStep() == Frame::metalPixelCount() && mFrameTraverser.channelStep() == 0);
-    //TODO: See if frame can just be merged into canvas, or if not, if canvas traverser can properly cut off the
-    // first two pixels consumed by frametraverser so that here we dont even need to account for the meta pixels
+    CanvasTraverserPrime& prime = mMeta.surrenderTraverser();
+    mPxSequence = prime.surrenderPxSequence();
+    mChSequence = prime.surrenderChSequence();
+    mCurrentSelection = Selection{prime.pixelIndex(), prime.channel()};
 
-    /* Determine end position
-     *
-     * We determine the number of available bits, starting from the first non-meta pixels
-     * in order to determine the last byte boundary correctly (since this depends strictly
-     * on the starting pos and BPC), but then add two to the pixel portion of the pos to
-     * account for the meta pixels that were skipped
-     */
-    uint writeablePixels = mFrameTraverser.remainingPixels() + 1; // +1 to include current
-    quint64 bitsAvailable = (writeablePixels * 3 * mBpc);
-    bitsAvailable &= ~7; // Same as (x / 8) * 8, only count whole bytes
-    mEnd = Pos::fromBitPos(bitsAvailable, mBpc);
-    mEnd.px += Frame::metalPixelCount();
+    mInitialState = std::make_unique<State>(state());
 }
-
-CanvasTraverser::CanvasTraverser(const State& state) :
-    mFrameTraverser(state.frameState()),
-    mBpc(state.bpc()),
-    mChBitIdx(state.chBitIndex()),
-    mEnd(state.end())
-{}
 
 //-Instance Functions--------------------------------------------------------------------------------------------
 //Private:
-CanvasTraverser::Pos CanvasTraverser::currentPos() const
+void CanvasTraverser::restoreState(const State& state)
 {
-    return {.px = mFrameTraverser.pixelStep(), .ch = mFrameTraverser.channelStep(), .bit = mChBitIdx};
+    mPxSequence = std::make_unique<PxSequenceGenerator>(state.pxState);
+    mChSequence = std::make_unique<ChSequenceGenerator>(state.chState);
+    mLinearPosition = state.linearPosition;
+    mCurrentSelection = state.currentSelection;
+
+}
+void CanvasTraverser::calculateEnd()
+{
+    /* Determine end Position
+     *
+     * We determine the number of available bits, based on the pixel-sequence's remaining
+     * pixels (which handles ignoring meta-pixels) in order to determine the last byte boundary
+     * correctly (since this depends strictly on the starting Position and BPC).
+     */
+
+    quint64 writeablePixels = Qx::length(mPxSequence->pixelCoverage(), mPxSequence->pixelTotal());
+    quint64 bitsAvailable = (writeablePixels * 3 * mMeta.bpc());
+    bitsAvailable &= ~7; // Same as (x / 8) * 8, only count whole bytes
+    mLinearEnd = Position::fromBits(bitsAvailable, mMeta.bpc());
+}
+
+void CanvasTraverser::advanceChannel()
+{
+    Q_ASSERT(!mPxSequence->atEnd()); // Shouldn't happen with current implementation
+
+    if(mChSequence->pixelExhausted())
+        advancePixel();
+    else
+    {
+        mLinearPosition.ch++;
+        mCurrentSelection.ch = mChSequence->next();
+    }
+}
+
+void CanvasTraverser::advancePixel()
+{
+    mLinearPosition.px += 1;
+    mCurrentSelection.px = mPxSequence->next();
+    mLinearPosition.ch = 0;
+    mCurrentSelection.ch = mChSequence->next();
 }
 
 //Public:
-CanvasTraverser::State CanvasTraverser::state() const
+void CanvasTraverser::init()
 {
-    return State{mFrameTraverser.state(), mBpc, mChBitIdx, mEnd};
+    if(*this != *mInitialState)
+        restoreState(*mInitialState);
+    calculateEnd();
 }
 
-quint8 CanvasTraverser::bpc() const { return mBpc; }
+CanvasTraverser::State CanvasTraverser::state() const
+{
+    return State{
+        mPxSequence->state(),
+        mChSequence->state(),
+        mLinearPosition,
+        mCurrentSelection
+    };
+}
 
 bool CanvasTraverser::atEnd() const
 {
-    Pos cp = currentPos();
-    Q_ASSERT(currentPos() <= mEnd);
-    bool reached = cp >= mEnd;
-    Q_ASSERT(reached || !mFrameTraverser.atEnd());
-    return reached;
+    Q_ASSERT(mLinearPosition <= mLinearEnd); // Debug check to ensure end is never passed
+    return mLinearPosition >= mLinearEnd; // Release fallback to check for at or over end
 }
 
-quint64 CanvasTraverser::pixelIndex() const { return mFrameTraverser.pixelIndex(); }
-Channel CanvasTraverser::channel() const { return mFrameTraverser.channel(); }
-int CanvasTraverser::channelBitIndex() const { return mChBitIdx; }
+quint64 CanvasTraverser::pixelIndex() const { return mCurrentSelection.px; }
+Channel CanvasTraverser::channel() const { return mCurrentSelection.ch; }
+int CanvasTraverser::channelBitIndex() const { return mLinearPosition.bit; }
+int CanvasTraverser::remainingChannelBits() const { return mMeta.bpc() - channelBitIndex(); }
 
 void CanvasTraverser::advanceBits(int bitCount)
-{
+ {
     if(Q_UNLIKELY(atEnd()))
     {
         qCritical("Attempted to advance past end!");
         return;
     }
 
-    mChBitIdx+= bitCount;
-    Q_ASSERT(mChBitIdx <= mBpc); // Current design dictates that advancement is capped at the number of bits left on the current channel
+    mLinearPosition.bit += bitCount;
+    Q_ASSERT(mLinearPosition.bit <= mMeta.bpc()); // Current design dictates that advancement is capped at the number of bits left on the current channel
 
-    if(mChBitIdx == mBpc)
+    if(mLinearPosition.bit == mMeta.bpc())
     {
-        mChBitIdx = 0;
-        bool changingPx = mFrameTraverser.pixelExhausted();
-        if(changingPx && mPrePxChange)
-            mPrePxChange();
-        mFrameTraverser.nextChannel();
-        if(changingPx && !atEnd() && mPostPxChange)
-            mPostPxChange();
+        mLinearPosition.bit = 0;
+        advanceChannel();
     }
 
-    Q_ASSERT(currentPos() <= mEnd); // Never should be possible to go past end
+    Q_ASSERT(mLinearPosition <= mLinearEnd); // Never should be possible to go past end
+}
+
+bool CanvasTraverser::bitAdvanceWillChangePixel(int bitCount)
+{
+    return mLinearPosition.bit + bitCount >= mMeta.bpc() && mChSequence->pixelExhausted();
 }
 
 qint64 CanvasTraverser::skip(qint64 bytes)
@@ -103,78 +131,54 @@ qint64 CanvasTraverser::skip(qint64 bytes)
         return -1;
 
     quint64 bitsToSkip = (static_cast<quint64>(bytes) * 8);
-    Pos pos = currentPos();
-    quint64 bitPos = pos.toBitPos(mBpc);
-    Pos newPos = Pos::fromBitPos(bitPos + bitsToSkip, mBpc);
-    if(newPos > mEnd)
-        newPos = mEnd;
+    quint64 bitPos = mLinearPosition.toBits(mMeta.bpc());
+    Position newPos = Position::fromBits(bitPos + bitsToSkip, mMeta.bpc());
+    if(newPos > mLinearEnd)
+        newPos = mLinearEnd;
 
     /* Have to walk through each channel in order for the pixel sequence to be properly generated,
      * but channel bit index can be set directly since we manage it here.
      */
-    quint64 chDist = Pos::channelsBeteween(pos, newPos);
+    quint64 chDist = Position::channelsBeteween(mLinearPosition, newPos);
     for(quint64 skip = 0; skip < chDist; skip++)
-        mFrameTraverser.nextChannel();
-    mChBitIdx = newPos.bit;
+        advanceChannel();
+    mLinearPosition.bit = newPos.bit;
 
     // Return actual bytes skipped
-    return (newPos.toBitPos(mBpc) - bitPos)/8;
+    return (newPos.toBits(mMeta.bpc()) - bitPos)/8;
 }
-
-void CanvasTraverser::setPrePixelChange(const std::function<void(void)>& ppc) { mPrePxChange = ppc; }
-void CanvasTraverser::setPostPixelChange(const std::function<void(void)>& ppc) { mPostPxChange = ppc; }
 
 //-Operators----------------------------------------------------------------------------------------------------------------
 //Public:
 bool CanvasTraverser::operator==(const State& state) const
 {
-    return mFrameTraverser == state.frameState() &&
-           mBpc == state.bpc() &&
-           mChBitIdx == state.chBitIndex() &&
-           mEnd == state.end();
+    return *mPxSequence == state.pxState &&
+           *mChSequence == state.chState &&
+           mLinearPosition == state.linearPosition &&
+           mCurrentSelection == state.currentSelection;
 }
 
 //===============================================================================================================
-// CanvasTraverser::Pos
+// CanvasTraverser::Position
 //===============================================================================================================
 
-quint64 CanvasTraverser::Pos::channelsBeteween(const Pos& a, const Pos& b)
+quint64 CanvasTraverser::Position::channelsBeteween(const Position& a, const Position& b)
 {
     return (b.px - a.px)*3 + (b.ch - a.ch);
 }
 
-CanvasTraverser::Pos CanvasTraverser::Pos::fromBitPos(quint64 bitPos, quint8 bpc)
+CanvasTraverser::Position CanvasTraverser::Position::fromBits(quint64 bitPosistion, quint8 bpc)
 {
     return {
-        .px = bitPos / (bpc * 3),
-        .ch = static_cast<int>((bitPos / bpc) % 3),
-        .bit = static_cast<int>(bitPos % bpc)
+        .px = bitPosistion / (bpc * 3),
+        .ch = static_cast<int>((bitPosistion / bpc) % 3),
+        .bit = static_cast<int>(bitPosistion % bpc)
     };
 }
 
-quint64 CanvasTraverser::Pos::toBitPos(quint8 bpc) const
+quint64 CanvasTraverser::Position::toBits(quint8 bpc) const
 {
     return (((px * 3) + ch) * bpc) + bit;
 }
-
-//===============================================================================================================
-// CanvasTraverser::State
-//===============================================================================================================
-
-//-Constructor---------------------------------------------------------------------------------------------------------
-//Public:
-CanvasTraverser::State::State(const FrameTraverser::State& frameState, quint8 bpc, int chBitIdx, Pos end) :
-    mFrameState(frameState),
-    mBpc(bpc),
-    mChBitIdx(chBitIdx),
-    mEnd(end)
-{}
-
-//-Instance Functions--------------------------------------------------------------------------------------------
-//Public:
-FrameTraverser::State CanvasTraverser::State::frameState() const { return mFrameState; }
-quint8 CanvasTraverser::State::bpc() const { return mBpc; }
-int CanvasTraverser::State::chBitIndex() const { return mChBitIdx; }
-CanvasTraverser::Pos CanvasTraverser::State::end() const { return mEnd; }
 
 }

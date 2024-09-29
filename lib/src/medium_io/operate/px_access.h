@@ -7,30 +7,22 @@
 namespace PxCryptPrivate
 {
 
+class MetaAccess;
+
 class PxAccess
 {
-//-Inner Struct-----------------------------------------------------------------------------------------------------------
-private:
-    struct Pos
-    {
-        quint64 px;
-        int ch;
-        int bit;
-    };
-
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
     QRgb* mPixels;
     const QRgb* mRefPixels;
     CanvasTraverser mTraverser;
-    CanvasTraverser::State mInitTravState;
 
     std::array<quint8, 4> mBuffer;
     bool mNeedFlush;
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    PxAccess(QImage* canvas, const FrameTraverser& frameTraverser, quint8 bpc, const QImage* refCanvas);
+    PxAccess(QImage& canvas, MetaAccess& metaAccess);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:
@@ -54,12 +46,13 @@ private:
 
 public:
     // Stat
-    quint8 bpc() const;
-    bool hasReferenceCanvas() const;
+    bool hasReferenceImage() const;
+    int availableBits() const;
     int bitIndex() const;
     bool atEnd() const;
 
     // Manipulation
+    void setReferenceImage(const QImage* ref);
     void reset();
     qint64 skip(qint64 bytes);
     void advanceBits(int bitCount);

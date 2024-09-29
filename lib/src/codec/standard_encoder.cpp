@@ -5,9 +5,9 @@
 #include "codec/encdec.h"
 #include "codec/encoder_p.h"
 #include "codec/encdec.h"
-#include "medium_io/frame.h"
 #include "medium_io/canvas.h"
 #include "art_io/works/standard.h"
+#include "pxcrypt/stat.h"
 
 namespace PxCrypt
 {
@@ -87,8 +87,8 @@ StandardEncoder::StandardEncoder() : Encoder(std::make_unique<StandardEncoderPri
  */
 quint64 StandardEncoder::calculateMaximumPayload(const QSize& dim, quint16 tagSize, quint8 bpc)
 {
-    PxCryptPrivate::StandardWork::Measure m(tagSize, 0); // 0 size payload to check for leftover
-    PxCryptPrivate::Frame::Capacity c = PxCryptPrivate::Frame::capacity(dim, bpc);
+    PxCryptPrivate::StandardWork::Measure m(tagSize, 0); // 0 size payload to check for leftover 
+    Stat::Capacity c = Stat(dim).capacity(bpc);
     return c.bytes - m.size();
 }
 
@@ -179,6 +179,7 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
         return Error(Error::InvalidImage);
 
     // Measurements
+    Stat mediumStat(medium);
     StandardWork::Measure measurement(d->mTag.size(), payload.size());
 
     if(d->mBpc == 0)// Determine BPC if auto
@@ -187,13 +188,13 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
         if(d->mBpc == 0)
         {
             // Check how short at max density
-            quint64 max = Frame::capacity(medium.size(), BPC_MAX).bytes;
+            quint64 max = mediumStat.capacity(BPC_MAX).bytes;
             return Error(Error::WontFit, u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3));
         }
     }
     else // Ensure data will fit with fixed BPC
     {
-        quint64 max = Frame::capacity(medium.size(), d->mBpc).bytes;
+        quint64 max = mediumStat.capacity(d->mBpc).bytes;
         if(static_cast<quint64>(measurement.size()) > max)
             return Error(Error::WontFit, u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3));
     }
@@ -201,13 +202,13 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
     // Copy base image, normalize to standard format
     QImage workspace = standardizeImage(medium);
 
-    // Setup frame, mark meta pixels
-    Frame frame(&workspace, d->mPsk);
-    frame.setBpc(d->mBpc);
-    frame.setEncoding(d->mEncoding);
+    // Setup canvas, mark meta pixels, use self as reference if using relative encoding
+    Canvas canvas(workspace, d->mPsk);
+    canvas.setBpc(d->mBpc);
+    canvas.setEncoding(d->mEncoding);
+    canvas.setReference( d->mEncoding == Relative ? &workspace : nullptr);
 
-    // Setup IO, use self to denote relative encoding if applicable
-    Canvas canvas(&workspace, frame, d->mEncoding == Relative ? &workspace : nullptr);
+    // Prepare for IO
     canvas.open(QIODevice::WriteOnly); // Closes upon destruction
 
     // Write

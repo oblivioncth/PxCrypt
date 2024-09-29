@@ -5,7 +5,7 @@
 #include <QtGlobal>
 
 // Project Includes
-#include "medium_io/frame.h"
+#include "medium_io/canvas.h"
 
 namespace PxCryptPrivate
 {
@@ -22,7 +22,7 @@ protected:
 
 public:
     quint64 size() const;
-    Frame::metavalue_t minimumBpc(const QSize& dim) const;
+    Canvas::metavalue_t minimumBpc(const QSize& dim) const;
 };
 
 template<typename T>

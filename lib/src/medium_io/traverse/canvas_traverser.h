@@ -2,92 +2,96 @@
 #define CANVAS_TRAVERSER_H
 
 // Project Includes
-#include "medium_io/traverse/frame_traverser.h"
+#include "medium_io/sequence/px_sequence_generator.h"
+#include "medium_io/sequence/ch_sequence_generator.h"
 
 namespace PxCryptPrivate
 {
 
+class MetaAccess;
+
 class CanvasTraverser
 {
-//-Inner Class------------------------------------------------------------------------------------------------------
-public:
-    class State;
-
 //-Inner Struct-----------------------------------------------------------------------------------------------------------
 private:
-    struct Pos
+    struct Position
     {
         quint64 px;
         int ch;
         int bit;
 
-        static quint64 channelsBeteween(const Pos& a, const Pos& b);
-        static Pos fromBitPos(quint64 bitPos, quint8 bpc);
-        quint64 toBitPos(quint8 bpc) const;
-        bool operator==(const Pos& other) const = default;
-        auto operator<=>(const Pos& other) const noexcept = default;
+        static quint64 channelsBeteween(const Position& a, const Position& b);
+        static Position fromBits(quint64 bitPos, quint8 bpc);
+        quint64 toBits(quint8 bpc) const;
+        bool operator==(const Position& other) const = default;
+        auto operator<=>(const Position& other) const noexcept = default;
+    };
+
+    struct Selection
+    {
+        qint64 px;
+        Channel ch;
+        //int bit; Always the same as linear position bit so just share that
+
+        bool operator==(const Selection& other) const = default;
+    };
+
+    struct State
+    {
+        PxSequenceGenerator::State pxState;
+        ChSequenceGenerator::State chState;
+        Position linearPosition;
+        Selection currentSelection;
     };
 
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
-    FrameTraverser mFrameTraverser;
-    quint8 mBpc;
-    int mChBitIdx;
-    Pos mEnd;
-    std::function<void(void)> mPrePxChange; // Not saved as part of state
-    std::function<void(void)> mPostPxChange; // Not saved as part of state
+    // Meta
+    MetaAccess& mMeta;
+
+    // Generator
+    std::unique_ptr<PxSequenceGenerator> mPxSequence;
+    std::unique_ptr<ChSequenceGenerator> mChSequence;
+
+    // Location
+    Position mLinearPosition;
+    Selection mCurrentSelection;
+    Position mLinearEnd;
+
+    // State
+    std::unique_ptr<State> mInitialState;
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
-    CanvasTraverser(const FrameTraverser& frameTraverser, quint8 bpc);
-    CanvasTraverser(const State& state);
+    CanvasTraverser(MetaAccess& meta);
 
 //-Instance Functions----------------------------------------------------------------------------------------------
 private:
-    Pos currentPos() const;
+    void restoreState(const State& state);
+    void calculateEnd();
+    void advanceChannel();
+    void advancePixel();
 
 public:
+    void init();
+
     // Stat
     State state() const;
-    quint8 bpc() const;
     bool atEnd() const;
 
     quint64 pixelIndex() const;
     Channel channel() const;
     int channelBitIndex() const;
+    int remainingChannelBits() const;
 
     // Manipulation
     void advanceBits(int bitCount);
+    bool bitAdvanceWillChangePixel(int bitCount);
     qint64 skip(qint64 bytes);
-
-    // Callback
-    void setPrePixelChange(const std::function<void(void)>& ppc); // Callback over signal to avoid use of QObject for something so simple.
-    void setPostPixelChange(const std::function<void(void)>& ppc); // Callback over signal to avoid use of QObject for something so simple.
 
 //-Operators----------------------------------------------------------------------------------------------------------------
 public:
     bool operator==(const State& state) const;
-};
-
-class CanvasTraverser::State
-{
-//-Instance Variables------------------------------------------------------------------------------------------------------
-private:
-    FrameTraverser::State mFrameState;
-    quint8 mBpc;
-    int mChBitIdx;
-    Pos mEnd;
-
-//-Constructor-------------------------------------------------------------------------------------------------------------
-public:
-    State(const FrameTraverser::State& frameState, quint8 bpc, int chBitIdx, Pos end);
-
-//-Instance Functions------------------------------------------------------------------------------------------------------
-public:
-    FrameTraverser::State frameState() const;
-    quint8 bpc() const;
-    int chBitIndex() const;
-    Pos end() const;
 };
 
 }

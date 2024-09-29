@@ -10,12 +10,12 @@ namespace PxCryptPrivate
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-Canvas::Canvas(QImage* image, const Frame& frame, const QImage* refImage) :
-    mAccess(image, frame.traverser(), frame.bpc(), refImage),
-    mTranslator(mAccess)
-{
-    Q_ASSERT(image && !image->isNull());
-}
+Canvas::Canvas(QImage& image, const QByteArray& psk) :
+    mSize(image.size()),
+    mMetaAccess(image, !psk.isEmpty() ? psk : DEFAULT_SEED),
+    mPxAccess(image, mMetaAccess),
+    mTranslator(mPxAccess)
+{}
 
 //-Destructor---------------------------------------------------------------------------------------------------
 //Public:
@@ -23,22 +23,22 @@ Canvas::~Canvas() { close(); }
 
 //-Instance Functions--------------------------------------------------------------------------------------------
 //Private:
-void Canvas::_reset() { mAccess.reset(); }
+void Canvas::_reset() { mPxAccess.reset(); }
 
 //Protected:
 qint64 Canvas::readData(char* data, qint64 maxlen)
 {
-    if(maxlen == 0) // QIODevice doc's say this input can be used to perform "post-reading operations"
-        return mAccess.atEnd() ? -1 : 0;
+    if(maxlen == 0) // QIODevice doc's say this input (0) can be used to perform "post-reading operations"
+        return mPxAccess.atEnd() ? -1 : 0;
 
-    if(mAccess.atEnd())
+    if(mPxAccess.atEnd())
     {
         qWarning("Attempt to read at end of canvas!");
         return -1;
     }
 
     qint64 i;
-    for(i = 0; i < maxlen && !mAccess.atEnd(); i++)
+    for(i = 0; i < maxlen && !mPxAccess.atEnd(); i++)
     {
         char& byte = data[i];
         if(!mTranslator.skimByte(reinterpret_cast<quint8&>(byte)))
@@ -51,19 +51,19 @@ qint64 Canvas::readData(char* data, qint64 maxlen)
 qint64 Canvas::skipData(qint64 maxSize)
 {
     Q_ASSERT(maxSize >= 0);
-    return mAccess.skip(maxSize);
+    return mPxAccess.skip(maxSize);
 }
 
 qint64 Canvas::writeData(const char* data, qint64 len)
 {
-    if(mAccess.atEnd())
+    if(mPxAccess.atEnd())
     {
         qWarning("Attempt to write at end of canvas!");
         return -1;
     }
 
     qint64 i;
-    for(i = 0; i < len && !mAccess.atEnd(); i++)
+    for(i = 0; i < len && !mPxAccess.atEnd(); i++)
     {
         quint8 byte = data[i];
         if(!mTranslator.weaveByte(byte))
@@ -72,7 +72,7 @@ qint64 Canvas::writeData(const char* data, qint64 len)
 
     // Always ensure data is current if Unbuffered is used
     if(openMode().testFlag(QIODevice::Unbuffered))
-        mAccess.flush();
+        mPxAccess.flush();
 
     return i;
 }
@@ -87,6 +87,11 @@ bool Canvas::open(OpenMode mode)
         qCritical("Unsupported open mode!");
 
     // Prepare for access
+    Encoding e = static_cast<Encoding>(mMetaAccess.enc());
+    if(e == Encoding::Relative)
+        Q_ASSERT(mPxAccess.hasReferenceImage());
+    else
+        mPxAccess.setReferenceImage(nullptr); // Force-clear reference when it's not needed
     _reset();
 
     // Base implementation
@@ -95,10 +100,17 @@ bool Canvas::open(OpenMode mode)
 
 void Canvas::close()
 {
-    mAccess.flush();
+    mPxAccess.flush();
     return QIODevice::close();
 }
 
-bool Canvas::atEnd() const { return mAccess.atEnd(); }
+bool Canvas::atEnd() const { return mPxAccess.atEnd(); }
+
+Canvas::metavalue_t Canvas::bpc() const { return mMetaAccess.bpc(); }
+Canvas::Encoding Canvas::encoding() const { return static_cast<Encoding>(mMetaAccess.enc()); }
+
+void Canvas::setBpc(metavalue_t bpc) { mMetaAccess.setBpc(bpc); }
+void Canvas::setEncoding(Encoding enc) { mMetaAccess.setEnc(enc); }
+void Canvas::setReference(const QImage* ref) { mPxAccess.setReferenceImage(ref); }
 
 }

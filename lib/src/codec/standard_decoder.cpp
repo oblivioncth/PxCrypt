@@ -5,9 +5,9 @@
 #include "pxcrypt/codec/encoder.h"
 #include "codec/decoder_p.h"
 #include "codec/encdec.h"
-#include "medium_io/frame.h"
 #include "medium_io/canvas.h"
 #include "art_io/works/standard.h"
+#include "pxcrypt/stat.h"
 
 namespace PxCrypt
 {
@@ -109,35 +109,37 @@ StandardDecoder::Error StandardDecoder::decode(QByteArray& decoded, const QImage
     if(encoded.isNull())
         return Error(Error::InvalidSource);
 
+    // Get image stats
+    Stat encStat(encoded);
+
     // Ensure image meets bare minimum space for meta pixels
-    if(!Frame::meetsSizeMinimum(encoded))
+    if(!encStat.fitsMetadata())
         return Error(Error::NotLargeEnough);
 
     // Ensure standard pixel format
     QImage encStd = standardizeImage(encoded);
 
-    // Setup frame
-    Frame frame(&encStd, d->mPsk);
+    // Setup canvas
+    Canvas canvas(encStd, d->mPsk);
 
     // Ensure BPC is valid
-    quint8 bpc = frame.bpc();
+    quint8 bpc = canvas.bpc();
     if(bpc < BPC_MIN || bpc > BPC_MAX)
         return Error(Error::InvalidMeta);
 
     // Ensure encoding is valid
-    Encoder::Encoding encoding = frame.encoding();
+    Encoder::Encoding encoding = canvas.encoding();
     if(!magic_enum::enum_contains(encoding))
         return Error(Error::InvalidMeta);
 
     // Bare minimum size check
-    Frame::Capacity capacity = frame.capacity();
+    Stat::Capacity capacity = encStat.capacity(bpc);
     quint64 minSize = StandardWork::Measure().size();
     if(capacity.bytes < minSize)
         return Error(Error::NotLargeEnough);
 
     // Ensure medium image is valid if applicable
     QImage mediumStd;
-    const QImage* mediumStdPtr = nullptr;
     if(encoding == Encoder::Relative)
     {
         if(medium.isNull())
@@ -147,11 +149,10 @@ StandardDecoder::Error StandardDecoder::decode(QByteArray& decoded, const QImage
             return Error(Error::DimensionMismatch);
 
         mediumStd = standardizeImage(medium);
-        mediumStdPtr = &mediumStd;
+        canvas.setReference(&mediumStd);
     }
 
-    // Setup IO
-    Canvas canvas(&encStd, frame, mediumStdPtr);
+    // Prepare for IO
     canvas.open(QIODevice::ReadOnly); // Closes upon destruction
 
     // Read
