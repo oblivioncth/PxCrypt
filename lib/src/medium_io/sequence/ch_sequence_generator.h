@@ -6,6 +6,7 @@
 
 // Qt Includes
 #include <QRandomGenerator>
+#include <QVarLengthArray>
 
 // Project Includes
 #include "codec/encdec.h"
@@ -17,17 +18,20 @@ class ChSequenceGenerator
 {
 //-Aliases----------------------------------------------------------------------------------------------------------
 private:
-    using ChannelTracker = std::array<bool, CH_COUNT>;
+    using ChannelTracker = QVarLengthArray<Channel, 3>;
 
 //-Inner Class------------------------------------------------------------------------------------------------------
 public:
     class State;
 
+//-Class Variables------------------------------------------------------------------------------------------------------
+private:
+    static constexpr std::array<Channel, 3> ALL_CHANNELS{Channel::Red, Channel::Green, Channel::Blue};
+
 //-Instance Variables------------------------------------------------------------------------------------------------------
 private:
     QRandomGenerator mGenerator;
-    ChannelTracker mUsedChannels; // Wastes 1 element slot, but keeps indexing clean
-    int mStep;
+    ChannelTracker mUnusedChannels;
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
@@ -40,7 +44,6 @@ private:
 
 public:
     bool pixelExhausted() const;
-    int step() const;
     State state() const;
 
     Channel next();
@@ -56,17 +59,15 @@ class ChSequenceGenerator::State
 private:
     QRandomGenerator mRng;
     ChannelTracker mChannels;
-    int mStep;
 
 //-Constructor-------------------------------------------------------------------------------------------------------------
 public:
-    State(const QRandomGenerator& rng, const ChannelTracker& channels, int step);
+    State(const QRandomGenerator& rng, const ChannelTracker& channels);
 
 //-Instance Functions------------------------------------------------------------------------------------------------------
 public:
     QRandomGenerator rng() const;
     ChannelTracker channels() const;
-    int step() const;
 };
 
 }
