@@ -1,5 +1,9 @@
+// Unit Include
+#include "measure.h"
+
 // Project Includes
 #include "art_io/artwork.h"
+#include "pxcrypt/stat.h"
 
 namespace PxCryptPrivate
 {
@@ -15,6 +19,6 @@ IMeasure::IMeasure() {}
 //-Instance Functions----------------------------------------------------------------------------------------------
 //Public:
 quint64 IMeasure::size() const { return IArtwork::size(renditionSize()); }
-Frame::metavalue_t IMeasure::minimumBpc(const QSize& dim) const { return Frame::minimumBpc(dim, size()); }
+Canvas::metavalue_t IMeasure::minimumBpc(const QSize& dim) const { return PxCrypt::Stat(dim).minimumDensity(size()); }
 
 }

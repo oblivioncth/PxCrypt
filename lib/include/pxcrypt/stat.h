@@ -30,6 +30,7 @@ private:
 //-Constructor---------------------------------------------------------------------------------------------------------
 public:
     Stat(const QImage& image);
+    Stat(const QSize& size);
 
 //-Destructor---------------------------------------------------------------------------------------------------
 public:
@@ -38,6 +39,8 @@ public:
 //-Instance Functions----------------------------------------------------------------------------------------------
 public:
     Capacity capacity(quint8 bpc) const;
+    bool fitsMetadata() const;
+    quint8 minimumDensity(quint64 bytes) const;
 };
 
 }

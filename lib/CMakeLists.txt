@@ -33,12 +33,10 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         codec/standard_encoder.cpp
         medium_io/canvas.h
         medium_io/canvas.cpp
-        medium_io/frame.h
-        medium_io/frame.cpp
-        medium_io/operate/basic_px_access.h
-        medium_io/operate/basic_px_access.cpp
         medium_io/operate/data_translator.h
         medium_io/operate/data_translator.cpp
+        medium_io/operate/meta_access.h
+        medium_io/operate/meta_access.cpp
         medium_io/operate/px_access.h
         medium_io/operate/px_access.cpp
         medium_io/sequence/ch_sequence_generator.h
@@ -47,8 +45,8 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         medium_io/sequence/px_sequence_generator.cpp
         medium_io/traverse/canvas_traverser.h
         medium_io/traverse/canvas_traverser.cpp
-        medium_io/traverse/frame_traverser.h
-        medium_io/traverse/frame_traverser.cpp
+        medium_io/traverse/canvas_traverser_prime.h
+        medium_io/traverse/canvas_traverser_prime.cpp
     LINKS
         PRIVATE
             $<BUILD_INTERFACE:magic_enum::magic_enum>

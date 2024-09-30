@@ -1,6 +1,9 @@
 // Unit Include
 #include "px_access.h"
 
+// Project Includes
+#include "medium_io/operate/meta_access.h"
+
 namespace PxCryptPrivate
 {
 
@@ -10,15 +13,13 @@ namespace PxCryptPrivate
 
 //-Constructor---------------------------------------------------------------------------------------------------------
 //Public:
-PxAccess::PxAccess(QImage* canvas, const FrameTraverser& frameTraverser, quint8 bpc, const QImage* refCanvas) :
-    mPixels(reinterpret_cast<QRgb*>(canvas->bits())),
-    mRefPixels(refCanvas ? reinterpret_cast<const QRgb*>(refCanvas->bits()) : nullptr),
-    mTraverser(frameTraverser, bpc),
-    mInitTravState(mTraverser.state()),
+PxAccess::PxAccess(QImage& canvas, MetaAccess& metaAccess) :
+    mPixels(reinterpret_cast<QRgb*>(canvas.bits())),
+    mRefPixels(nullptr),
+    mTraverser(metaAccess),
     mNeedFlush(false)
 {
-    Q_ASSERT(canvas && !canvas->isNull());
-    reset();
+    Q_ASSERT(!canvas.isNull());
 }
 
 //-Instance Functions--------------------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ quint8 PxAccess::canvasGreen() const { return qGreen(constCanvasPixel()); }
 quint8 PxAccess::canvasBlue() const { return qBlue(constCanvasPixel()); }
 quint8 PxAccess::canvasAlpha() const { return qAlpha(constCanvasPixel()); }
 
-const QRgb& PxAccess::referencePixel() const{ Q_ASSERT(mRefPixels); return mRefPixels[mTraverser.pixelIndex()]; }
+const QRgb& PxAccess::referencePixel() const{ return mRefPixels[mTraverser.pixelIndex()]; }
 quint8 PxAccess::referenceRed() const { return qRed(referencePixel()); }
 quint8 PxAccess::referenceGreen() const { return qGreen(referencePixel()); }
 quint8 PxAccess::referenceBlue() const { return qBlue(referencePixel()); }
@@ -58,23 +59,23 @@ void PxAccess::flushBuffer()
 }
 
 //Public:
-quint8 PxAccess::bpc() const { return mTraverser.bpc(); }
-int PxAccess::bitIndex() const { return mTraverser.channelBitIndex(); }
-bool PxAccess::hasReferenceCanvas() const { return mRefPixels; }
+bool PxAccess::hasReferenceImage() const { return mRefPixels; }
+int PxAccess::availableBits() const { return mTraverser.remainingChannelBits(); }
+int PxAccess::bitIndex() const { return mTraverser.channelBitIndex(); };
 bool PxAccess::atEnd() const { return mTraverser.atEnd(); }
+
+void PxAccess::setReferenceImage(const QImage* ref)
+{
+    mRefPixels = ref ? reinterpret_cast<const QRgb*>(ref->bits()) : nullptr;
+}
 
 void PxAccess::reset()
 {
     // Ensure canvas is current
     flushBuffer();
 
-    // Restart generator sequence to start (just before first non-meta-pixel)
-    if(mTraverser != mInitTravState)
-        mTraverser = CanvasTraverser(mInitTravState);
-
-    // Ensure callbacks are set
-    mTraverser.setPrePixelChange([this]{ flushBuffer(); });
-    mTraverser.setPostPixelChange([this]{ fillBuffer(); });
+    // Re-initialize canvas traverser
+    mTraverser.init();
 
     // Fill
     fillBuffer();
@@ -95,7 +96,16 @@ qint64 PxAccess::skip(qint64 bytes)
     return skipped;
 }
 
-void PxAccess::advanceBits(int bitCount) { mTraverser.advanceBits(bitCount); }
+void PxAccess::advanceBits(int bitCount)
+{
+    bool cycleBuffer = mTraverser.bitAdvanceWillChangePixel(bitCount);
+    if(cycleBuffer)
+        flushBuffer();
+    mTraverser.advanceBits(bitCount);
+    if(cycleBuffer && !atEnd())
+        fillBuffer();
+}
+
 void PxAccess::flush() { flushBuffer(); }
 
 quint8& PxAccess::bufferedValue()
