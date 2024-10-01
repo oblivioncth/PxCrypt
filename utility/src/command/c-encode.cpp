@@ -150,17 +150,17 @@ Qx::Error CEncode::process(const QStringList& commandLine)
     mCore.printMessage(NAME, MSG_MEDIUM_DIM.arg(mediumSize.width()).arg(mediumSize.height()));
 
     // Encode
-    PxCrypt::Encoder encoder;
+    PxCrypt::StandardEncoder encoder;
     encoder.setBpc(aBpc);
     encoder.setPresharedKey(aKey);
     encoder.setEncoding(aEncoding);
-    encoder.setTag(aTag);
+    encoder.setTag(aTag.toUtf8());
 
     mCore.printMessage(NAME, MSG_START_ENCODING);
-    QImage encoded = encoder.encode(aPayload, aMedium);
-    if(encoder.hasError())
+    QImage encoded;
+    PxCrypt::StandardEncoder::Error err = encoder.encode(encoded, aPayload, aMedium);
+    if(err)
     {
-        PxCrypt::EncodeError err = encoder.error();
         mCore.printError(NAME, err);
         return err;
     }

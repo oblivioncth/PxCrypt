@@ -2,8 +2,8 @@
 #include <QtTest>
 
 // Project Includes
-#include <pxcrypt/encoder.h>
-#include <pxcrypt/decoder.h>
+#include <pxcrypt/codec/standard_encoder.h>
+#include <pxcrypt/codec/standard_decoder.h>
 
 // Qx Includes
 #include <qx/utility/qx-macros.h>
@@ -70,10 +70,11 @@ void tst_consistent_rng::multi_platform_decode()
     QVERIFY(!encoded.isNull());
 
     // Decode
-    PxCrypt::Decoder dec;
+    PxCrypt::StandardDecoder dec;
 
-    QByteArray decoded = dec.decode(encoded);
-    QVERIFY2(!dec.hasError(), C_STR(dec.error().errorString()));
+    QByteArray decoded;
+    PxCrypt::StandardDecoder::Error err = dec.decode(decoded, encoded);
+    QVERIFY2(!err, C_STR(err.errorString()));
 
     // Compare
     QCOMPARE(decoded, mPayload);

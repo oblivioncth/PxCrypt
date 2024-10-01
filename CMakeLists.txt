@@ -14,7 +14,7 @@ set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3.5")
+fetch_ob_cmake("e78a1a7c8ebf4e4aa64c221e30b3be702524c4cc")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -61,7 +61,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "v0.5.1"
+    REF "06c1ffe7a027c25b379973edfd117290aaa29035"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )

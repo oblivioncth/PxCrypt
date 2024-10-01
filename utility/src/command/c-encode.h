@@ -7,7 +7,7 @@
 // Project Includes
 #include "command.h"
 #include "project_vars.h"
-#include "pxcrypt/encoder.h"
+#include "pxcrypt/codec/standard_encoder.h"
 
 class QX_ERROR_TYPE(CEncodeError, "CEncodeError", 3002)
 {
