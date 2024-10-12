@@ -4,7 +4,8 @@ ob_add_basic_standard_test(
     TARGET_PREFIX "${TESTS_TARGET_PREFIX}"
     TARGET_VAR test_target
     LINKS
-        ${TESTS_COMMON_TARGET}
+        PRIVATE
+            ${TESTS_COMMON_TARGET}
 )
 
 # Bundle test data

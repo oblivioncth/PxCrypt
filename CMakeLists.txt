@@ -14,7 +14,7 @@ set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("e78a1a7c8ebf4e4aa64c221e30b3be702524c4cc")
+fetch_ob_cmake("9f45dec8dc1cd09d99862b7b7ea335b361cf7ff7")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -50,8 +50,8 @@ endif()
 
 # Find Qt package
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060000)
-include(OB/BetterFindQt6)
-ob_find_qt6_package(REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
+include(OB/Qt)
+ob_find_package_qt(REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
 
 # Fetch Qx (build and import from source)
 set(PXCRYPT_QX_COMPONENTS
@@ -61,7 +61,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "06c1ffe7a027c25b379973edfd117290aaa29035"
+    REF "v0.5.8"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )
