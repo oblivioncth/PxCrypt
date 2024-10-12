@@ -14,7 +14,7 @@ Requirements
  - OS
 	 - Windows 10 or above
 	 - Linux (untested on more general Unix systems)
- 
+
 Packaging
 ----------
 PxCrypt is provided as a CMake package composed of a single library, several public header files, and the encoder/decoder utility.
@@ -127,14 +127,14 @@ If newer to working with Qt, it is easiest to build from within Qt creator as it
 
 Alternatively, you can use the `qt-cmake` wrapper for similar Qt environment automation when building the project on the command-line, which is shown further down.
 
-The CMake project is designed to be used with multi-configuration generators such as Visual Studio or Ninja Multi-Config (recommended), and may require some tweaking to work with single configuration generators.
+The `ninja` generator is recommended.
 
 ### CMake Options:
 
  - `PXCRYPT_DOCS` - Set to `ON` in order to generate the documentation target (OFF)
  - `PXCRYPT_TESTS` - Set to `ON` in order to generate the test targets (OFF)
  - `BUILD_SHARED_LIBS` - Build PxCrypt as a shared library instead of a static one (OFF)
- 
+
 ### CMake Targets:
 
  - `all` - Builds the PxCrypt library and encoder/decoder utility
@@ -146,7 +146,7 @@ The CMake project is designed to be used with multi-configuration generators suc
 
 ### CMake Install Components:
 
-- `pxcrypt` - Installs top-level files (README.md, CMake package configuration files, etc.) 
+- `pxcrypt` - Installs top-level files (README.md, CMake package configuration files, etc.)
 - `pxcrypt_base` - Installs the built library
 - `pxcrypt_frontend` - Installs the built encoder/decoder utility
 - `pxcrypt_docs` - Installs the built documentation
@@ -199,10 +199,10 @@ The path for this documentation varies depending on how you obtained Qt, but is 
     # NOTE:
     # By default on Windows <QT_SOFTWARE> is C:\Program Files\Qt
     # On Linux it is often /usr/local/Qt
-    
+
 ### Tests:
 The project contains a suite of tests to ensure that the library functions as intended. They will be expanded upon as the library matures.
-    
+
 ### Package
 By default, the CMakeLists project configures CPack to create an artifact ZIP containing:
  - The library
