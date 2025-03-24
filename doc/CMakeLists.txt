@@ -21,6 +21,6 @@ ob_standard_documentation(${DOC_TARGET_NAME}
         "${LIB_PATH}/src"
         "${LIB_PATH}/include"
     THEME_COLORS
-        PRIMARY "#5CCC28""
+        PRIMARY "#5CCC28"
         NIGHT_PRIMARY "#59C42B"
 )
