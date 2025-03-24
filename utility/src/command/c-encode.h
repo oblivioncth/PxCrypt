@@ -111,7 +111,7 @@ private:
         "Absolute - Doesn't require the original medium to decode\n"_s;
     static inline const QString CL_OPT_ENCODING_DEFAULT = u"Absolute"_s;
 
-    /* NOTE: This will cause a compilation error when changing PxCrypt::EncType in order to prompt the developer
+    /* NOTE: This will cause a compilation error when changing PxCrypt::Encoder::Encoding in order to prompt the developer
      * to ensure any new options have been described above and then manually check them off here
      */
     static_assert(magic_enum::enum_values<PxCrypt::Encoder::Encoding>() == std::array<PxCrypt::Encoder::Encoding, 2>{

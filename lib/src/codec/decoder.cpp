@@ -30,7 +30,7 @@ DecoderPrivate::~DecoderPrivate() {};
 /*!
  *  @class Decoder <pxcrypt/codec/decoder.h>
  *
- *  @brief The Encoder class is an abstract base class from which all PxCrypt decoders derive in order to
+ *  @brief The Encoder class is a base class from which all PxCrypt decoders derive in order to
  *  skim and decrypt data from the color channels of an encoded image.
  */
 

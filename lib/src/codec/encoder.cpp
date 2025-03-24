@@ -41,7 +41,7 @@ EncoderPrivate::~EncoderPrivate() {};
 /*!
  *  @class Encoder <pxcrypt/codec/encoder.h>
  *
- *  @brief The Encoder class is an abstract base class from which all PxCrypt encoders derive in order to
+ *  @brief The Encoder class is a base class from which all PxCrypt encoders derive in order to
  *  provide serialization of binary data to portions of an arbitrary image's color channels.
  */
 
@@ -54,8 +54,6 @@ EncoderPrivate::~EncoderPrivate() {};
  *
  *  @par Relative
  *  @parblock
- *  This is the default encoding strategy.
- *
  *  The input data is broken up into 1-7 bit-wide frames in according to the value selected for
  *  bits per channel which are then woven into existing pixel data with each frame being mapped to
  *  one channel of a given pixel. This is accomplished by applying an offset to the original color
@@ -81,6 +79,8 @@ EncoderPrivate::~EncoderPrivate() {};
  *
  *  @par Absolute
  *  @parblock
+ *  This is the default encoding strategy.
+ *
  *  Input data is broken up into frames in the same manner as the Relative strategy, but are simply
  *  inserted directly into a pixel's channel data by replacing the lowest bits up to amount allowed
  *  by the BPC value. This allows the convenience of not requiring the original medium to decode
