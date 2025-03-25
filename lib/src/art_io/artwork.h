@@ -84,7 +84,7 @@ public:
 
         // Setup new artwork
         DerivedT readArt;
-        Artwork& readArtBase = static_cast<Artwork&>(readArt);
+        Artwork& readArtBase = static_cast<Artwork&>(readArt); // TODO: WTF is this cast for???
 
         // Read rendition portion
         ArtworkError renditionError = readArtBase.renditionRead(canvasStream);

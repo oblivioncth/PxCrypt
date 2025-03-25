@@ -50,7 +50,7 @@ EncoderPrivate::~EncoderPrivate() {};
  *  @enum Encoder::Encoding
  *
  *  This enum specifies the encoding strategy utilized when encoding/decoding data, which
- *  affects several aspects of the resultant image.
+ *  affects several aspects of the resultant image(s).
  *
  *  @par Relative
  *  @parblock
@@ -101,10 +101,10 @@ EncoderPrivate::~EncoderPrivate() {};
  *  @endparblock
  *
  *  @var Encoder::Encoding Encoder::Relative
- *  Requires the original medium in order to decode the encrypted data.
+ *  Requires the original medium(s) in order to decode the encrypted data.
  *
  *  @var Encoder::Encoding Encoder::Absolute
- *  Does not require the original medium in order to decode the encrypted data.
+ *  Does not require the original medium(s) in order to decode the encrypted data.
  */
 
 //-Constructor---------------------------------------------------------------------------------------------------

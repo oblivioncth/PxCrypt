@@ -4,10 +4,13 @@
 // Magic enum
 #include <magic_enum.hpp>
 
+// Qt Includes
+#include <QFileInfo>
+
 // Project Includes
 #include "command.h"
 #include "project_vars.h"
-#include "pxcrypt/codec/standard_encoder.h"
+#include "pxcrypt/codec/encoder.h"
 
 class QX_ERROR_TYPE(CEncodeError, "CEncodeError", 3002)
 {
@@ -17,11 +20,12 @@ class QX_ERROR_TYPE(CEncodeError, "CEncodeError", 3002)
 public:
     enum Type
     {
-        NoError = 0,
-        InvalidEncoding = 1,
-        InvalidDensity = 2,
-        FailedReadingMedium = 3,
-        FailedWritingEncoded = 4
+        NoError,
+        InvalidEncoding,
+        InvalidDensity,
+        MediumDoesNotExist,
+        FailedReadingMedium,
+        FailedWritingEncoded
     };
 
 //-Instance Variables------------------------------------------------------------------------------------------------
@@ -29,6 +33,7 @@ private:
     Type mType;
     QString mGeneral;
     QString mSpecific;
+    QString mDetails;
 
 //-Constructor----------------------------------------------------------------------------------------------------------
 public:
@@ -42,8 +47,9 @@ private:
     quint32 deriveValue() const override;
     QString derivePrimary() const override;
     QString deriveSecondary() const override;
+    QString deriveDetails() const override;
 
-    CEncodeError wSpecific(const QString& spec) const;
+    CEncodeError wSpecific(const QString& spec, const QString& det = {}) const;
 
 public:
     bool isValid() const;
@@ -53,30 +59,52 @@ public:
 
 class CEncode : public Command
 {
+//-Structs--------------------------------------------------------------------------------------------------------------
+private:
+    struct Job
+    {
+        QFileInfo inputInfo;
+        QFileInfo mediumInfo;
+        quint8 bpc;
+        PxCrypt::Encoder::Encoding encoding;
+        QByteArrayView payload;
+        QByteArrayView psk;
+        QString tag;
+    };
+
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
     // Error
     static inline const CEncodeError ERR_INVALID_ENCODING =
-            CEncodeError(CEncodeError::InvalidEncoding, u"Invalid encoding:"_s);
+        CEncodeError(CEncodeError::InvalidEncoding, u"Invalid encoding:"_s);
     static inline const CEncodeError ERR_INVALID_DENSITY =
-            CEncodeError(CEncodeError::InvalidDensity, u"Invalid data density:"_s);
+        CEncodeError(CEncodeError::InvalidDensity, u"Invalid data density:"_s);
+    static inline const CEncodeError ERR_MEDIUM_DOES_NOT_EXIST =
+        CEncodeError(CEncodeError::MediumDoesNotExist, u"The provided medium path does not exist."_s);
     static inline const CEncodeError ERR_MEDIUM_READ_FAILED =
-            CEncodeError(CEncodeError::FailedReadingMedium, u"Failed reading the medium image."_s);
+        CEncodeError(CEncodeError::FailedReadingMedium, u"Failed reading the medium image(s)."_s);
     static inline const CEncodeError ERR_OUTPUT_WRITE_FAILED =
-            CEncodeError(CEncodeError::FailedWritingEncoded, u"Failed writing the encoded image."_s);
+        CEncodeError(CEncodeError::FailedWritingEncoded, u"Failed writing the encoded image(s)."_s);
 
     // Encoding
     static inline const QString OUTPUT_EXT = u"png"_s;
 
-    // Messages
+    // Messages - All
     static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Encode\n--------------"_s;
     static inline const QString MSG_BPC = u"Bits per channel: %1"_s;
     static inline const QString MSG_PAYLOAD_SIZE = u"Payload size: %1 KiB"_s;
-    static inline const QString MSG_MEDIUM_DIM = u"Medium dimmensions: %1 x %2"_s;
     static inline const QString MSG_ENCODING = u"Encoding: %1"_s;
     static inline const QString MSG_START_ENCODING = u"Encoding image..."_s;
-    static inline const QString MSG_ACTUAL_BPC = u"Final bits per channel: %1"_s;
-    static inline const QString MSG_IMAGE_SAVED = u"Wrote encoded image to '%1'"_s;
+
+    // Messages - Single
+    static inline const QString MSG_SINGLE_MEDIUM_DIM = u"Medium dimensions: %1 x %2"_s;
+    static inline const QString MSG_SINGLE_ACTUAL_BPC = u"Final bits per channel: %1"_s;
+    static inline const QString MSG_SINGLE_IMAGE_SAVED = u"Wrote encoded image to '%1'"_s;
+
+    // Messages - Multi
+    static inline const QString MSG_MULTI_IMAGE_COUNT = u"Using %1 images"_s;
+    static inline const QString MSG_MULTI_APROX_BPC = u"Final greatest bits per channel: %1"_s;
+    static inline const QString MSG_MULTI_IMAGE_SAVED = u"Wrote encoded images to '%1'"_s;
 
     // Command line option strings
     static inline const QString CL_OPT_INPUT_S_NAME = u"i"_s;
@@ -85,11 +113,11 @@ private:
 
     static inline const QString CL_OPT_OUTPUT_S_NAME = u"o"_s;
     static inline const QString CL_OPT_OUTPUT_L_NAME = u"output"_s;
-    static inline const QString CL_OPT_OUTPUT_DESC = u"Path to encoded output file. Defaults to the input path with a '_enc' suffix."_s;
+    static inline const QString CL_OPT_OUTPUT_DESC = u"Path to encoded output file or directory. Defaults to the input path with a '_enc' suffix."_s;
 
     static inline const QString CL_OPT_MEDIUM_S_NAME = u"m"_s;
     static inline const QString CL_OPT_MEDIUM_L_NAME = u"medium"_s;
-    static inline const QString CL_OPT_MEDIUM_DESC = u"The image to encode the data within."_s;
+    static inline const QString CL_OPT_MEDIUM_DESC = u"The image(s) to encode the data within. A path to a directory performs a multi-part encode with all contained images."_s;
 
     static inline const QString CL_OPT_DENSITY_S_NAME = u"d"_s;
     static inline const QString CL_OPT_DENSITY_L_NAME = u"density"_s;
@@ -107,8 +135,8 @@ private:
     static inline const QString CL_OPT_ENCODING_DESC =
         u"The type of encoding to use (defaults to Absolute):\n"
         "\n"
-        "Relative - Requires the original medium to decode\n"
-        "Absolute - Doesn't require the original medium to decode\n"_s;
+        "Relative - Requires the original medium(s) to decode\n"
+        "Absolute - Doesn't require the original medium(s) to decode\n"_s;
     static inline const QString CL_OPT_ENCODING_DEFAULT = u"Absolute"_s;
 
     /* NOTE: This will cause a compilation error when changing PxCrypt::Encoder::Encoding in order to prompt the developer
@@ -136,13 +164,17 @@ private:
 public:
     // Meta
     static inline const QString NAME = u"encode"_s;
-    static inline const QString DESCRIPTION = u"Store a file within the color channel data of an image."_s;
+    static inline const QString DESCRIPTION = u"Store a file within the color channel data of an image or images."_s;
 
 //-Constructor----------------------------------------------------------------------------------------------------------
 public:
     CEncode(Core& coreRef);
 
 //-Instance Functions------------------------------------------------------------------------------------------------------
+private:
+    Qx::Error encodeSingleImage(const Job& job);
+    Qx::Error encodeMultipleImages(const Job& job);
+
 protected:
     const QList<const QCommandLineOption*> options() override;
     const QSet<const QCommandLineOption*> requiredOptions() override;

@@ -11,6 +11,8 @@ ob_add_standard_library(${LIB_TARGET_NAME}
             stat.h
             codec/decoder.h
             codec/encoder.h
+            codec/multi_decoder.h
+            codec/multi_encoder.h
             codec/standard_decoder.h
             codec/standard_encoder.h
     IMPLEMENTATION
@@ -23,12 +25,16 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         art_io/measure.cpp
         art_io/works/standard.h
         art_io/works/standard.cpp
+        art_io/works/multipart.h
+        art_io/works/multipart.cpp
         codec/decoder.cpp
         codec/decoder_p.h
         codec/encdec.h
         codec/encdec.cpp
         codec/encoder.cpp
         codec/encoder_p.h
+        codec/multi_decoder.cpp
+        codec/multi_encoder.cpp
         codec/standard_decoder.cpp
         codec/standard_encoder.cpp
         medium_io/canvas.h
@@ -51,8 +57,9 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         PRIVATE
             $<BUILD_INTERFACE:magic_enum::magic_enum>
         PUBLIC
-            Qt6::Core
-            Qt6::Gui
+            ${Qt}::Core
+            ${Qt}::Gui
+            ${Qt}::Concurrent
             Qx::Core
     CONFIG STANDARD
 )

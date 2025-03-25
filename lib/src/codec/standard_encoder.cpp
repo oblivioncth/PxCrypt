@@ -228,9 +228,9 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
 /*!
  *  @class StandardEncoder::Error <pxcrypt/codec/standard_encoder.h>
  *
- *  @brief The StandardEncoder::Error class is used to report errors during image encoding.
+ *  @brief The StandardEncoder::Error class is used to report errors during single image encoding.
  *
- *  @sa Encoder and DecodeError.
+ *  @sa StandardEncoder and StandardDecoder::Error.
  */
 
 //-Class Enums-----------------------------------------------------------------------------------------------------
