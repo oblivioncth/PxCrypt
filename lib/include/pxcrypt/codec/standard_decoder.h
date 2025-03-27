@@ -47,10 +47,6 @@ public:
         DimensionMismatch,
         NotLargeEnough,
         InvalidMeta,
-        InvalidHeader,
-        LengthMismatch,
-        UnexpectedEnd,
-        ChecksumMismatch,
         SkimFailed
     };
 
