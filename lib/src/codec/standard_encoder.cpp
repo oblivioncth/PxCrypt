@@ -194,7 +194,7 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
     else // Ensure data will fit with fixed BPC
     {
         quint64 max = mediumStat.capacity(d->mBpc).bytes;
-        if(static_cast<quint64>(measurement.size()) > max)
+        if(measurement.size() > max)
             return Error(Error::WontFit, u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3));
     }
 
@@ -205,7 +205,7 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
     Canvas canvas(workspace, d->mPsk);
     canvas.setBpc(d->mBpc);
     canvas.setEncoding(d->mEncoding);
-    canvas.setReference( d->mEncoding == Relative ? &workspace : nullptr);
+    canvas.setReference(d->mEncoding == Relative ? &workspace : nullptr);
 
     // Prepare for IO
     canvas.open(QIODevice::WriteOnly); // Closes upon destruction

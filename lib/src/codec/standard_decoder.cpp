@@ -27,7 +27,7 @@ public:
 public:
     StandardDecoderPrivate();
 
-//-Instance Functions---------------------------------------------------------------------------------------------
+//-Class Functions---------------------------------------------------------------------------------------------
 public:
     static StandardDecoder::Error fromArtworkError(const PxCryptPrivate::ArtworkError& aError);
 };
