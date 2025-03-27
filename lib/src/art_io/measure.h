@@ -23,6 +23,7 @@ protected:
 public:
     quint64 size() const;
     Canvas::metavalue_t minimumBpc(const QSize& dim) const;
+    quint64 leftOverSpace(const QSize& dim, Canvas::metavalue_t bpc) const;
 };
 
 template<typename T>

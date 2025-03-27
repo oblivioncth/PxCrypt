@@ -87,9 +87,8 @@ StandardEncoder::StandardEncoder() : Encoder(std::make_unique<StandardEncoderPri
  */
 quint64 StandardEncoder::calculateMaximumPayload(const QSize& dim, quint16 tagSize, quint8 bpc)
 {
-    PxCryptPrivate::StandardWork::Measure m(tagSize, 0); // 0 size payload to check for leftover 
-    Stat::Capacity c = Stat(dim).capacity(bpc);
-    return c.bytes - m.size();
+    PxCryptPrivate::StandardWork::Measure m(tagSize, 0); // 0 size payload to check for leftover
+    return m.leftOverSpace(dim, bpc);
 }
 
 /*!
