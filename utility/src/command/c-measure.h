@@ -1,6 +1,9 @@
 #ifndef CMEASURE_H
 #define CMEASURE_H
 
+// Qt Includes
+#include <QDir>
+
 // Magic enum
 #include <magic_enum.hpp>
 
@@ -15,9 +18,10 @@ class QX_ERROR_TYPE(CMeasureError, "CMeasureError", 3003)
 public:
     enum Type
     {
-        NoError = 0,
-        FailedReadingInput = 1,
-        InputTooSmall = 2
+        NoError,
+        InputDoesNotExist,
+        FailedReadingInput,
+        InputTooSmall
     };
 
 //-Instance Variables------------------------------------------------------------------------------------------------
@@ -25,6 +29,7 @@ private:
     Type mType;
     QString mGeneral;
     QString mSpecific;
+    QString mDetails;
 
 //-Constructor----------------------------------------------------------------------------------------------------------
 public:
@@ -38,8 +43,9 @@ private:
     quint32 deriveValue() const override;
     QString derivePrimary() const override;
     QString deriveSecondary() const override;
+    QString deriveDetails() const override;
 
-    CMeasureError wSpecific(const QString& spec) const;
+    CMeasureError wSpecific(const QString& spec, const QString& det = {}) const;
 
 public:
     bool isValid() const;
@@ -52,24 +58,32 @@ class CMeasure : public Command
 //-Class Variables------------------------------------------------------------------------------------------------------
 private:
     // Error
+    static inline const CMeasureError ERR_INPUT_DOES_NOT_EXIST =
+        CMeasureError(CMeasureError::InputDoesNotExist, u"The provided input path does not exist."_s);
     static inline const CMeasureError ERR_INPUT_READ_FAILED =
-            CMeasureError(CMeasureError::FailedReadingInput, u"Failed reading the input image."_s);
+        CMeasureError(CMeasureError::FailedReadingInput, u"Failed reading the input image."_s);
     static inline const CMeasureError ERR_INPUT_TOO_SMALL =
-            CMeasureError(CMeasureError::InputTooSmall, u"The provided image's dimensions are too small for it to act as a medium."_s);
+        CMeasureError(CMeasureError::InputTooSmall, u"The provided image's dimensions are too small for it to act as a medium."_s);
+
 
     // Measurement
     static inline const QString MEASUREMENT_LINE = u"BPC %1 - %2 bytes (%3 KiB)\n"_s;
 
-    // Messages
+    // Messages - All
     static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Measure\n--------------"_s;
-    static inline const QString MSG_IMAGE_DIMENSIONS = u"Image Dimmensions: %1 x %2"_s;
-    static inline const QString MSG_TAG_CONSUMPTION = u"Filename Consumes: %1 bytes"_s;
+    static inline const QString MSG_TAG_CONSUMPTION = u"Tag Consumes: %1 bytes"_s;
     static inline const QString MSG_PAYLOAD_CAPACITY = u"Payload Capacities:"_s;
+
+    // Messages - Single
+    static inline const QString MSG_SINGLE_IMAGE_DIMENSIONS = u"Image Dimensions: %1 x %2"_s;
+
+    // Messages - Multi
+    static inline const QString MSG_MULTI_IMAGE_COUNT = u"Image Count: %1"_s;
 
     // Command line option strings
     static inline const QString CL_OPT_INPUT_S_NAME = u"i"_s;
     static inline const QString CL_OPT_INPUT_L_NAME = u"input"_s;
-    static inline const QString CL_OPT_INPUT_DESC = u"Path to image to measure."_s;
+    static inline const QString CL_OPT_INPUT_DESC = u"Path to image(s) to measure. A path to a directory evaluates all images within for a multi-part encode."_s;
 
     static inline const QString CL_OPT_FILENAME_S_NAME = u"f"_s;
     static inline const QString CL_OPT_FILENAME_L_NAME = u"filename"_s;
@@ -93,6 +107,10 @@ public:
     CMeasure(Core& coreRef);
 
 //-Instance Functions------------------------------------------------------------------------------------------------------
+private:
+    Qx::Error measureSingleImage(QList<quint64>& capacities, const QString& imgPath, const QString& filename);
+    Qx::Error measureMultipleImages(QList<quint64>& capacities, const QDir& imgRoot, const QString& filename);
+
 protected:
     const QList<const QCommandLineOption*> options() override;
     const QSet<const QCommandLineOption*> requiredOptions() override;

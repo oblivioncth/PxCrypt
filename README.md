@@ -17,11 +17,16 @@ Overall an image's capacity for encoding is determined by its dimensions. The la
 - Optionally augments data obfuscation with basic encryption via a pre-shared key that scrambles the payload data sequence
 - Optionally encode data in a manner that also requires the original, unaltered image in order to decode the payload (can be combined with a pre-shared key)
 - Always produces a 32-bit RGBA images (saves as a PNG from the command-line)
+- Allows for splitting payloads across multiple images, similar to split-archive formats
 
 ### Note on Security
-While the this technique results in embedded data that's highly scrambled and difficult to decode, and the underlying sequence generator cannot be meaningfully sampled for state recreation in this application, it is not a CSPRNG (MT19937). The purpose of this technique is largely data obfuscation, with a basic level of encryption. **For maximum data security, pre-encrypt payloads using a cryptographically secure algorithm, like AES.** 
+While the this technique results in embedded data that's highly scrambled and difficult to decode, and the underlying sequence generator cannot be meaningfully sampled for state recreation in this application, it is not a CSPRNG (MT19937). The purpose of this technique is largely data obfuscation, with a basic level of encryption. **For maximum data security, pre-encrypt payloads using a cryptographically secure algorithm, like AES.**
 
 ## Library
+
+> [!WARNING]
+> While this library is in a pre-release state (i.e. < v1.0) the underlying implementation is subject to change in ways that break compatibility with older encrypted images at any time! The intention is to avoid such changes, but I cannot guarantee they will not occur until 1.0 is finalized. Should a breaking change occur, an older version of the library can always be used to decrypt the contents of older images.
+
 Detailed documentation of this library, facilitated by Doxygen, is available at: https://oblivioncth.github.io/PxCrypt/
 
 ### Getting Started
@@ -34,7 +39,7 @@ Finally, the [Minimal Example](https://oblivioncth.github.io/PxCrypt/index.html#
 You can also refer to the encoder/decoder utility source to get a better understanding of how to use the library.
 
 ## Encoder/Decoder Utility
-This utility is able to encode and decode PxCrypt images via a command-line interface. The **encode** command takes a single arbitrary file along with an image as input and produces a "magic" image with the provided file encoded within, as well as the file's original name. The **decode** command takes an encoded image and simply reverses the process. There are various options for both commands that can be used to customize exactly how data serialization is handled.
+This utility is able to encode and decode PxCrypt images via a command-line interface. The **encode** command takes a single arbitrary file along with an image or images as input and produces a single or multiple "magic" image(s) with the provided file encoded within, as well as the file's original name. The **decode** command takes an encoded image or images and simply reverses the process. There are various options for both commands that can be used to customize exactly how data serialization is handled.
 
 Input image format support can vary depending on platform, but usually most popular formats are supported. The exact list on a given system can be checked using the global **-f** option.
 
@@ -45,18 +50,18 @@ An optional pre-shared key (i.e. password) can be added during magic image creat
 ### Usage
 
 The application uses the following syntax scheme:
-    
+
     PxCrypt <global options> [command] <command options>
-    
+
 The order of switches within each options section does not matter.
 
 ### Example
 To encode a file within an image, try:
-	
+
 	PxCrypt encode -i "example/file/path.txt" -m "medium/image/path.jpg"
 
 then to recover the data
-	
+
 	PxCrypt decode -i "example/file/path_enc.png"
 
 The original `"example/file/path.txt"` file will need to be moved before using the `decode` command as the utility will not overwrite files that already exist.
@@ -76,16 +81,16 @@ Encoding data with a pre-shared key is recommended as anyone with this utility c
 Options:
  -  **-i | --input:** Path to the input file to encode
  -  **-o | --output:** Path to the encoded output file. Defaults to the input path with a '_enc' suffix
- - **-m | --medium:** Path to the image in which to encode the file
+ - **-m | --medium:** Path to the image in which to encode the file, or a directory of images to use for a multi-part encode
  - **-d | --density:** How many bits-per-channel to use when encoding the image (auto | 1-7). Defaults to 'auto'
  - **-k | --key:** An optional key/password to require in order to decode the encoded image
  - **-t | --type:** "The type of encoding to use, choose between 'Relative' and 'Absolute' (defaults to Absolute)
 
 Requires:
-**-i** and **-m** 
+**-i** and **-m**
 
 *Notes:*
-See the documentation for [PxCrypt::Encoder::Encoding](https://oblivioncth.github.io/PxCrypt/classPxCrypt_1_1Encoder.html#add57a5880fd161dfd3ae3943adb9aed3) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
+See the documentation for [PxCrypt::Encoder::Encoding](https://oblivioncth.github.io/PxCrypt/class_px_crypt_1_1_encoder.html#add57a5880fd161dfd3ae3943adb9aed3) for the differences between the encoding types. The gist is that 'Relative' will require the original medium image in order to decode the encoded data, and is therefore can be more secure, while 'Absolute' does not.
 
 --------------------------------------------------------------------------------
 
@@ -123,7 +128,7 @@ While the degree to which an image becomes visually distorted when used as an en
 
 In this regard there are two factors: How much data is allocated per channel, and how many pixels are allocated for encoded data.
 
-The first metric, known as bits-per-channel, or BPC (which is set with the option **-d** of the utility), determines the maximum distortion severity of a single pixel, while the second affects the overall proximity of distortion artifacts. 
+The first metric, known as bits-per-channel, or BPC (which is set with the option **-d** of the utility), determines the maximum distortion severity of a single pixel, while the second affects the overall proximity of distortion artifacts.
 
 The following images demonstrate the effect the encoding process has on an image at various BPC levels and overall capacity usage (i.e. both factors), using the Absolute encoding type:
 
@@ -155,7 +160,7 @@ BPC 7 - 20% Capacity (Left), 50% Capacity (Center), 80% Capacity (Right)
 - [Neargye's Magic Enum](https://github.com/Neargye/magic_enum)
 - [OBCMake](https://github.com/oblivioncth/OBCmake) (build script support, fetched automatically)
 - [Doxygen](https://www.doxygen.nl/)  (for documentation)
- 
+
 ## Pre-built Releases/Artifacts
 
 Releases and some workflows currently provide builds of PxCrypt in various combinations of platforms and compilers. View the repository [Actions](https://github.com/oblivioncth/PxCrypt/actions) or [Releases](https://github.com/oblivioncth/PxCrypt/releases) to see examples

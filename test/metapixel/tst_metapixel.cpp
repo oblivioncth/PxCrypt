@@ -2,8 +2,8 @@
 #include <QtTest>
 
 // Project Includes
-#include <pxcrypt/encoder.h>
-#include <pxcrypt/decoder.h>
+#include <pxcrypt/codec/standard_encoder.h>
+#include <pxcrypt/codec/standard_decoder.h>
 
 // Qx Includes
 #include <qx/utility/qx-macros.h>
@@ -43,12 +43,12 @@ void tst_metapixel::invalid_meta_data()
 {
     // Ensure all images from various platforms can be decoded on this platform
     QTest::addColumn<QString>("encodedPath");
-    QTest::addColumn<PxCrypt::DecodeError::Type>("expectedError");
+    QTest::addColumn<PxCrypt::StandardDecoder::Error::Type>("expectedError");
 
     // Add test rows
     QDir data(":/data");
-    QTest::newRow("invalid_bpc") << data.absoluteFilePath("invalid_bpc.png") << PxCrypt::DecodeError::InvalidMeta;
-    QTest::newRow("invalid_encoding") << data.absoluteFilePath("invalid_encoding.png") << PxCrypt::DecodeError::InvalidMeta;
+    QTest::newRow("invalid_bpc") << data.absoluteFilePath("invalid_bpc.png") << PxCrypt::StandardDecoder::Error::InvalidMeta;
+    QTest::newRow("invalid_encoding") << data.absoluteFilePath("invalid_encoding.png") << PxCrypt::StandardDecoder::Error::InvalidMeta;
 
     // NOTE: Current invalid encoding test uses value of 7, if that value ends up occupied then this
     // needs to change
@@ -58,18 +58,19 @@ void tst_metapixel::invalid_meta()
 {
     // Fetch data from test table
     QFETCH(QString, encodedPath);
-    QFETCH(PxCrypt::DecodeError::Type, expectedError);
+    QFETCH(PxCrypt::StandardDecoder::Error::Type, expectedError);
 
     // Load image
     QImage encoded(encodedPath);
     QVERIFY(!encoded.isNull());
 
     // Decode
-    PxCrypt::Decoder dec;
+    PxCrypt::StandardDecoder dec;
 
-    dec.decode(encoded);
-    QVERIFY2(dec.hasError(), "Image is not purposely flawed correctly");
-    QCOMPARE(dec.error().type(), expectedError);
+    QByteArray dummy;
+    PxCrypt::StandardDecoder::Error err = dec.decode(dummy, encoded);
+    QVERIFY2(err, "Image is not purposely flawed correctly");
+    QCOMPARE(err.type(), expectedError);
 }
 
 QTEST_APPLESS_MAIN(tst_metapixel)

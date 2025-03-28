@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.23.0...3.26.0)
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
 project(PxCrypt
-    VERSION 0.1
+    VERSION 0.2
     LANGUAGES CXX
     DESCRIPTION "Encrypt data within an image"
 )
@@ -14,7 +14,7 @@ set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3.2.1")
+fetch_ob_cmake("v0.3.9")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -42,6 +42,7 @@ endif()
 set(PXCRYPT_QT_COMPONENTS
     Core
     Gui
+    Concurrent
 )
 
 if(${PROJECT_NAME_UC}_TESTS)
@@ -50,8 +51,8 @@ endif()
 
 # Find Qt package
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060000)
-include(OB/BetterFindQt6)
-ob_find_qt6_package(REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
+include(OB/Qt)
+ob_find_package_qt(REQUIRED COMPONENTS ${PXCRYPT_QT_COMPONENTS})
 
 # Fetch Qx (build and import from source)
 set(PXCRYPT_QX_COMPONENTS
@@ -61,7 +62,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "v0.5.1"
+    REF "v0.6.2"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )
