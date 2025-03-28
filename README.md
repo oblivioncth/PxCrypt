@@ -68,6 +68,8 @@ The original `"example/file/path.txt"` file will need to be moved before using t
 
 Encoding data with a pre-shared key is recommended as anyone with this utility can decode keyless images. Using the "Relative" encoding type is even better.
 
+You can also pass a directory path in place of a single image to both the `encode`/`decode` command to perform a multi-part encode/decode, in which the input file is split up amongst multiple images in order to increase available storage space. This extends to the `measure` command as well.
+
 ### All Commands/Options
 
 #### Global Options:
@@ -97,9 +99,9 @@ See the documentation for [PxCrypt::Encoder::Encoding](https://oblivioncth.githu
 **decode** - Retrieves the original file from an encoded image
 
 Options:
- -  **-i | --input:** Path to the encoded image to decode
+ -  **-i | --input:** Path to the encoded image(s) to decode
  -  **-o | --output:** Directory to place the decoded output. Defaults to the input path's directory
- - **-m | --medium:** Path to the original image used to encode the data (ignored for encoding types other than 'Relative')
+ - **-m | --medium:** Path to the original image(s) used to encode the data (ignored for encoding types other than 'Relative')
  - **-k | --key:** The key for images protected with one
 
 Requires:
@@ -107,10 +109,10 @@ Requires:
 
 --------------------------------------------------------------------------------
 
-**measure** - Determine how much data can be encoded within a given image
+**measure** - Determine how much data can be encoded within a given image or images
 
 Options:
- -  **-i | --input:** Path to the image to measure
+ -  **-i | --input:** Path to the image(s) to measure
  -  **-f | --filename:** Name of potential payload file. Defaults to 'filename.txt'
 
 Requires:
