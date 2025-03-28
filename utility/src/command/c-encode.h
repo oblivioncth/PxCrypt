@@ -90,7 +90,6 @@ private:
     static inline const QString OUTPUT_EXT = u"png"_s;
 
     // Messages - All
-    static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Encode\n--------------"_s;
     static inline const QString MSG_BPC = u"Bits per channel: %1"_s;
     static inline const QString MSG_PAYLOAD_SIZE = u"Payload size: %1"_s;
     static inline const QString MSG_ENCODING = u"Encoding: %1"_s;
@@ -179,9 +178,7 @@ protected:
     const QList<const QCommandLineOption*> options() override;
     const QSet<const QCommandLineOption*> requiredOptions() override;
     const QString name() override;
-
-public:
-    Qx::Error process(const QStringList& commandLine) override;
+    Qx::Error perform() override;
 };
 REGISTER_COMMAND(CEncode::NAME, CEncode, CEncode::DESCRIPTION);
 

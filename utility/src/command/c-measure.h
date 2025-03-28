@@ -70,7 +70,6 @@ private:
     static inline const QString MEASUREMENT_LINE = u"BPC %1 - %2 (%3 bytes)\n"_s;
 
     // Messages - All
-    static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Measure\n--------------"_s;
     static inline const QString MSG_TAG_CONSUMPTION = u"Tag Consumes: %1"_s;
     static inline const QString MSG_PAYLOAD_CAPACITY = u"Payload Capacities:"_s;
 
@@ -115,9 +114,7 @@ protected:
     const QList<const QCommandLineOption*> options() override;
     const QSet<const QCommandLineOption*> requiredOptions() override;
     const QString name() override;
-
-public:
-    Qx::Error process(const QStringList& commandLine) override;
+    Qx::Error perform() override;
 };
 REGISTER_COMMAND(CMeasure::NAME, CMeasure, CMeasure::DESCRIPTION);
 

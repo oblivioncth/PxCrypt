@@ -165,27 +165,9 @@ const QSet<const QCommandLineOption*> CDecode::requiredOptions() { return CL_OPT
 const QString CDecode::name() { return NAME; }
 
 //Public:
-Qx::Error CDecode::process(const QStringList& commandLine)
+Qx::Error CDecode::perform()
 {
     //-Preparation---------------------------------------
-    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
-
-    // Parse and check for valid arguments
-    CommandError parseError = parse(commandLine);
-    if(parseError.isValid())
-        return parseError;
-
-    // Handle standard options
-    if(checkStandardOptions())
-        return CDecodeError();
-
-    // Check for required options
-    CommandError reqCheck = checkRequiredOptions();
-    if(reqCheck.isValid())
-    {
-        mCore.printError(NAME, reqCheck);
-        return reqCheck;
-    }
 
     // Get key
     QByteArray aKey = mParser.value(CL_OPTION_KEY).toUtf8();

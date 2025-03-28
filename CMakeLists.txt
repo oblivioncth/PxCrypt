@@ -62,7 +62,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "v0.6.2"
+    REF "226b2d53da729b81e9dfaacfa37d0a9ab3328b67"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )

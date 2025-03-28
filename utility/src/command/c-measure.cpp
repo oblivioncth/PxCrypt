@@ -115,27 +115,9 @@ const QSet<const QCommandLineOption*> CMeasure::requiredOptions() { return CL_OP
 const QString CMeasure::name() { return NAME; }
 
 //Public:
-Qx::Error CMeasure::process(const QStringList& commandLine)
+Qx::Error CMeasure::perform()
 {
     //-Preparation---------------------------------------
-    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
-
-    // Parse and check for valid arguments
-    CommandError parseError = parse(commandLine);
-    if(parseError.isValid())
-        return parseError;
-
-    // Handle standard options
-    if(checkStandardOptions())
-        return CMeasureError();
-
-    // Check for required options
-    CommandError reqCheck = checkRequiredOptions();
-    if(reqCheck.isValid())
-    {
-        mCore.printError(NAME, reqCheck);
-        return reqCheck;
-    }
 
     // Get input info
     QFileInfo inputInfo(mParser.value(CL_OPTION_INPUT));

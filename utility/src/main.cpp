@@ -9,8 +9,6 @@
 #include "command/command.h"
 #include "project_vars.h"
 
-// FIXME: THERE IS A FLAW IN THE UTILITY WHERE BAD SWITCHES SEEM TO CAUSE NO OUTPUT
-
 // Meta
 const QString NAME = "main";
 
