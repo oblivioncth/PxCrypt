@@ -196,6 +196,10 @@ QString MultiDecoder::tag() const { Q_D(const MultiDecoder); return d->mTag; }
  *  The original medium images @a mediums are used as a reference for images with encodings that require it, but
  *  are otherwise ignored. The encoded data is descrambled using the currently set pre-shared key.
  *
+ *  @note @a encoded and @a mediums do not need to be in the same order they were at the time of encoding, but
+ *  they do need to be in the same order relative to each other so that the correct medium is matched with
+ *  the correct encoded image.
+ *
  *  After an image is successfully decoded the tag of the encoded data is made available via tag().
  *
  *  @sa MultiEncoder::encode().
