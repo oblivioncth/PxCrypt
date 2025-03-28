@@ -52,7 +52,7 @@ void tst_encode_decode::full_data_cycle_data()
         QImage medium;
         qsizetype payloadSize;
         QByteArray psk;
-        quint8 bpc;
+        quint8 bpc = 0;
         PxCrypt::Encoder::Encoding encoding;
     };
 
@@ -79,7 +79,7 @@ void tst_encode_decode::full_data_cycle_data()
         .medium = realWorldImage,
         .payloadSize = 1000,
         .psk = QBAL("\x49\xAE\xC4\xDE"),
-        .encoding = PxCrypt::Encoder::Relative
+        .encoding = PxCrypt::Encoder::Relative,
     };
 
     for(quint8 i = 0; i < 8; i++)
@@ -146,7 +146,7 @@ void tst_encode_decode::full_data_cycle_data()
         .testName = pfTag,
         .medium = pfMedium,
         .payloadSize = pfPayload,
-        .psk = QBAL("\38\xDF\xE1\x4F"),
+        .psk = QBAL("\x38\xDF\xE1\x4F"),
         .bpc = pfBpc,
         .encoding = PxCrypt::Encoder::Absolute
     };
