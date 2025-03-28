@@ -42,6 +42,7 @@ endif()
 set(PXCRYPT_QT_COMPONENTS
     Core
     Gui
+    Concurrent
 )
 
 if(${PROJECT_NAME_UC}_TESTS)

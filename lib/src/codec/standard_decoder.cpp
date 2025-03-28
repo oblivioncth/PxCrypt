@@ -90,11 +90,9 @@ QString StandardDecoder::tag() const { Q_D(const StandardDecoder); return d->mTa
  *  The original medium image @a medium is used as a reference for images with encodings that require it, but
  *  is otherwise ignored. The encoded data is descrambled using the currently set pre-shared key.
  *
- *  If encoding fails, a null byte array will be returned. Use error() to determine the cause. Further attempts
- *  to use decode() will be ignored until the error state is cleared via reset(). After an image is successfully
- *  decoded the tag of the encoded data is made available via tag().
+ *  After an image is successfully decoded the tag of the encoded data is made available via tag().
  *
- *  @sa Encoder::encode().
+ *  @sa StandardEncoder::encode().
  */
 StandardDecoder::Error StandardDecoder::decode(QByteArray& decoded, const QImage& encoded, const QImage& medium)
 {

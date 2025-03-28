@@ -61,17 +61,17 @@ target_link_libraries(example_app PUBLIC PxCrypt::Codec)
 
 5) Include the desired public headers in your code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-#include <pxcrypt/encode.h>
-#include <pxcrypt/decode.h>
+#include <pxcrypt/standard_encode.h>
+#include <pxcrypt/standard_decode.h>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-6) Review the rest of the documentation, primarily encode.h and decode.h. Also see PxCrypt::EncType for the difference between the available encoding strategies.
+6) Review the rest of the documentation, primarily StandardEncoder/StandardDecoder and MultiEncoder/MultiDecoder Also see Encoder::Encoding for the difference between the available encoding strategies.
 
 Minimal Example
 ---------------
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-#include <pxcrypt/encoder.h>
-#include <pxcrypt/decoder.h>
+#include <pxcrypt/codec/standard_encoder.h>
+#include <pxcrypt/codec/standard_decoder.h>
 #include <iostream>
 
 int main()
@@ -90,24 +90,26 @@ int main()
     //-Encode-------------------------
 
     // Encoder
-    PxCrypt::Encoder enc;
+    PxCrypt::StandardEncoder enc;
     enc.setTag(tagIn);
     enc.setBpc(0); // Auto
     enc.setPresharedKey(psk);
     enc.setEncoding(PxCrypt::Encoder::Relative);
 
-    QImage encoded = enc.encode(payloadIn, medium);
-    Q_ASSERT(!enc.hasError());
+    QImage encoded;
+    PxCrypt::StandardEncoder::Error eErr = enc.encode(encoded, payloadIn, medium);
+    Q_ASSERT(!eErr);
 
     //-Decode-------------------------
 
     // Decoder
-    PxCrypt::Decoder dec;
+    PxCrypt::StandardDecoder dec;
     dec.setPresharedKey(psk);
 
-    QByteArray payloadOut = dec.decode(encoded, medium);
+    QByteArray payloadOut;
+    PxCrypt::StandardDecoder::Error dErr = dec.decode(payloadOut, encoded, medium);
+    Q_ASSERT(!dErr);
     QString tagOut = dec.tag();
-    Q_ASSERT(!dec.hasError());
 
     //-Compare-------------------------
     std::cout << (payloadIn == payloadOut && tagIn == tagOut ? "Success" : "Fail")
