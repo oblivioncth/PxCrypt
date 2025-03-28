@@ -11,6 +11,7 @@
 // Project Includes
 #include "pxcrypt/codec/standard_encoder.h"
 #include "pxcrypt/codec/multi_encoder.h"
+#include "utility.h"
 
 //===============================================================================================================
 // CMeasureError
@@ -114,27 +115,9 @@ const QSet<const QCommandLineOption*> CMeasure::requiredOptions() { return CL_OP
 const QString CMeasure::name() { return NAME; }
 
 //Public:
-Qx::Error CMeasure::process(const QStringList& commandLine)
+Qx::Error CMeasure::perform()
 {
     //-Preparation---------------------------------------
-    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
-
-    // Parse and check for valid arguments
-    CommandError parseError = parse(commandLine);
-    if(parseError.isValid())
-        return parseError;
-
-    // Handle standard options
-    if(checkStandardOptions())
-        return CMeasureError();
-
-    // Check for required options
-    CommandError reqCheck = checkRequiredOptions();
-    if(reqCheck.isValid())
-    {
-        mCore.printError(NAME, reqCheck);
-        return reqCheck;
-    }
 
     // Get input info
     QFileInfo inputInfo(mParser.value(CL_OPTION_INPUT));
@@ -167,7 +150,7 @@ Qx::Error CMeasure::process(const QStringList& commandLine)
     }
 
     // Print stats
-    mCore.printMessage(NAME, MSG_TAG_CONSUMPTION.arg(filename.size()));
+    mCore.printMessage(NAME, MSG_TAG_CONSUMPTION.arg(Utility::dataStr(filename.size())));
     mCore.printMessage(NAME, MSG_PAYLOAD_CAPACITY);
 
     // Print capacity at all BPC
@@ -175,7 +158,7 @@ Qx::Error CMeasure::process(const QStringList& commandLine)
     for(quint8 bpc = 1; bpc <= 7; bpc++)
     {
         quint64 c = capacities[bpc - 1];
-        measurement += MEASUREMENT_LINE.arg(bpc).arg(c).arg(c/1024.0, 0, 'f', 2);
+        measurement += MEASUREMENT_LINE.arg(bpc).arg(Utility::dataStr(c)).arg(c);
     }
     mCore.printMessage(NAME, measurement);
 

@@ -11,6 +11,7 @@
 // Project Includes
 #include "pxcrypt/codec/standard_decoder.h"
 #include "pxcrypt/codec/multi_decoder.h"
+#include "utility.h"
 
 //===============================================================================================================
 // CDecodeError
@@ -164,27 +165,9 @@ const QSet<const QCommandLineOption*> CDecode::requiredOptions() { return CL_OPT
 const QString CDecode::name() { return NAME; }
 
 //Public:
-Qx::Error CDecode::process(const QStringList& commandLine)
+Qx::Error CDecode::perform()
 {
     //-Preparation---------------------------------------
-    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
-
-    // Parse and check for valid arguments
-    CommandError parseError = parse(commandLine);
-    if(parseError.isValid())
-        return parseError;
-
-    // Handle standard options
-    if(checkStandardOptions())
-        return CDecodeError();
-
-    // Check for required options
-    CommandError reqCheck = checkRequiredOptions();
-    if(reqCheck.isValid())
-    {
-        mCore.printError(NAME, reqCheck);
-        return reqCheck;
-    }
 
     // Get key
     QByteArray aKey = mParser.value(CL_OPTION_KEY).toUtf8();
@@ -241,7 +224,7 @@ Qx::Error CDecode::process(const QStringList& commandLine)
         return jobError;
     }
 
-    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(decoded.size()/1024.0, 0, 'f', 2));
+    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(Utility::dataStr(decoded.size())));
     mCore.printMessage(NAME, MSG_TAG.arg(tag));
 
     // Write decoded data

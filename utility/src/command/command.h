@@ -143,17 +143,20 @@ public:
     static QString describe(const QString& name);
 
 //-Instance Functions------------------------------------------------------------------------------------------------------
-protected:
-    virtual const QList<const QCommandLineOption*> options() = 0;
-    virtual const QSet<const QCommandLineOption*> requiredOptions() = 0;
-    virtual const QString name() = 0;
+private:
     CommandError parse(const QStringList& commandLine);
     bool checkStandardOptions();
     CommandError checkRequiredOptions();
     void showHelp();
 
+protected:
+    virtual const QList<const QCommandLineOption*> options() = 0;
+    virtual const QSet<const QCommandLineOption*> requiredOptions() = 0;
+    virtual const QString name() = 0;
+    virtual Qx::Error perform() = 0;
+
 public:
-    virtual Qx::Error process(const QStringList& commandLine) = 0;
+    Qx::Error process(const QStringList& commandLine);
 };
 
 class CommandFactory

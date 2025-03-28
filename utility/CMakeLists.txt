@@ -25,6 +25,8 @@ ob_add_standard_executable(${APP_TARGET_NAME}
         kernel/core.h
         kernel/core.cpp
         main.cpp
+        utility.h
+        utility.cpp
     LINKS
         PRIVATE
             PxCrypt::Codec

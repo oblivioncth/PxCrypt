@@ -15,6 +15,7 @@
 #include "codec/encoder_p.h"
 #include "art_io/works/multipart.h"
 #include "pxcrypt/stat.h"
+#include "utility.h"
 
 using namespace PxCryptPrivate;
 using Measure = MultiPartWork::Measure;
@@ -270,14 +271,14 @@ Error MultiEncoderPrivate::encode(QByteArrayView payload, QList<QImage>& encoded
                 {
                     // Check how short at max density (TODO: Make a central function for the size short string arg'ing since its reused so much)
                     quint64 max = imageStat.capacity(BPC_MAX).bytes;
-                    throw MultiEncoderException(Error(Error::WontFit, idx,  u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3)));
+                    throw MultiEncoderException(Error(Error::WontFit, idx,  u"(%1 short)."_s.arg(Utility::dataStr(measurement.size() - max))));
                 }
             }
             else // Ensure data will fit with fixed BPC
             {
                 quint64 max = imageStat.capacity(bpc).bytes;
                 if(measurement.size() > max)
-                    throw MultiEncoderException(Error(Error::WontFit, idx,  u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3)));
+                    throw MultiEncoderException(Error(Error::WontFit, idx,  u"(%1 short)."_s.arg(Utility::dataStr(measurement.size() - max))));
             }
 
             // Track max BPC

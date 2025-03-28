@@ -3,6 +3,7 @@
 
 // Qx Includes
 #include <qx/utility/qx-helpers.h>
+#include <qx/core/qx-string.h>
 
 //===============================================================================================================
 // CommandError
@@ -59,9 +60,7 @@ QString Command::describe(const QString& name) { return registry().value(name).d
 std::unique_ptr<Command> Command::acquire(const QString& name, Core& coreRef) { return registry().value(name).factory->produce(coreRef); }
 
 //-Instance Functions------------------------------------------------------------------------------------------------------
-//Protected:
-const QList<const QCommandLineOption*> Command::options() { return CL_OPTIONS_STANDARD; }
-
+//Private:
 CommandError Command::parse(const QStringList& commandLine)
 {
     // Add command options
@@ -129,4 +128,36 @@ void Command::showHelp()
 
     // Show help
     mCore.printMessage(NAME, helpStr);
+}
+
+//Protected:
+const QList<const QCommandLineOption*> Command::options() { return CL_OPTIONS_STANDARD; }
+
+//Public:
+Qx::Error Command::process(const QStringList& commandLine)
+{
+    // Print invocation text
+    QString inv = PROJECT_SHORT_NAME u" "_s + Qx::String::toHeadlineCase(name()) + '\n';
+    inv.append(u"-"_s.repeated(inv.size() - 1)); // -1 for '\n'
+    mCore.printMessage(NAME, inv);
+
+    // Parse and check for valid arguments
+    if(CommandError parseError = parse(commandLine))
+    {
+        mCore.printError(NAME, parseError);
+        return parseError;
+    }
+
+    // Handle standard options
+    if(checkStandardOptions())
+        return CommandError();
+
+    // Check for required options
+    if(CommandError reqCheck = checkRequiredOptions())
+    {
+        mCore.printError(NAME, reqCheck);
+        return reqCheck;
+    }
+
+    return perform();
 }

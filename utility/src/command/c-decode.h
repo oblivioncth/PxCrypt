@@ -75,9 +75,8 @@ private:
         CDecodeError(CDecodeError::FailedReadingInput, u"Failed reading the input encoded image(s)."_s);
 
     // Messages - All
-    static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Decode\n--------------"_s;
     static inline const QString MSG_DECODING = u"Decoding..."_s;
-    static inline const QString MSG_PAYLOAD_SIZE = u"Decoded %1 KiB"_s;
+    static inline const QString MSG_PAYLOAD_SIZE = u"Decoded %1"_s;
     static inline const QString MSG_TAG = u"Data tag: %1"_s;
     static inline const QString MSG_DATA_SAVED = u"Wrote decoded data to '%1'"_s;
 
@@ -131,9 +130,7 @@ protected:
     const QList<const QCommandLineOption*> options() override;
     const QSet<const QCommandLineOption*> requiredOptions() override;
     const QString name() override;
-
-public:
-    Qx::Error process(const QStringList& commandLine) override;
+    Qx::Error perform() override;
 };
 REGISTER_COMMAND(CDecode::NAME, CDecode, CDecode::DESCRIPTION);
 

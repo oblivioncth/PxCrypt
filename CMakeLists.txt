@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.23.0...3.26.0)
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
 project(PxCrypt
-    VERSION 0.2
+    VERSION 0.2.1
     LANGUAGES CXX
     DESCRIPTION "Encrypt data within an image"
 )
@@ -62,7 +62,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "v0.6.2"
+    REF "226b2d53da729b81e9dfaacfa37d0a9ab3328b67"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )

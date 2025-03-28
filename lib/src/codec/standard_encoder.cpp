@@ -8,6 +8,7 @@
 #include "medium_io/canvas.h"
 #include "art_io/works/standard.h"
 #include "pxcrypt/stat.h"
+#include "utility.h"
 
 namespace PxCrypt
 {
@@ -188,14 +189,14 @@ StandardEncoder::Error StandardEncoder::encode(QImage& encoded, QByteArrayView p
         {
             // Check how short at max density
             quint64 max = mediumStat.capacity(BPC_MAX).bytes;
-            return Error(Error::WontFit, u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3));
+            return Error(Error::WontFit, u"(%1 short)."_s.arg(Utility::dataStr(measurement.size() - max)));
         }
     }
     else // Ensure data will fit with fixed BPC
     {
         quint64 max = mediumStat.capacity(d->mBpc).bytes;
         if(measurement.size() > max)
-            return Error(Error::WontFit, u"(%1 KiB short)."_s.arg((measurement.size() - max)/1024.0, 0, 'f', 3));
+            return Error(Error::WontFit, u"(%1 short)."_s.arg(Utility::dataStr(measurement.size() - max)));
     }
 
     // Copy base image, normalize to standard format

@@ -11,6 +11,7 @@
 // Project Includes
 #include "pxcrypt/codec/standard_encoder.h"
 #include "pxcrypt/codec/multi_encoder.h"
+#include "utility.h"
 
 //===============================================================================================================
 // CEncodeError
@@ -128,6 +129,9 @@ Qx::Error CEncode::encodeMultipleImages(const Job& job)
      * latter ctor would allow the library to work as is, where images are pre-loaded, but the former would allow
      * the image to be loaded on demand by the encoder from disk, so there would only be as many images in memory
      * at once as there are threads.
+     *
+     * In theory this could also be done for the payload, so that the segments given to the workers are only
+     * loaded as the worker is live, though this would be a little more involved.
      */
     QImageReader imgReader;
     QList<QImage> mediums(mediumPaths.size());
@@ -186,27 +190,9 @@ const QSet<const QCommandLineOption*> CEncode::requiredOptions() { return CL_OPT
 const QString CEncode::name() { return NAME; }
 
 //Public:
-Qx::Error CEncode::process(const QStringList& commandLine)
+Qx::Error CEncode::perform()
 {
     //-Preparation---------------------------------------
-    mCore.printMessage(NAME, MSG_COMMAND_INVOCATION);
-
-    // Parse and check for valid arguments
-    CommandError parseError = parse(commandLine);
-    if(parseError.isValid())
-        return parseError;
-
-    // Handle standard options
-    if(checkStandardOptions())
-        return CEncodeError();
-
-    // Check for required options
-    CommandError reqCheck = checkRequiredOptions();
-    if(reqCheck.isValid())
-    {
-        mCore.printError(NAME, reqCheck);
-        return reqCheck;
-    }
 
     // Evaluate encoding type
     PxCrypt::Encoder::Encoding aEncoding;
@@ -268,7 +254,7 @@ Qx::Error CEncode::process(const QStringList& commandLine)
         mCore.printError(NAME, lr);
         return lr;
     }
-    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(aPayload.size()/1024.0, 0, 'f', 2));
+    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(Utility::dataStr(aPayload.size())));
 
     // Setup Job
     Job job{
