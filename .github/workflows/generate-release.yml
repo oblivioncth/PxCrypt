@@ -3,8 +3,8 @@ on:
   workflow_run:
     workflows: Build Project
     types: completed
-    branches: master
-    
+    branches: [master, main]
+
 jobs:
   generate-release:
     name: Generate Release
