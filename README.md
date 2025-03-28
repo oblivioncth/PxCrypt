@@ -6,7 +6,7 @@ The project also includes a command-line utility through which one can evaluate 
 
 Overall an image's capacity for encoding is determined by its dimensions. The larger the row and column count, the more data can be stored.
 
-[![Dev Builds](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml/badge.svg?branch=dev)](https://github.com/oblivioncth/PxCrypt/actions/workflows/push-reaction.yml)
+[![Dev Builds](https://github.com/oblivioncth/PxCrypt/actions/workflows/build-project.yml/badge.svg?branch=dev)](https://github.com/oblivioncth/PxCrypt/actions/workflows/build-project.yml)
 
 ## Features
 
