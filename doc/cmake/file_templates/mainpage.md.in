@@ -65,7 +65,7 @@ target_link_libraries(example_app PUBLIC PxCrypt::Codec)
 #include <pxcrypt/standard_decode.h>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-6) Review the rest of the documentation, primarily StandardEncoder/StandardDecoder and MultiEncoder/MultiDecoder Also see Encoder::Encoding for the difference between the available encoding strategies.
+6) Review the rest of the documentation, primarily [StandardEncoder](#PxCrypt::StandardEncoder), [StandardDecoder](#PxCrypt::StandardDecoder), [MultiEncoder](#PxCrypt::MultiEncoder) and [MultiDecoder](#PxCrypt::MultiDecoder). Also see [Encoder::Encoding](#PxCrypt::Encoder::Encoding) for the difference between the available encoding strategies.
 
 Minimal Example
 ---------------
