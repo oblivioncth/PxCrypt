@@ -4,7 +4,8 @@ on:
     types: [closed]
     branches:
     - 'master'
-    
+    - 'main'
+
 jobs:
   tag-master-and-sync-dev:
     name: Tag master merge commit, FF back to dev

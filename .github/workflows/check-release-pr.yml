@@ -2,7 +2,7 @@ name: Check Release PR
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: master
+    branches: [master, main]
 
 jobs:
   check-pr-correctness:

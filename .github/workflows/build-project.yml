@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
     - 'master'
+    - 'main'
   workflow_run:
     workflows: Tag and Sync
     types: completed
