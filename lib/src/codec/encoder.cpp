@@ -54,8 +54,8 @@ EncoderPrivate::~EncoderPrivate() {};
  *
  *  @par Relative
  *  @parblock
- *  The input data is broken up into 1-7 bit-wide frames in according to the value selected for
- *  bits per channel which are then woven into existing pixel data with each frame being mapped to
+ *  The input data is broken up into 1-7 bit-wide frames, according to the value selected for
+ *  bits per channel, which are then woven into existing pixel data with each frame being mapped to
  *  one channel of a given pixel. This is accomplished by applying an offset to the original color
  *  channel value that matches the magnitude of the frame. The frame is subtracted from the original
  *  value if it is greater than @c 127; otherwise, the frame is added to the original value.

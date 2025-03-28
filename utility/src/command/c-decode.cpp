@@ -231,7 +231,7 @@ Qx::Error CDecode::perform()
     QDir outputDir(mParser.isSet(CL_OPTION_OUTPUT) ? mParser.value(CL_OPTION_OUTPUT) : encodedInfo.absoluteDir());
     QFile outputFile(outputDir.absoluteFilePath(tag));
 
-    Qx::IoOpReport wr = Qx::writeBytesToFile(outputFile, decoded, Qx::WriteMode::Truncate, 0, Qx::WriteOption::NewOnly);
+    Qx::IoOpReport wr = Qx::writeBytesToFile(outputFile, decoded, Qx::WriteMode::Truncate, 0, Qx::WriteOption::NewOnly | Qx::WriteOption::CreatePath);
     if(wr.isFailure())
     {
         mCore.printError(NAME, wr);

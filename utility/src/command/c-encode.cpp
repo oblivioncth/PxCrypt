@@ -173,7 +173,10 @@ Qx::Error CEncode::encodeMultipleImages(const Job& job)
     for(qsizetype i = 0; i < encoded.size(); ++i)
     {
         auto& mp = mediumPaths.at(i);
-        const QString encodedPath = outputDir.absoluteFilePath(mediumDir.relativeFilePath(mp));
+        const QFileInfo rmpInfo(mediumDir.relativeFilePath(mp));
+        const QString rep = rmpInfo.path() + '/' + rmpInfo.baseName() + '.' + OUTPUT_EXT;
+        const QString encodedPath = outputDir.absoluteFilePath(rep);
+
         auto& enc = encoded.at(i);
         imgWriter.setFileName(encodedPath);
         if(!imgWriter.write(enc))

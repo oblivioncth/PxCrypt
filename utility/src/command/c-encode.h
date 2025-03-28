@@ -93,7 +93,7 @@ private:
     static inline const QString MSG_BPC = u"Bits per channel: %1"_s;
     static inline const QString MSG_PAYLOAD_SIZE = u"Payload size: %1"_s;
     static inline const QString MSG_ENCODING = u"Encoding: %1"_s;
-    static inline const QString MSG_START_ENCODING = u"Encoding image..."_s;
+    static inline const QString MSG_START_ENCODING = u"Encoding..."_s;
 
     // Messages - Single
     static inline const QString MSG_SINGLE_MEDIUM_DIM = u"Medium dimensions: %1 x %2"_s;
