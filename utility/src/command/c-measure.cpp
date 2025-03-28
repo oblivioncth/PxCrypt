@@ -11,6 +11,7 @@
 // Project Includes
 #include "pxcrypt/codec/standard_encoder.h"
 #include "pxcrypt/codec/multi_encoder.h"
+#include "utility.h"
 
 //===============================================================================================================
 // CMeasureError
@@ -167,7 +168,7 @@ Qx::Error CMeasure::process(const QStringList& commandLine)
     }
 
     // Print stats
-    mCore.printMessage(NAME, MSG_TAG_CONSUMPTION.arg(filename.size()));
+    mCore.printMessage(NAME, MSG_TAG_CONSUMPTION.arg(Utility::dataStr(filename.size())));
     mCore.printMessage(NAME, MSG_PAYLOAD_CAPACITY);
 
     // Print capacity at all BPC
@@ -175,7 +176,7 @@ Qx::Error CMeasure::process(const QStringList& commandLine)
     for(quint8 bpc = 1; bpc <= 7; bpc++)
     {
         quint64 c = capacities[bpc - 1];
-        measurement += MEASUREMENT_LINE.arg(bpc).arg(c).arg(c/1024.0, 0, 'f', 2);
+        measurement += MEASUREMENT_LINE.arg(bpc).arg(Utility::dataStr(c)).arg(c);
     }
     mCore.printMessage(NAME, measurement);
 

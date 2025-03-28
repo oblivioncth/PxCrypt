@@ -11,6 +11,7 @@
 // Project Includes
 #include "pxcrypt/codec/standard_decoder.h"
 #include "pxcrypt/codec/multi_decoder.h"
+#include "utility.h"
 
 //===============================================================================================================
 // CDecodeError
@@ -241,7 +242,7 @@ Qx::Error CDecode::process(const QStringList& commandLine)
         return jobError;
     }
 
-    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(decoded.size()/1024.0, 0, 'f', 2));
+    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(Utility::dataStr(decoded.size())));
     mCore.printMessage(NAME, MSG_TAG.arg(tag));
 
     // Write decoded data

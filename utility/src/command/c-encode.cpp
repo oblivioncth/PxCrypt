@@ -11,6 +11,7 @@
 // Project Includes
 #include "pxcrypt/codec/standard_encoder.h"
 #include "pxcrypt/codec/multi_encoder.h"
+#include "utility.h"
 
 //===============================================================================================================
 // CEncodeError
@@ -268,7 +269,7 @@ Qx::Error CEncode::process(const QStringList& commandLine)
         mCore.printError(NAME, lr);
         return lr;
     }
-    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(aPayload.size()/1024.0, 0, 'f', 2));
+    mCore.printMessage(NAME, MSG_PAYLOAD_SIZE.arg(Utility::dataStr(aPayload.size())));
 
     // Setup Job
     Job job{

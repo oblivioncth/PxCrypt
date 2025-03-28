@@ -92,7 +92,7 @@ private:
     // Messages - All
     static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Encode\n--------------"_s;
     static inline const QString MSG_BPC = u"Bits per channel: %1"_s;
-    static inline const QString MSG_PAYLOAD_SIZE = u"Payload size: %1 KiB"_s;
+    static inline const QString MSG_PAYLOAD_SIZE = u"Payload size: %1"_s;
     static inline const QString MSG_ENCODING = u"Encoding: %1"_s;
     static inline const QString MSG_START_ENCODING = u"Encoding image..."_s;
 

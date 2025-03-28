@@ -17,6 +17,8 @@ ob_add_standard_library(${LIB_TARGET_NAME}
             codec/standard_encoder.h
     IMPLEMENTATION
         stat.cpp
+        utility.h
+        utility.cpp
         art_io/artwork.h
         art_io/artwork.cpp
         art_io/artwork_error.h

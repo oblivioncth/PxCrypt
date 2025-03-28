@@ -67,11 +67,11 @@ private:
 
 
     // Measurement
-    static inline const QString MEASUREMENT_LINE = u"BPC %1 - %2 bytes (%3 KiB)\n"_s;
+    static inline const QString MEASUREMENT_LINE = u"BPC %1 - %2 (%3 bytes)\n"_s;
 
     // Messages - All
     static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Measure\n--------------"_s;
-    static inline const QString MSG_TAG_CONSUMPTION = u"Tag Consumes: %1 bytes"_s;
+    static inline const QString MSG_TAG_CONSUMPTION = u"Tag Consumes: %1"_s;
     static inline const QString MSG_PAYLOAD_CAPACITY = u"Payload Capacities:"_s;
 
     // Messages - Single

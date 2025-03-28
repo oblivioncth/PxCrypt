@@ -77,7 +77,7 @@ private:
     // Messages - All
     static inline const QString MSG_COMMAND_INVOCATION = PROJECT_SHORT_NAME u" Decode\n--------------"_s;
     static inline const QString MSG_DECODING = u"Decoding..."_s;
-    static inline const QString MSG_PAYLOAD_SIZE = u"Decoded %1 KiB"_s;
+    static inline const QString MSG_PAYLOAD_SIZE = u"Decoded %1"_s;
     static inline const QString MSG_TAG = u"Data tag: %1"_s;
     static inline const QString MSG_DATA_SAVED = u"Wrote decoded data to '%1'"_s;
 
