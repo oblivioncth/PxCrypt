@@ -135,6 +135,7 @@ The `ninja` generator is recommended.
 
  - `PXCRYPT_DOCS` - Set to `ON` in order to generate the documentation target (OFF)
  - `PXCRYPT_TESTS` - Set to `ON` in order to generate the test targets (OFF)
+ - `PXCRYPT_INSTALL_MISC` - Set to `ON` to enable installation of misc components (e.g. README.md/LICENSE) (ON)
  - `BUILD_SHARED_LIBS` - Build PxCrypt as a shared library instead of a static one (OFF)
 
 ### CMake Targets:
@@ -152,6 +153,7 @@ The `ninja` generator is recommended.
 - `pxcrypt_base` - Installs the built library
 - `pxcrypt_frontend` - Installs the built encoder/decoder utility
 - `pxcrypt_docs` - Installs the built documentation
+- `pxcrypt_misc` - Installs miscellaneous files (e.g. README.md/LICENSE)
 
 If PxCrypt is configured as a sub-project, its install components are automatically removed from the `all` component, as to not pollute the install directory of the top-level project. They can still be installed by directly referencing their component names as shown above.
 
