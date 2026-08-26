@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.23.0...3.26.0)
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
 project(PxCrypt
-    VERSION 0.2.2
+    VERSION 0.2.3
     LANGUAGES CXX
     DESCRIPTION "Encrypt data within an image"
 )
@@ -14,7 +14,7 @@ set(PROJECT_NAME_FORMAL ${PROJECT_NAME})
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3.9")
+fetch_ob_cmake("v0.4.0.2")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -23,6 +23,7 @@ ob_standard_project_setup()
 # Configuration options
 option(${PROJECT_NAME_UC}_TESTS "Build ${PROJECT_NAME} tests" OFF)
 option(${PROJECT_NAME_UC}_DOCS "Build ${PROJECT_NAME} documentation" OFF)
+option(${PROJECT_NAME_UC}_INSTALL_MISC "Enable installation of misc components (e.g README.md/LICENSE)" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
@@ -62,7 +63,7 @@ set(PXCRYPT_QX_COMPONENTS
 
 include(OB/FetchQx)
 ob_fetch_qx(
-    REF "226b2d53da729b81e9dfaacfa37d0a9ab3328b67"
+    REF "v0.6.3"
     COMPONENTS
         ${PXCRYPT_QX_COMPONENTS}
 )
@@ -109,7 +110,9 @@ ob_standard_project_package_config(
 
 #================= Install ==========================
 
-ob_standard_project_misc_install()
+if(${PROJECT_NAME_UC}_INSTALL_MISC)
+    ob_standard_project_misc_install()
+endif()
 
 #====================== CPack ==============================
 
